@@ -4,9 +4,68 @@ This is the semi-official 'all-in-one' Logstash cookbook.
 
 Requirements
 ============
+All of the requirements are explicitly defined in the recipes. Every effort has been made to utilize official Opscode cookbooks.
+
+However if you wish to use an external ElasticSearch cluster, you will need to install that yourself and change the relevant attributes for discovery.
+The same applies to integration with Graphite.
+
+I recommend the following cookbooks for Graphite and ES:
+
+* [Heavywater Graphite Cookbook](https://github.com/heavywater/chef-graphite) - This is the one I use
+* [Karmi's ElasticSearch Cookbook](https://github.com/karmi/cookbook-elasticsearch) - I use my own version not this one
+
+It's possibly that this will be remedied in the future.
 
 Attributes
 ==========
+
+## Default
+
+* `node[:logstash][:basedir]` - the base directory for all the Logstash components
+* `node[:logstash][:user]` - the owner for all Logstash components
+* `node[:logstash][:group]` - the group for all Logstash components
+* `node[:logstash][:graphite_role]` - the Chef role to search for discovering your preexisting Graphite server
+* `node[:logstash][:elasticsearch_role]` - the Chef role to search for discovering your preexisting ElasticSearch cluster.
+* `node[:logstash][:elasticsearch_cluster]` - the cluster name assigned to your preexisting ElasticSearch cluster. Only applies to external ES clusters.
+
+## Agent
+
+* `node[:logstash][:agent][:install_method]` - The method to install logstash - either `jar` or `source`
+* `node[:logstash][:agent][:version]` - The version of Logstash to install. Only applies to `jar` install method.
+* `node[:logstash][:agent][:source_url]` - The URL of the Logstash jar to download. Only applies to `jar` install method.
+* `node[:logstash][:agent][:checksum]` - The checksum of the jar file. Only applies to `jar` install method.
+* `node[:logstash][:agent][:base_config]` - The name of the template to use for `logstash.conf` as a base config.
+* `node[:logstash][:agent][:xms]` - The minimum memory to assign the JVM.
+* `node[:logstash][:agent][:xmx]` - The maximum memory to assign the JVM.
+* `node[:logstash][:agent][:debug]` - Run logstash with `-v` option?
+* `node[:logstash][:agent][:server_role]` - The role of the node behaving as a Logstash `server`/`indexer`
+
+## Server
+
+* `node[:logstash][:server][:install_method]` - The method to install logstash - either `jar` or `source`
+* `node[:logstash][:server][:version]` - The version of Logstash to install. Only applies to `jar` install method.
+* `node[:logstash][:server][:source_url]` - The URL of the Logstash jar to download. Only applies to `jar` install method.
+* `node[:logstash][:server][:checksum]` - The checksum of the jar file. Only applies to `jar` install method.
+* `node[:logstash][:server][:base_config]` - The name of the template to use for `logstash.conf` as a base config.
+* `node[:logstash][:server][:xms]` - The minimum memory to assign the JVM.
+* `node[:logstash][:server][:xmx]` - The maximum memory to assign the JVM.
+* `node[:logstash][:server][:debug]` - Run logstash with `-v` option?
+* `node[:logstash][:server][:enable_embedded_es]` - Should Logstash run with the embedded ElasticSearch server or not?
+
+## Kibana
+
+* `node[:logstash][:kibana][:repo]` - The git repo to install Kibana from.
+* `node[:logstash][:kibana][:sha]` - The sha/branch of the repo you wish to clone.
+* `node[:logstash][:kibana][:apache_template]` - The name of the template file to use for the Apache site file
+* `node[:logstash][:kibana][:config]` - The name of the template to use for the Kibana `config.php` file
+* `node[:logstash][:kibana][:elasticsearch_role]` - The role of you ElasticSearch server. Defaults to 127.0.0.1 if not found.
+* `node[:logstash][:kibana][:server_name]` - The value to use for the Apache `ServerName` variable to use for the Kibana Apache virtual host.
+
+## Source
+
+* `node[:logstash][:source][:repo]` - The git repo to use for the source code of Logstash
+* `node[:logstash][:source][:sha]` - The sha/branch of the repo you wish to clone.
+* `node[:logstash][:source][:java_home]` - your `JAVA_HOME` location. Needed explicity for `ant` when building JRuby
 
 Usage
 =====
