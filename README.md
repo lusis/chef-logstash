@@ -38,6 +38,8 @@ The reason for giving `kibana` its own role assignment is to allow you to point 
 
 The reason for giving `agent` its own role assignment is to allow the `server` and `agent` recipes to work together.
 
+Yes, if you have a graphite installation with a role of `graphite_server`, logstash will send stats of events received to `logstash.events`.
+
 ## Agent and Server configuration
 The template to use for configuration is made an attribute as well. This allows you to define your OWN logstash configuration file without mucking with the default templates.
 
