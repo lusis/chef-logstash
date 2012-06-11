@@ -69,3 +69,6 @@ The `pyshipper` recipe will work as well but it is NOT wired up to anything yet.
 
 * Everything uses `runit`. Get over it. I'll take patches but I'm not fucking with init scripts myself.
 * Currently only tested on Ubuntu Natty. However everything **NOT** logstash-y, is using official opscode cookbooks so if THOSE are cross platform, this should work. I do plan on testing myself.
+
+# LICENSE
+Apache 2.0, broheim.
