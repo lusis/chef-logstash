@@ -47,4 +47,4 @@ template "#{node[:logstash][:basedir]}/kibana/current/config.php" do
   variables(@es_server => es_server)
 end
 
-#service "apache2"
+service "apache2"
