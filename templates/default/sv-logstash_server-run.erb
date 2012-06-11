@@ -1,0 +1,13 @@
+#!/bin/sh
+
+cd /<%= node[:logstash][:basedir] %>/server/
+exec 2>&1
+# Need to set LOGSTASH_HOME and HOME so sincedb will work
+LOGSTASH_HOME="<%= node[:logstash][:basedir] %>/server"
+GC_OPTS="-XX:+UseParallelOldGC"
+JAVA_OPTS="-server -Xms<%= node[:logstash][:server][:xms] %> -Xmx<%= node[:logstash][:server][:xmx] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/"
+LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/logstash.conf -l $LOGSTASH_HOME/log/logstash.log"
+<% if node[:logstash][:agent][:debug] -%>
+LOGSTASH_OPTS="$LOGSTASH_OPTS -v"
+<% end -%>
+HOME=$LOGSTASH_HOME exec java $JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS

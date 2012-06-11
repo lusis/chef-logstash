@@ -1,0 +1,11 @@
+NameVirtualHost *:80
+<VirtualHost *:80>
+  ServerName <%= node.ipaddress %>
+	DocumentRoot "<%= @docroot %>"
+	
+
+	<Directory "<%= @docroot %>">
+		DirectoryIndex index.php
+	</Directory>
+
+</VirtualHost>

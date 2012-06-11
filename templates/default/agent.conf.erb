@@ -1,0 +1,20 @@
+# This file was created for <%= node.name %>
+# by Chef
+# Manual changes will be lost
+input {
+  file {
+    type => "sample-logs"
+    path => ["/var/log/*.log"]
+    exclude => ["*.gz"]
+    debug => true
+  }
+}
+
+output {
+  <% if @logstash_server.empty? -%>
+  # Provide a sane default
+  null { }
+  <% else -%>
+  tcp { host => <%= @logstash_server.first.ipaddress %> port => "5959" }
+  <% end -%>
+}
