@@ -15,6 +15,6 @@ output {
   # Provide a sane default
   null { }
   <% else -%>
-  tcp { host => <%= @logstash_server.first.ipaddress %> port => "5959" }
+  tcp { host => "<%= @logstash_server.first.ipaddress %>" port => "5959" }
   <% end -%>
 }
