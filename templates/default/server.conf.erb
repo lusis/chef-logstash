@@ -11,9 +11,9 @@ output {
 	<% if @enable_embedded_es -%>
 	elasticsearch { embedded => true }
 	<% else -%>
-	elasticsearch { host => <%= @es_server.first.ipaddress %> cluster => <%= @es_cluster %> }
+	elasticsearch { host => "<%= @es_server.first.ipaddress %>" cluster => "<%= @es_cluster %>" }
 	<% end -%>
 	<% unless @graphite_server.empty? -%>
-	graphite { host => <%= @graphite_server.first.ipaddress %> metrics => ["logstash.events", "1"] }
+	graphite { host => "<%= @graphite_server.first.ipaddress %>" metrics => ["logstash.events", "1"] }
 	<% end -%>
 }
