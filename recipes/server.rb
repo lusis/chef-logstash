@@ -24,7 +24,7 @@ directory "#{node['logstash']['home']}/server" do
   group "#{node['logstash']['group']}"
 end
 
-%w{bin etc lib log tmp patterns haproxylog_db }.each do |ldir|
+%w{bin etc lib log tmp patterns  }.each do |ldir|
   
   directory "#{node['logstash']['basedir']}/server/#{ldir}" do
     action :create
@@ -98,6 +98,18 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
   action :create_if_missing
 end
 
+# stuff specific to management of logs from haproxy
+
+directory "#{node['logstash']['basedir']}/server/haproxylog_db" do
+  action :create
+  mode "0755"
+  owner "#{node['logstash']['user']}"
+  group "#{node['logstash']['group']}"
+end
+
+link "/var/lib/logstash/haproxylog_db" do
+  to "#{node['logstash']['basedir']}/server/haproxylog_db"
+end
 
 #create pattern_file  for haproxy
 template "/opt/logstash/server/etc/patterns/haproxy.conf" do
