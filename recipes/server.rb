@@ -69,6 +69,22 @@ directory "#{node['logstash']['basedir']}/server/etc/conf.d" do
   group "#{node['logstash']['group']}"
 end
 
+
+if platform_family?  "debian"
+  runit_service "logstash_server"
+elsif "rhel"
+  template "/etc/init.d/logstash_server" do
+    source "init.erb"
+    owner "root"
+    group "root"
+    mode "0774"
+  end
+  service "logstash_server" do
+    supports :restart => true, :reload => true, :status => true
+    action :enable
+  end
+end
+
 template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
   source "#{node['logstash']['server']['base_config']}"
   owner "#{node['logstash']['user']}"
@@ -83,25 +99,9 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
 end
 
 
-case platform_family?
-when "debian"
-  runit_service "logstash_server"
-when "rhel"
-  template "/etc/init.d/logstash" do
-    source "init.erb"
-    owner "root"
-    group "root"
-    mode "0774"
-  end
-  service "logstash" do
-    supports :restart => true, :reload => true, :status => true
-    action :enable
-  end
-end
-
 #create pattern_file  for haproxy
 template "/opt/logstash/server/etc/patterns/haproxy.conf" do
-    source "haproxy_pattern.el.erb"
+    source "haproxy_pattern.erb"
     owner "root"
     group "root"
     mode "0774"
