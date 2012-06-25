@@ -72,7 +72,7 @@ function stop() {
 	    kill -0 `cat $PIDFILE` >/dev/null 2>&1
 	    if [ $? -gt 0 ]; then
 		echo "PID file ($PIDFILE) found but no matching process was found. Stop aborted."
-		exit 1
+		exit 0
 	    fi
 	else
 	    echo "\$PIDFILE was set ($PIDFILE) but the specified file does not exist. Is Logstash running? Assuming it has stopped and pro\

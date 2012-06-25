@@ -95,7 +95,7 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
            :es_server => elasticsearch_server,
            :es_cluster => node['logstash']['elasticsearch_cluster'])
   notifies :restart, "service[logstash_server]"
-  action :create_if_missing
+  action :create
 end
 
 # stuff specific to management of logs from haproxy

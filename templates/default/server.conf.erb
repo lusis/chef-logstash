@@ -5,14 +5,17 @@ input {
     port => "5959"
     format => "json_event"
   }
-  <% else %>
-  <% node['logstash']['server']['inputs'].each do |input| -%>
+  <% else %>    
+    <% node['logstash']['server']['inputs'].each do |input| -%>
      
-     <% input.each do |name,hash| -%> 
-     <%= name %> {
-       <% hash.each do |k,v| -%>         
-       <%= k %> => "<%= v %>"
-     }
+        <% input.each do |name,hash| -%> 
+             <%= name %> {
+                 <% hash.each do |k,v| -%>         
+                       <%= k %> => "<%= v %>"
+                 <% end -%>
+        <% end -%>
+        }
+     <% end -%>
   <% end -%>
 }
 
