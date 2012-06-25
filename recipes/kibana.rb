@@ -10,7 +10,7 @@ apache_module "php5" do
 end
 
 apache_site "default" do
-  action :disable
+  enable false
 end
 
 directory "#{node[:logstash][:basedir]}/kibana" do

@@ -1,9 +1,19 @@
 input {
+  <% if  node['logstash']['server']['inputs'].empty? -%>
   tcp {
     type => "tcp-input"
     port => "5959"
     format => "json_event"
   }
+  <% else %>
+  <% node['logstash']['server']['inputs'].each do |input| -%>
+     
+     <% input.each do |name,hash| -%> 
+     <%= name %> {
+       <% hash.each do |k,v| -%>         
+       <%= k %> => "<%= v %>"
+     }
+  <% end -%>
 }
 
 output {
