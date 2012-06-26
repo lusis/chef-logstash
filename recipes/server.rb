@@ -12,7 +12,6 @@
 include_recipe "logstash::default"
 include_recipe "logrotate"
 
-
 graphite_server = search(:node, "roles:#{node[:logstash][:graphite_role]} AND chef_environment:#{node.chef_environment}")
 elasticsearch_server = search(:node, "roles:#{node[:logstash][:elasticsearch_role]} AND chef_environment:#{node.chef_environment}")[0]
 
@@ -37,8 +36,7 @@ end
     to "#{node['logstash']['basedir']}/server/#{ldir}"
   end
 end
-
-
+  
 #installation
 if node['logstash']['server']['install_method'] == "jar"
   remote_file "#{node['logstash']['basedir']}/server/lib/logstash-#{node['logstash']['server']['version']}.jar" do
@@ -100,27 +98,27 @@ end
 
 # stuff specific to management of logs from haproxy
 
-directory "#{node['logstash']['basedir']}/server/haproxylog_db" do
+directory "#{node['logstash']['basedir']}/server/apache_logs" do
   action :create
   mode "0755"
   owner "#{node['logstash']['user']}"
   group "#{node['logstash']['group']}"
 end
 
-link "/var/lib/logstash/haproxylog_db" do
-  to "#{node['logstash']['basedir']}/server/haproxylog_db"
+link "/var/lib/logstash/apache_logs" do
+  to "#{node['logstash']['basedir']}/server/apache_logs"
 end
 
 #create pattern_file  for haproxy
-template "/opt/logstash/server/etc/patterns/haproxy.conf" do
-    source "haproxy_pattern.erb"
-    owner "root"
-    group "root"
+cookbook_file "/opt/logstash/server/etc/patterns/haproxy" do
+    source "haproxy"
+    owner "#{node['logstash']['user']}"
+    group "#{node['logstash']['group']}"
     mode "0774"
 end
 
-#set logrotate  for /opt/logstash/server/haproxylog_db
-logrotate_app "haproxylog_db" do
+#set logrotate  for /opt/logstash/server/apache_logs
+logrotate_app "apache_logs" do
   path "#{node['logstash']['server']['logrotate_target']}"
   frequency "daily"
   rotate "30"
