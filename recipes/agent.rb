@@ -49,6 +49,26 @@ directory "#{node['logstash']['basedir']}/agent/etc/patterns" do
   group node['logstash']['group']
 end
 
+
+if platform_family?  "debian"
+  runit_service "logstash_agent"
+elsif "rhel"
+  template "/etc/init.d/logstash_agent" do
+    source "init.erb"
+    owner "root"
+    group "root"
+    mode "0774"
+    variables(
+              :config_file => "shipper.conf",
+              :basedir => "#{node['logstash']['basedir']}/agent"
+              )
+  end
+  service "logstash_agent" do
+    supports :restart => true, :reload => true, :status => true
+    action :enable
+  end
+end
+
 if node['logstash']['agent']['install_method'] == "jar"
   remote_file "#{node['logstash']['basedir']}/agent/lib/logstash-#{node['logstash']['agent']['version']}.jar" do
     owner "root"
@@ -70,27 +90,11 @@ else
   end
 end
 
-template "#{node['logstash']['basedir']}/agent/etc/logstash.conf" do
+template "#{node['logstash']['basedir']}/agent/etc/shipper.conf" do
   source node['logstash']['agent']['base_config']
   owner node['logstash']['user']
   group node['logstash']['group']
   mode "0644"
   variables(:logstash_server_ip => logstash_server_ip)
   notifies :restart, "service[logstash_agent]"
-end
-
-if platform_family?  "debian"
-  runit_service "logstash_agent"
-elsif "rhel"
-  template "/etc/init.d/logstash_agent" do
-    source "init.erb"
-    owner "root"
-    group "root"
-    mode "0774"
-    variables(:config_file => "shipper.conf")
-  end
-  service "logstash_server" do
-    supports :restart => true, :reload => true, :status => true
-    action :enable
-  end
 end

@@ -92,7 +92,10 @@ elsif "rhel"
     owner "root"
     group "root"
     mode "0774"
-    variables(:config_file => "logstash.conf")
+    variables(
+              :config_file => "logstash.conf",
+              :basedir => "#{node['logstash']['basedir']}/server"
+              )
   end
   service "logstash_server" do
     supports :restart => true, :reload => true, :status => true

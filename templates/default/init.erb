@@ -9,7 +9,7 @@
 
 PIDDIR="<%= node['logstash']['pid_dir'] %>"
 export PIDFILE="$PIDDIR/logstash.pid"
-export LS_HOME="<%= node['logstash']['server']['home'] %>"
+export LS_HOME="<%= @basedir %>"
 export LS_CONFIG="$LS_HOME/etc/<%= @config_file %>"
 LS_USER="<%= node['logstash']['user'] %>"
 LOGDIR="<%= node['logstash']['log_dir'] %>"
@@ -46,7 +46,7 @@ start() {
     fi
     
     echo -e "\033[1mStarting logstash...\033[0m"
-    su $LS_USER -c "$BIN_SCRIPT" & # > /dev/null 2>&1 
+    su $LS_USER -c "$BIN_SCRIPT" & > /dev/null 2>&1 
     ls_pid=$!
     result=$?
     
