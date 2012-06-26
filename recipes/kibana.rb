@@ -6,9 +6,11 @@ include_recipe "php::module_curl"
 if Chef::Config[:solo]
   es_server_ip = node['logstash']['elasticsearch_ip']
 else
-  es_server_results = search(:node, "role:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
+  es_server_results = search(:node, "roles:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
   unless es_server_results.empty?
     es_server_ip = es_server_results[0]['ipaddress']
+  else
+    es_server_ip = node['logstash']['elasticsearch_ip']
   end
 end
 
@@ -53,7 +55,7 @@ template "#{node['logstash']['basedir']}/kibana/current/config.php" do
   owner node['logstash']['user']
   group node['logstash']['group']
   mode "0755"
-  variables(@es_server_ip => es_server_ip)
+  variables(:es_server_ip => es_server_ip)
 end
 
 service "apache2"

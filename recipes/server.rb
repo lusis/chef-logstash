@@ -12,19 +12,22 @@
 include_recipe "logstash::default"
 include_recipe "logrotate"
 
-
 if Chef::Config[:solo] 
   es_server_ip = node['logstash']['elasticsearch_ip']
   graphite_server_ip = node['logstash']['graphite_ip']
 else
-  es_results = search(:node, "role:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
-  graphite_results = search(:node, "role:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
+  es_results = search(:node, "roles:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
+  graphite_results = search(:node, "roles:#{node['logstash']['graphite_role']} AND chef_environment:#{node.chef_environment}")
 
   unless es_results.empty?
     es_server_ip = es_results[0]['ipaddress']
+  else
+    es_server_ip = node['logstash']['elasticsearch_ip']
   end
-  unless es_results.empty?
-    graphite_server_ip = es_results[0]['ipaddress']
+  unless graphite_results.empty?
+    graphite_server_ip = graphite_results[0]['ipaddress']
+  else
+    graphite_server_ip = node['logstash']['graphite_ip']
   end
 end
 
