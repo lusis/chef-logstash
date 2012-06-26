@@ -11,10 +11,10 @@ input {
 }
 
 output {
-  <% if @logstash_server.empty? -%>
+  <% if @logstash_server_ip.empty? -%>
   # Provide a sane default
   null { }
   <% else -%>
-  tcp { host => "<%= @logstash_server.first.ipaddress %>" port => "5959" }
+  tcp { host => "<%= @logstash_server_ip %>" port => "5959" }
   <% end -%>
 }

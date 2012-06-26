@@ -2,6 +2,7 @@ include_recipe "apache2"
 include_recipe "apache2::mod_php5"
 include_recipe "php::module_curl"
 
+
 es_server = search(:node, "role:#{node['logstash']['kibana']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
 kibana_version = node['logstash']['kibana']['sha']
 

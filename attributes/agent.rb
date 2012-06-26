@@ -9,3 +9,6 @@ default['logstash']['agent']['debug'] = false
 
 # roles/flasgs for various autoconfig/discovery components
 default['logstash']['agent']['server_role'] = "logstash_server"
+
+# for use in case recipe used w/ chef-solo, default to self
+default['logstash']['agent']['server_ipaddress'] = ""
