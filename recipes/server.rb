@@ -13,8 +13,8 @@ include_recipe "logstash::default"
 include_recipe "logrotate"
 
 
-graphite_server = search(:node, "role:#{node[:logstash][:graphite_role]} AND chef_environment:#{node.chef_environment}")
-elasticsearch_server = search(:node, "role:#{node[:logstash][:elasticsearch_role]} AND chef_environment:#{node.chef_environment}")
+graphite_server = search(:node, "roles:#{node[:logstash][:graphite_role]} AND chef_environment:#{node.chef_environment}")
+elasticsearch_server = search(:node, "roles:#{node[:logstash][:elasticsearch_role]} AND chef_environment:#{node.chef_environment}")[0]
 
 #create directory for logstash
 directory "#{node['logstash']['home']}/server" do

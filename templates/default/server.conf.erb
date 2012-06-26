@@ -29,4 +29,17 @@ output {
 	<% unless @graphite_server.empty? -%>
 	graphite { host => "<%= @graphite_server.first.ipaddress %>" metrics => ["logstash.events", "1"] }
 	<% end -%>
+
+  <% unless  node['logstash']['server']['outputs'].empty? -%>
+      <% node['logstash']['server']['outputs'].each do |output| -%>
+        <% output.each do |name,hash| -%> 
+             <%= name %> {
+                 <% hash.each do |k,v| -%>         
+                       <%= k %> => "<%= v %>"
+                 <% end -%>
+        <% end -%>
+              }
+      <% end -%>
+  <% end -%>
+
 }
