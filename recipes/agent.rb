@@ -79,4 +79,18 @@ template "#{node['logstash']['basedir']}/agent/etc/logstash.conf" do
   notifies :restart, "service[logstash_agent]"
 end
 
-runit_service "logstash_agent"
+if platform_family?  "debian"
+  runit_service "logstash_agent"
+elsif "rhel"
+  template "/etc/init.d/logstash_agent" do
+    source "init.erb"
+    owner "root"
+    group "root"
+    mode "0774"
+    variables(:config_file => "shipper.conf")
+  end
+  service "logstash_server" do
+    supports :restart => true, :reload => true, :status => true
+    action :enable
+  end
+end

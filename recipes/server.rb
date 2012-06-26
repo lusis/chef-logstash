@@ -92,6 +92,7 @@ elsif "rhel"
     owner "root"
     group "root"
     mode "0774"
+    variables(:config_file => "logstash.conf")
   end
   service "logstash_server" do
     supports :restart => true, :reload => true, :status => true
