@@ -3,7 +3,15 @@ include_recipe "apache2::mod_php5"
 include_recipe "php::module_curl"
 
 
-es_server = search(:node, "role:#{node['logstash']['kibana']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
+if Chef::Config[:solo]
+  es_server_ip = node['logstash']['elasticsearch_ip']
+else
+  es_server_results = search(:node, "role:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
+  unless es_server_results.empty?
+    es_server_ip = es_server_results[0]['ipaddress']
+  end
+end
+
 kibana_version = node['logstash']['kibana']['sha']
 
 apache_module "php5" do
@@ -45,7 +53,7 @@ template "#{node['logstash']['basedir']}/kibana/current/config.php" do
   owner node['logstash']['user']
   group node['logstash']['group']
   mode "0755"
-  variables(@es_server => es_server)
+  variables(@es_server_ip => es_server_ip)
 end
 
 service "apache2"

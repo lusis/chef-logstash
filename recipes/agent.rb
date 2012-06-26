@@ -6,13 +6,13 @@
 include_recipe "logstash::default"
 
 # check if running chef-solo
-if Chef::Config[:client] == "client"
+if Chef::Config[:solo]
+  logstash_server_ip = node['logstash']['agent']['server_ipaddress']
+else
   logstash_server_results = search(:node, "role:#{node['logstash']['agent']['server_role']} AND chef_environment:#{node.chef_environment}")
   unless logstash_server_results.empty?
     logstash_server_ip = logstash_server_results[0]['ipaddress']
   end
-else
-  logstash_server_ip = node['logstash']['agent']['server_ipaddress']
 end
   
 directory "#{node['logstash']['basedir']}/agent" do

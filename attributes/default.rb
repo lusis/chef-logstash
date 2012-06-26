@@ -9,3 +9,5 @@ default['logstash']['pid_dir'] = "/var/run/logstash"
 default['logstash']['graphite_role'] = "graphite_server"
 default['logstash']['elasticsearch_role'] = "elasticsearch_server"
 default['logstash']['elasticsearch_cluster'] = "logstash"
+default['logstash']['elasticsearch_ip'] = ''
+default['logstash']['graphite_ip'] = ''

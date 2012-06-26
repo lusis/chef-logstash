@@ -12,8 +12,21 @@
 include_recipe "logstash::default"
 include_recipe "logrotate"
 
-graphite_server = search(:node, "roles:#{node['logstash']['graphite_role']} AND chef_environment:#{node.chef_environment}")
-elasticsearch_server = search(:node, "roles:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")[0]
+
+if Chef::Config[:solo] 
+  es_server_ip = node['logstash']['elasticsearch_ip']
+  graphite_server_ip = node['logstash']['graphite_ip']
+else
+  es_results = search(:node, "role:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
+  graphite_results = search(:node, "role:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
+
+  unless es_results.empty?
+    es_server_ip = es_results[0]['ipaddress']
+  end
+  unless es_results.empty?
+    graphite_server_ip = es_results[0]['ipaddress']
+  end
+end
 
 #create directory for logstash
 directory "#{node['logstash']['home']}/server" do
@@ -88,10 +101,10 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
   owner node['logstash']['user']
   group node['logstash']['group']
   mode "0644"
-  variables(:graphite_server => graphite_server,
-           :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
-           :es_server => elasticsearch_server,
-           :es_cluster => node['logstash']['elasticsearch_cluster'])
+  variables(:graphite_server_ip => graphite_server_ip,
+            :es_server_ip => es_server_ip,
+            :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
+            :es_cluster => node['logstash']['elasticsearch_cluster'])
   notifies :restart, "service[logstash_server]"
   action :create
 end
