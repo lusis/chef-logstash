@@ -12,15 +12,15 @@
 include_recipe "logstash::default"
 include_recipe "logrotate"
 
-graphite_server = search(:node, "roles:#{node[:logstash][:graphite_role]} AND chef_environment:#{node.chef_environment}")
-elasticsearch_server = search(:node, "roles:#{node[:logstash][:elasticsearch_role]} AND chef_environment:#{node.chef_environment}")[0]
+graphite_server = search(:node, "roles:#{node['logstash']['graphite_role']} AND chef_environment:#{node.chef_environment}")
+elasticsearch_server = search(:node, "roles:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")[0]
 
 #create directory for logstash
 directory "#{node['logstash']['home']}/server" do
   action :create
   mode "0755"
-  owner "#{node['logstash']['user']}"
-  group "#{node['logstash']['group']}"
+  owner node['logstash']['user']
+  group node['logstash']['group']
 end
 
 %w{bin etc lib log tmp patterns  }.each do |ldir|
@@ -28,8 +28,8 @@ end
   directory "#{node['logstash']['basedir']}/server/#{ldir}" do
     action :create
     mode "0755"
-    owner "#{node['logstash']['user']}"
-    group "#{node['logstash']['group']}"
+    owner node['logstash']['user']
+    group node['logstash']['group']
   end
 
   link "/var/lib/logstash/#{ldir}" do
@@ -43,28 +43,28 @@ if node['logstash']['server']['install_method'] == "jar"
     owner "root"
     group "root"
     mode "0755"
-    source "#{node['logstash']['server']['source_url']}"
-    #checksum "#{node['logstash']['server']['checksum']}"
+    source node['logstash']['server']['source_url']
+    checksum node['logstash']['server']['checksum']
   not_if {File.exists?("#{node['logstash']['basedir']}/server/lib/logstash-#{node['logstash']['server']['version']}.jar")}
   end
   link "#{node['logstash']['basedir']}/server/lib/logstash.jar" do
     to "#{node['logstash']['basedir']}/server/lib/logstash-#{node['logstash']['server']['version']}.jar"
-    #notifies :restart, "service[logstash_server]"
+    notifies :restart, "service[logstash_server]"
   end
 else
   include_recipe "logstash::source"
 
   link "#{node['logstash']['basedir']}/server/lib/logstash.jar" do
     to "#{node['logstash']['basedir']}/source/build/logstash-#{node['logstash']['source']['sha']}-monolithic.jar"
-    #notifies :restart, "service[logstash_server]"
+    notifies :restart, "service[logstash_server]"
   end
 end
 
 directory "#{node['logstash']['basedir']}/server/etc/conf.d" do
   action :create
   mode "0755"
-  owner "#{node['logstash']['user']}"
-  group "#{node['logstash']['group']}"
+  owner node['logstash']['user']
+  group node['logstash']['group']
 end
 
 
@@ -84,9 +84,9 @@ elsif "rhel"
 end
 
 template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
-  source "#{node['logstash']['server']['base_config']}"
-  owner "#{node['logstash']['user']}"
-  group "#{node['logstash']['group']}"
+  source node['logstash']['server']['base_config']
+  owner node['logstash']['user']
+  group node['logstash']['group']
   mode "0644"
   variables(:graphite_server => graphite_server,
            :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
@@ -101,8 +101,8 @@ end
 directory "#{node['logstash']['basedir']}/server/apache_logs" do
   action :create
   mode "0755"
-  owner "#{node['logstash']['user']}"
-  group "#{node['logstash']['group']}"
+  owner node['logstash']['user']
+  group node['logstash']['group']
 end
 
 link "/var/lib/logstash/apache_logs" do
@@ -112,14 +112,14 @@ end
 #create pattern_file  for haproxy
 cookbook_file "/opt/logstash/server/etc/patterns/haproxy" do
     source "haproxy"
-    owner "#{node['logstash']['user']}"
-    group "#{node['logstash']['group']}"
+    owner node['logstash']['user']
+    group node['logstash']['group']
     mode "0774"
 end
 
 #set logrotate  for /opt/logstash/server/apache_logs
 logrotate_app "apache_logs" do
-  path "#{node['logstash']['server']['logrotate_target']}"
+  path node['logstash']['server']['logrotate_target']
   frequency "daily"
   rotate "30"
   notifies :restart, "service[rsyslog]"
