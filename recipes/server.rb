@@ -150,6 +150,7 @@ logrotate_app "logstash" do
   path "/var/log/logstash/*.log"
   frequency "daily"
   rotate "30"
+  create    "664 #{node['logstash']['user']} #{node['logstash']['user']}"
   notifies :restart, "service[rsyslog]"
 end
 

@@ -98,3 +98,12 @@ template "#{node['logstash']['basedir']}/agent/etc/shipper.conf" do
   variables(:logstash_server_ip => logstash_server_ip)
   notifies :restart, "service[logstash_agent]"
 end
+
+logrotate_app "logstash" do
+  path "/var/log/logstash/*.log"
+  frequency "daily"
+  rotate "30"
+  create "664 #{node['logstash']['user']} #{node['logstash']['user']}"
+  notifies :restart, "service[rsyslog]"
+end
+
