@@ -16,8 +16,8 @@ LOGDIR="<%= node['logstash']['log_dir'] %>"
 LS_LOG="$LOGDIR/logstash.log"
 BIN_SCRIPT="/usr/bin/env java -jar $LS_HOME/lib/logstash.jar agent -f $LS_CONFIG > $LS_LOG 2>&1 &  echo \$! > $PIDFILE"
 
-if [ -f /lib/lsb/init-functions ] ; then
-    . /lib/lsb/init-functions
+if [ -f /etc/init.d/functions ] ; then
+    . /etc/init.d/functions
 fi
 
 start() {
