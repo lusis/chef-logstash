@@ -51,10 +51,12 @@ start() {
     result=$?
     
     if [ $result -ne 0 ] ; then
-	log_failure_msg "Logstash did not start successfully"
+        failure
+	echo -e "Logstash did not start successfully"
 	exit 1
     else 
-	log_success_msg "Logstash started successfully"
+        failure
+	echo -e "Logstash started successfully"
     fi
 
 }
@@ -130,12 +132,13 @@ status() {
 
   # RUNNING
   if [[ $pid && -d "/proc/$pid" ]]; then
-      log_success_msg "Logstash is running with pid $pid"
+      success
+      echo -e "Logstash is running with pid $pid"
   fi
   
   # NOT RUNNING
   if [[ ! $pid || ! -d "/proc/$pid" ]]; then
-    log_success_msg "Logstash not running"
+    echo "Logstash not running"
   fi
 
   # STALE PID FOUND
