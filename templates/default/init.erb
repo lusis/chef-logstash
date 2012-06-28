@@ -74,7 +74,7 @@ function stop() {
 	if [ -f "$PIDFILE" ]; then
 	    kill -0 `cat $PIDFILE` >/dev/null 2>&1
 	    if [ $? -gt 0 ]; then
-		echo "PID file ($PIDFILE) found but no matching process was found. Stop aborted."
+		echo "PID file ($PIDFILE) found but no matching process was found. Nothing to do."
 		exit 0
 	    fi
 	else
