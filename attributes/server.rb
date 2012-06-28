@@ -7,7 +7,6 @@ default['logstash']['server']['base_config'] = "server.conf.erb"
 default['logstash']['server']['xms'] = "1024M"
 default['logstash']['server']['xmx'] = "1024M"
 default['logstash']['server']['debug'] = false
-default['logstash']['server']['logrotate_target'] = "/opt/logstash/server/haproxylog_db/*.log"
 default['logstash']['server']['home'] = '/opt/logstash/server'
 
 # roles/flags for various autoconfig/discovery components

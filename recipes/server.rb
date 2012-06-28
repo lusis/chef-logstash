@@ -141,8 +141,8 @@ end
 logrotate_app "apache_logs" do
   path node['logstash']['server']['logrotate_target']
   frequency "daily"
+  create    "664 #{node['logstash']['user']} #{node['logstash']['user']}"
   rotate "30"
-  notifies :restart, "service[rsyslog]"
 end
 
 
@@ -151,7 +151,6 @@ logrotate_app "logstash" do
   frequency "daily"
   rotate "30"
   create    "664 #{node['logstash']['user']} #{node['logstash']['user']}"
-  notifies :restart, "service[rsyslog]"
 end
 
 
