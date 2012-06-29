@@ -1,8 +1,18 @@
 #!/usr/bin/env rake
 
+cookbook_path = '/tmp/logstash-cookbooks'
+
+
+
 @cookbook = "logstash"
 
-desc "Runs foodcritc linter"
+desc "install dependencies using Berkshelf"
+task :install_deps do
+  system("berks install --shims #{cookbook_path}")
+end
+
+
+desc "Runs foodcritic linter"
 task :foodcritic do
   if Gem::Version.new("1.9.2") <= Gem::Version.new(RUBY_VERSION.dup)
     sandbox = File.join(File.dirname(__FILE__), %w{tmp foodcritic}, @cookbook)
