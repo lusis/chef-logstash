@@ -11,6 +11,7 @@
 
 include_recipe "logstash::default"
 include_recipe "logrotate"
+include_recipe "rabbitmq"
 
 if Chef::Config[:solo] 
   es_server_ip = node['logstash']['elasticsearch_ip']
@@ -32,7 +33,7 @@ else
 end
 
 #create directory for logstash
-directory "#{node['logstash']['home']}/server" do
+directory "#{node['logstash']['basedir']}/server" do
   action :create
   mode "0755"
   owner node['logstash']['user']
