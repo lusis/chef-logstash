@@ -24,9 +24,10 @@ apache_site "default" do
   enable false
 end
 
-directory "#{node['logstash']['basedir']}/kibana" do
+directory "#{node['logstash']['basedir']}/kibana/#{kibana_version}" do
   owner node['logstash']['user']
   group node['logstash']['group']
+  recursive true
 end
 
 git "#{node['logstash']['basedir']}/kibana/#{kibana_version}" do
