@@ -1,5 +1,4 @@
 metadata
-cookbook 'apt'
 cookbook 'logrotate'
 cookbook 'vim'
 cookbook 'monit'
