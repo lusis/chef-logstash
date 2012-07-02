@@ -61,40 +61,37 @@ Vagrant::Config.run do |config|
 
     dist_config.vm.provision :chef_solo do |chef|
 
-      chef.cookbooks_path    = [ File.expand_path('../', __FILE__),
-                                 File.expand_path('../tmp/cookbooks', __FILE__)
-                               ]
+      chef.cookbooks_path    = [ '/tmp/logstash-cookbooks' ]
       chef.provisioning_path = '/etc/vagrant-chef'
       chef.log_level         = :debug
 
-      chef.run_list = %w| apt
+      chef.run_list = %w| minitest-handler
+      		        apt
                         java
-                        vim
-                        nginx
                         monit
-                        elasticsearch
-                        elasticsearch::proxy_nginx
-                        elasticsearch::plugin_aws
-                        elasticsearch::test |
+			elasticsearch
+			logstash::server|
 
       chef.json = {
         elasticsearch: {
           cluster_name: "logstash_vagrant",
-
+          min_mem: '64m',
+          max_mem: '64m',
           limits: {
             nofile:  1024,
             memlock: 512
+            }
+		
           },
-
-          nginx: {
-            users: [{
-                      username: 'USERNAME',
-                      password: 'PASSWORD'
-                    }]
+        logstash: {
+          server: {
+            xms: '128m',
+            xmx: '128m',
+            enable_embedded_es: false,
+            elasticserver_ip: '127.0.0.1'
           }
         }
       }
-
     end
   end
 
