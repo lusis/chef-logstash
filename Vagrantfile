@@ -22,7 +22,9 @@ Vagrant::Config.run do |config|
                         java
                         monit
 			elasticsearch
-			logstash::server|
+         		php::module_curl
+			logstash::server
+			logstash::kibana|
 
       chef.json = {
         elasticsearch: {
@@ -70,7 +72,10 @@ Vagrant::Config.run do |config|
                         java
                         monit
 			elasticsearch
-			logstash::server|
+         		php::module_curl
+			logstash::server
+			logstash::kibana|
+
 
       chef.json = {
         elasticsearch: {
@@ -117,19 +122,32 @@ Vagrant::Config.run do |config|
 			yumrepo::epel
                         vim
                         monit
-                        elasticsearch |
+                        elasticsearch
+         		php::module_curl
+			logstash::server
+			logstash::kibana|
 
       chef.json = {
         elasticsearch: {
-          cluster_name: "elasticsearch_vagrant",
-
+          cluster_name: "logstash_vagrant",
+          min_mem: '64m',
+          max_mem: '64m',
           limits: {
             nofile:  1024,
             memlock: 512
             }
 		
+          },
+        logstash: {
+          server: {
+            xms: '128m',
+            xmx: '128m',
+            enable_embedded_es: false,
+            elasticserver_ip: '127.0.0.1'
           }
-	}
+        }
+      }
+ 
     end
   end
 
