@@ -21,6 +21,7 @@ Vagrant::Config.run do |config|
       		        apt
                         java
                         monit
+			git
 			elasticsearch
          		php::module_curl
 			logstash::server
@@ -71,6 +72,7 @@ Vagrant::Config.run do |config|
       		        apt
                         java
                         monit
+			git
 			elasticsearch
          		php::module_curl
 			logstash::server
@@ -119,9 +121,9 @@ Vagrant::Config.run do |config|
 
       chef.run_list = %w| minitest-handler
                         java
-			yumrepo::epel
+			yum::epel
                         vim
-                        monit
+			git
                         elasticsearch
          		php::module_curl
 			logstash::server
