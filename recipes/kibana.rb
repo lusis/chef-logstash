@@ -59,4 +59,11 @@ template "#{node['logstash']['basedir']}/kibana/current/config.php" do
   variables(:es_server_ip => es_server_ip)
 end
 
+if platform? "centos"
+  arch = node['kernel']['machine']    == "x86_64" ? "x86_64" : ""
+  file '/etc/httpd/mods-available/php5.load' do
+    content "LoadModule php5_module /usr/lib#{arch}/httpd/modules/libphp5.so"
+  end
+end
+
 service "apache2"
