@@ -2,19 +2,54 @@
 # by Chef
 # Manual changes will be lost
 input {
+
+  <% if  node['logstash']['agent']['inputs'].empty? -%>
   file {
     type => "sample-logs"
     path => ["/var/log/*.log"]
     exclude => ["*.gz"]
     debug => true
   }
+  <% else %>    
+    <% node['logstash']['agent']['inputs'].each do |input| -%>
+     
+        <% input.each do |name,hash| -%> 
+             <%= name %> {
+                 <% hash.each do |k,v| -%>         
+                       <%= k %> => '<%= v %>'
+                 <% end -%>
+        <% end -%>
+        }
+     <% end -%>
+  <% end -%>
+
 }
 
 output {
-  <% if @logstash_server.empty? -%>
+  stdout { }
+  <% if @logstash_server_ip.empty? -%>
   # Provide a sane default
   null { }
   <% else -%>
-  tcp { host => "<%= @logstash_server.first.ipaddress %>" port => "5959" }
+
+    <% unless  node['logstash']['agent']['outputs'].empty? -%>
+      <% node['logstash']['agent']['outputs'].each do |output| -%>
+        <% output.each do |name,hash| -%> 
+           <%= name %> {
+           <% hash.each do |k,v| -%>         
+              <%= k %> => '<%= v %>'
+            <% end -%>
+        <% end -%>
+           }
+      <% end -%>
+    <% else -%> 
+  
+    tcp { host => "<%= @logstash_server_ip %>" port => "5959" }
+
+    <% end -%>
+
+
   <% end -%>
 }
+
+

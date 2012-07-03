@@ -13,14 +13,14 @@ include_recipe "git"
 
 package "python-dev"
 
-git "#{node[:logstash][:basedir]}/shipper" do
+git "#{node['logstash']['basedir']}/shipper" do
   repository "git://github.com/lusis/logstash-shipper.git"
   reference "master"
   action :sync
 end
 
 %w{pyzmq-static simplejson argparse}.each do |ppkg|
-  python_pip "#{ppkg}" do
+  python_pip ppkg do
     action :install
   end
 end

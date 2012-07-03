@@ -1,6 +1,9 @@
+# <a name="title"></a> chef-logstash [![Build Status](https://secure.travis-ci.org/lusis/chef-logstash.png?branch=master)](http://travis-ci.org/lusis/chef-logstash)
+
 Description
 ===========
 This is the semi-official 'all-in-one' Logstash cookbook.
+
 
 Requirements
 ============
@@ -9,12 +12,11 @@ All of the requirements are explicitly defined in the recipes. Every effort has 
 However if you wish to use an external ElasticSearch cluster, you will need to install that yourself and change the relevant attributes for discovery.
 The same applies to integration with Graphite.
 
-I recommend the following cookbooks for Graphite and ES:
+This cookbook has been tested together with the following cookbooks
 
 * [Heavywater Graphite Cookbook](https://github.com/heavywater/chef-graphite) - This is the one I use
-* [Karmi's ElasticSearch Cookbook](https://github.com/karmi/cookbook-elasticsearch) - I use my own version not this one
+* [Karmi's ElasticSearch Cookbook](https://github.com/karmi/cookbook-elasticsearch) 
 
-It's possibly that this will be remedied in the future.
 
 Attributes
 ==========
@@ -27,10 +29,13 @@ Attributes
 * `node[:logstash][:graphite_role]` - the Chef role to search for discovering your preexisting Graphite server
 * `node[:logstash][:elasticsearch_role]` - the Chef role to search for discovering your preexisting ElasticSearch cluster.
 * `node[:logstash][:elasticsearch_cluster]` - the cluster name assigned to your preexisting ElasticSearch cluster. Only applies to external ES clusters.
+* `node['logstash']['elasticsearch_ip']` - the IP address that will be used for your elasticsearch server in case you are using Chef-solo
+* `node['logstash']['graphite_ip']` - the IP address that will be used for your graphite server in case you are using Chef-solo 
+
 
 ## Agent
 
-* `node[:logstash][:agent][:install_method]` - The method to install logstash - either `jar` or `source`
+* `node[:logstash][:agent][:install_method]` - The method to install logstash - either `jar` or `source`, defaults to `jar`
 * `node[:logstash][:agent][:version]` - The version of Logstash to install. Only applies to `jar` install method.
 * `node[:logstash][:agent][:source_url]` - The URL of the Logstash jar to download. Only applies to `jar` install method.
 * `node[:logstash][:agent][:checksum]` - The checksum of the jar file. Only applies to `jar` install method.
@@ -58,7 +63,6 @@ Attributes
 * `node[:logstash][:kibana][:sha]` - The sha/branch of the repo you wish to clone.
 * `node[:logstash][:kibana][:apache_template]` - The name of the template file to use for the Apache site file
 * `node[:logstash][:kibana][:config]` - The name of the template to use for the Kibana `config.php` file
-* `node[:logstash][:kibana][:elasticsearch_role]` - The role of you ElasticSearch server. Defaults to 127.0.0.1 if not found.
 * `node[:logstash][:kibana][:server_name]` - The value to use for the Apache `ServerName` variable to use for the Kibana Apache virtual host.
 
 ## Source
@@ -107,7 +111,7 @@ The `server` will, by default, enable the embedded ES server. This can be overri
 See the `server` and `agent` attributes for more details.
 
 ## Source vs. Jar install methods
-Both `agent` and `server` support an attribute for how to install. By default this is set to `source` since the logtash chef handler requires changes only present in master. The current release is defined in attributes if you choose to go the `jar` route.
+Both `agent` and `server` support an attribute for how to install. By default this is set to `jar` to use the 1.1.1preview as it is required to use elasticsearch 0.19.4. The current release is defined in attributes if you choose to go the `source` route.
 
 ## Out of the box behaviour
 Here are some basic steps
@@ -126,10 +130,102 @@ Do something to generate a new line in any of the files in the agent's watch pat
 
 The `pyshipper` recipe will work as well but it is NOT wired up to anything yet.
 
+## Letting data drive your templates
+
+The current templates for the agent and server are written so that you can provide ruby hashes in your roles that map to inputs, filters, and outputs. Here is a role for logstash_server
+
+    name	"logstash_server"
+    description "Attributes and run_lists specific to FAO's logstash instance"
+    default_attributes(
+                   :logstash => {
+                     :server => {
+                       :enable_embedded_es => false,
+                       :inputs => [
+                                   :amqp => {
+                                       :type => "all",
+                                       :host => "127.0.0.1",
+                                       :exchange => "rawlogs",
+                                       :name => "rawlogs_consumer"
+                                      }
+                                  ],
+                       :filters => [
+                                    :grok => {
+                                      :type => "haproxy",
+                                      :pattern => "%{HAPROXYHTTP}",
+                                      :patterns_dir => '/opt/logstash/server/etc/patterns/'
+                                    }
+                                   ],
+                       :outputs => [
+                                    :file => {
+                                      :type => 'haproxy',
+                                      :path => '/opt/logstash/server/haproxy_logs/%{request_header_host}.log',
+                                      :message_format => '%{client_ip} - - [%{accept_date}] "%{http_request}" %{http_status_code} ....'
+                                    }
+                                   ]
+                      }
+                    }
+                   )
+    run_list(
+         "role[elasticsearch_server]",
+         "recipe[logstash::server]",
+         "recipe[php::module_curl]",
+         "recipe[logstash::kibana]"
+         )
+
+
+It will produce the following logstash.conf file
+
+     input {
+     
+             amqp {
+                       name => 'rawlogs_consumer'
+                       exchange => 'rawlogs'
+                       type => 'all'
+                       host => '127.0.0.1'
+             }
+      }
+
+      filter {
+         grok {
+             pattern => '%{HAPROXYHTTP}'
+             type => 'haproxy'
+             patterns_dir => '/opt/logstash/server/etc/patterns/'
+              }
+      }
+
+      output {
+          stdout { debug => true debug_format => "json" }
+          elasticsearch { host => "169.1.1.1" }
+          file {
+                       type => 'haproxy'
+                       message_format => '%{client_ip} - - [%{accept_date}] "%{http_request}" %{http_status_code} %{bytes_read} ....'
+                       path => '/opt/logstash/server/haproxy_logs/%{request_header_host}.log'
+              }
+       }
+
+
+
 # BIG WARNING
 
-* Everything uses `runit`. Get over it. I'll take patches but I'm not fucking with init scripts myself.
-* Currently only tested on Ubuntu Natty. However everything **NOT** logstash-y, is using official opscode cookbooks so if THOSE are cross platform, this should work. I do plan on testing myself.
+* Currently only tested on Ubuntu Natty on RHEL 6.2.
 
-# LICENSE
-Apache 2.0, broheim.
+
+## License and Author
+
+Author::                John E. Vincent 
+Author::                Bryan W. Berry (<bryan.berry@gmail.com>)    
+Copyright::             2012, John E. Vincent
+Copyright::             2012, Bryan W. Berry  
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

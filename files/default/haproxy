@@ -1,0 +1,3 @@
+# a fixup for haproxy, should be merged into https://github.com/logstash/logstash/blob/master/patterns/haproxy
+HAPROXYCAPTUREDREQUESTHEADERS %{NOTSPACE:request_header_host}\|%{DATA:request_header_x_forwarded_for}\|%{DATA:request_header_accept_language}\|%{NOTSPACE:request_header_referer}\|%{DATA:request_header_user_agent}
+HAPROXYCAPTUREDRESPONSEHEADERS %{DATA:response_header_content_type}\|%{DATA:response_header_content_encoding}\|%{DATA:response_header_cache_control}\|%{DATA:response_header_last_modified}

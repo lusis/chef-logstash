@@ -2,8 +2,8 @@
 
 $KIBANA_CONFIG = array(
   // Your elastic search server
-  <% if @es_server -%>
-  'elasticsearch_server' => "<%= @es_server.first.ipaddress %>:9200",
+  <% unless @es_server_ip.empty? -%>
+  'elasticsearch_server' => "<%= @es_server_ip %>:9200",
   <% else -%>
   'elasticsearch_server' => "127.0.0.1:9200",
   <% end -%>
