@@ -87,7 +87,7 @@ end
 
 if platform_family?  "debian"
   runit_service "logstash_server"
-elsif "rhel"
+elsif platform_family? "rhel"
   template "/etc/init.d/logstash_server" do
     source "init.erb"
     owner "root"
