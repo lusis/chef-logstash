@@ -85,9 +85,9 @@ directory "#{node['logstash']['basedir']}/server/etc/conf.d" do
 end
 
 
-if platform_family?  "debian"
+if platform?  "debian", "ubuntu"
   runit_service "logstash_server"
-elsif platform_family? "rhel"
+elsif platform? "redhat", "centos","amazon", "fedora"
   template "/etc/init.d/logstash_server" do
     source "init.erb"
     owner "root"
