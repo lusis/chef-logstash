@@ -8,7 +8,7 @@ package "wget"
 
 logstash_version = node[:logstash][:source][:sha]
 
-#logstash_server = search(:node, "role:#{node[:logstash][:agent][:server_role]} AND chef_environment:#{node.chef_environment}").first
+#logstash_server = search(:node, "roles:#{node[:logstash][:agent][:server_role]} AND chef_environment:#{node.chef_environment}").first
 
 directory "#{node[:logstash][:basedir]}/source" do
   action :create

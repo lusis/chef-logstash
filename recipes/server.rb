@@ -5,8 +5,8 @@
 #
 include_recipe "logstash::default"
 
-graphite_server = search(:node, "role:#{node[:logstash][:graphite_role]} AND chef_environment:#{node.chef_environment}")
-elasticsearch_server = search(:node, "role:#{node[:logstash][:elasticsearch_role]} AND chef_environment:#{node.chef_environment}")
+graphite_server = search(:node, "roles:#{node[:logstash][:graphite_role]} AND chef_environment:#{node.chef_environment}")
+elasticsearch_server = search(:node, "roles:#{node[:logstash][:elasticsearch_role]} AND chef_environment:#{node.chef_environment}")
 
 directory "#{node[:logstash][:basedir]}/server" do
   action :create

@@ -5,7 +5,7 @@
 #
 include_recipe "logstash::default"
 
-logstash_server = search(:node, "role:#{node[:logstash][:agent][:server_role]} AND chef_environment:#{node.chef_environment}")
+logstash_server = search(:node, "roles:#{node[:logstash][:agent][:server_role]} AND chef_environment:#{node.chef_environment}")
 
 directory "#{node[:logstash][:basedir]}/agent" do
   action :create
