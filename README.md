@@ -40,6 +40,7 @@ Attributes
 * `node[:logstash][:agent][:source_url]` - The URL of the Logstash jar to download. Only applies to `jar` install method.
 * `node[:logstash][:agent][:checksum]` - The checksum of the jar file. Only applies to `jar` install method.
 * `node[:logstash][:agent][:base_config]` - The name of the template to use for `logstash.conf` as a base config.
+* `node[:logstash][:agent][:base_config_cookbook]` - Where to find the base\_config template.
 * `node[:logstash][:agent][:xms]` - The minimum memory to assign the JVM.
 * `node[:logstash][:agent][:xmx]` - The maximum memory to assign the JVM.
 * `node[:logstash][:agent][:debug]` - Run logstash with `-v` option?
@@ -52,6 +53,7 @@ Attributes
 * `node[:logstash][:server][:source_url]` - The URL of the Logstash jar to download. Only applies to `jar` install method.
 * `node[:logstash][:server][:checksum]` - The checksum of the jar file. Only applies to `jar` install method.
 * `node[:logstash][:server][:base_config]` - The name of the template to use for `logstash.conf` as a base config.
+* `node[:logstash][:server][:base_config_cookbook]` - Where to find the base\_config template.
 * `node[:logstash][:server][:xms]` - The minimum memory to assign the JVM.
 * `node[:logstash][:server][:xmx]` - The maximum memory to assign the JVM.
 * `node[:logstash][:server][:debug]` - Run logstash with `-v` option?

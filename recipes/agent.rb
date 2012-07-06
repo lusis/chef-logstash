@@ -92,6 +92,7 @@ end
 
 template "#{node['logstash']['basedir']}/agent/etc/shipper.conf" do
   source node['logstash']['agent']['base_config']
+  cookbook node['logstash']['agent']['base_config_cookbook']
   owner node['logstash']['user']
   group node['logstash']['group']
   mode "0644"

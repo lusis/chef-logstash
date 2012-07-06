@@ -106,6 +106,7 @@ end
 
 template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
   source node['logstash']['server']['base_config']
+  cookbook node['logstash']['server']['base_config_cookbook']
   owner node['logstash']['user']
   group node['logstash']['group']
   mode "0644"
