@@ -50,9 +50,9 @@ directory "#{node['logstash']['basedir']}/agent/etc/patterns" do
 end
 
 
-if platform_family?  "debian"
+if platform?  "debian", "ubuntu"
   runit_service "logstash_agent"
-elsif "rhel"
+elsif platform? "redhat", "centos", "amazon", "fedora"
   template "/etc/init.d/logstash_agent" do
     source "init.erb"
     owner "root"
