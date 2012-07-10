@@ -50,10 +50,18 @@ output {
         <% output.each do |name,hash| -%> 
              <%= name %> {
                  <% hash.each do |k,v| -%>         
+                    <% case v.class.to_s -%>
+                    <% when "String" -%>
                        <%= k %> => '<%= v %>'
+                    <% when "Array" -%>
+                       <%= k %> => <%= v.inspect %>
+                    <% when "Trueclass", "FalseClass", "Fixnum" -%>
+                       <%= k %> => <%= v %>                    
+                    <% end -%>
                  <% end -%>
+                   }    
         <% end -%>
-              }
+            
       <% end -%>
   <% end -%>
 
