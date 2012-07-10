@@ -21,6 +21,7 @@ Vagrant::Config.run do |config|
       		        apt
                         java
                         monit
+                        erlang
 			git
 			elasticsearch
          		php::module_curl
@@ -72,6 +73,7 @@ Vagrant::Config.run do |config|
       		        apt
                         java
                         monit
+                        erlang
 			git
 			elasticsearch
          		php::module_curl
@@ -122,7 +124,7 @@ Vagrant::Config.run do |config|
       chef.run_list = %w| minitest-handler
                         java
 			yum::epel
-                        vim
+                        erlang
 			git
                         elasticsearch
          		php::module_curl
