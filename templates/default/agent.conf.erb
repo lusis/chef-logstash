@@ -3,8 +3,7 @@
 # Manual changes will be lost
 
 <% # unless templating via a role, use a sane set of defaults -%>
-<% if node['logstash']['agent']['inputs'].empty? and node['logstash']['agent']['filters'].empty? \
-     and node['logstash']['agent']['outputs'].empty? -%>
+<% if node['logstash']['agent']['inputs'].empty? and node['logstash']['agent']['filters'].empty? and node['logstash']['agent']['outputs'].empty? -%>
 
 input {
 
@@ -27,9 +26,6 @@ output {
   tcp { host => "<%= @logstash_server_ip %>" port => "5959" }
  <% end -%>
 }
-
-<% end -%>
-
 
 <% else -%>
 
