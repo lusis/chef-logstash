@@ -1,55 +1,45 @@
 # This file was created for <%= node.name %>
 # by Chef
 # Manual changes will be lost
+
+<% # unless templating via a role, use a sane set of defaults -%>
+<% if node['logstash']['agent']['inputs'].empty? and node['logstash']['agent']['filters'].empty? \
+     and node['logstash']['agent']['outputs'].empty? -%>
+
 input {
 
-  <% if  node['logstash']['agent']['inputs'].empty? -%>
   file {
     type => "sample-logs"
     path => ["/var/log/*.log"]
     exclude => ["*.gz"]
     debug => true
   }
-  <% else %>    
-    <% node['logstash']['agent']['inputs'].each do |input| -%>
-     
-        <% input.each do |name,hash| -%> 
-             <%= name %> {
-                 <% hash.each do |k,v| -%>         
-                       <%= k %> => '<%= v %>'
-                 <% end -%>
-        <% end -%>
-        }
-     <% end -%>
-  <% end -%>
 
 }
+
 
 output {
   stdout { }
-  <% if @logstash_server_ip.empty? -%>
+<% if @logstash_server_ip.empty? -%>
   # Provide a sane default
   null { }
-  <% else -%>
-
-    <% unless  node['logstash']['agent']['outputs'].empty? -%>
-      <% node['logstash']['agent']['outputs'].each do |output| -%>
-        <% output.each do |name,hash| -%> 
-           <%= name %> {
-           <% hash.each do |k,v| -%>         
-              <%= k %> => '<%= v %>'
-            <% end -%>
-        <% end -%>
-           }
-      <% end -%>
-    <% else -%> 
-  
-    tcp { host => "<%= @logstash_server_ip %>" port => "5959" }
-
-    <% end -%>
-
-
-  <% end -%>
+<% else -%>
+  tcp { host => "<%= @logstash_server_ip %>" port => "5959" }
+ <% end -%>
 }
 
+<% end -%>
+
+
+<% else -%>
+
+input {
+<%= hash_to_stash(node['logstash']['agent']['inputs']) %>
+}
+
+output {
+   <%= hash_to_stash(node['logstash']['agent']['outputs']) %>
+}
+
+<% end -%>
 
