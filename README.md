@@ -132,23 +132,50 @@ Do something to generate a new line in any of the files in the agent's watch pat
 
 The `pyshipper` recipe will work as well but it is NOT wired up to anything yet.
 
-## Letting data drive your templates
+## Using attributes to template your logstash configurationi
 
-The current templates for the agent and server are written so that you can provide ruby hashes in your roles that map to inputs, filters, and outputs. Here is a role for logstash_server
+The current templates for the agent and server are written so that you can provide ruby hashes in your roles that map to inputs, filters, and outputs. Here is a simple example of using templating an input w/ a role
+
+    default_attributes(
+         :logstash => {
+            :server => {
+              :inputs => [
+                 :amqp => {
+                    :type => "all",
+                    :host => "localhost",
+                    :exchange => "rawlogs"
+                 }
+              ]
+             } 
+            }      
+         )
+
+
+The Ruby hash above will be converted the following logstash configuration
+
+     input {
+        amqp {
+           type => "all"
+           host => "localhost"
+           exchange => "rawlogs"
+        }
+     }
+
+
+
+Here is a more complex example
 
     name	"logstash_server"
-    description "Attributes and run_lists specific to FAO's logstash instance"
+    description "Attributes and run_lists for your logstash server"
     default_attributes(
                    :logstash => {
                      :server => {
-                       :enable_embedded_es => false,
                        :inputs => [
                                    :amqp => {
-                                       :type => "all",
-                                       :host => "127.0.0.1",
-                                       :exchange => "rawlogs",
-                                       :name => "rawlogs_consumer"
-                                      }
+                                     :type => "all",
+                                     :host => "localhost",
+                                     :exchange => "rawlogs"
+                                   }
                                   ],
                        :filters => [
                                     :grok => {
@@ -158,20 +185,32 @@ The current templates for the agent and server are written so that you can provi
                                     }
                                    ],
                        :outputs => [
+                                    :stdout => {
+                                      :debug => true,
+                                      :debug_format => "json"
+                                    },
+                                    :elasticsearch => {
+                                      :host => "localhost"
+                                    },
                                     :file => {
                                       :type => 'haproxy',
-                                      :path => '/opt/logstash/server/haproxy_logs/%{request_header_host}.log',
-                                      :message_format => '%{client_ip} - - [%{accept_date}] "%{http_request}" %{http_status_code} ....'
+                                      :path => '/opt/logstash/server/logs/%{request_header_host}.log',
+                                      :message_format => '%{client_ip} - - [%{haproxy_monthday}/%{haproxy_month}/%{haproxy_year}:%{haproxy_time} +0000] "%{http_verb} %{http_request}" %{http_status_code} %{bytes_read} "%{request_header_referer}" "%{request_header_user_agent}"'
+                                    },
+                                    :graphite => {
+                                      :host => "127.0.0.1",
+                                      :metrics =>  [ "stats.%{request_header_host}.haproxy.request_type.%{http_verb}", "1"]
                                     }
                                    ]
-                      }
-                    }
+                     }
+                   }
+                   
                    )
-    run_list(
+      run_list(
          "role[elasticsearch_server]",
-         "recipe[logstash::server]",
-         "recipe[php::module_curl]",
-         "recipe[logstash::kibana]"
+         "recipe[git]",
+         "recipe[erlang]",
+         "recipe[logstash::server]"
          )
 
 
@@ -183,7 +222,7 @@ It will produce the following logstash.conf file
                        name => 'rawlogs_consumer'
                        exchange => 'rawlogs'
                        type => 'all'
-                       host => '127.0.0.1'
+                       host => 'localhost'
              }
       }
 
@@ -197,7 +236,7 @@ It will produce the following logstash.conf file
 
       output {
           stdout { debug => true debug_format => "json" }
-          elasticsearch { host => "169.1.1.1" }
+          elasticsearch { host => "localhost" }
           file {
                        type => 'haproxy'
                        message_format => '%{client_ip} - - [%{accept_date}] "%{http_request}" %{http_status_code} %{bytes_read} ....'
@@ -209,19 +248,20 @@ It will produce the following logstash.conf file
 
 # BIG WARNING
 
-* Currently only tested on Ubuntu Natty on RHEL 6.2.
+* Currently only tested on Ubuntu Natty or RHEL 6.2.
 
 
 ## License and Author
 
-Author::                John E. Vincent 
-Author::                Bryan W. Berry (<bryan.berry@gmail.com>)
-Author::                Richard Clamp (@richardc)
-Author::                Juanje Ojeda (@juanje)
-Copyright::             2012, John E. Vincent
-Copyright::             2012, Bryan W. Berry
-Copyright::             2012, Richard Clamp
-Copyright::             2012, Juanje Ojeda
+
+Author::                John E. Vincent  
+Author::                Bryan W. Berry (<bryan.berry@gmail.com>)  
+Author::                Richard Clamp (@richardc)  
+Author::                Juanje Ojeda (@juanje)  
+Copyright::             2012, John E. Vincent  
+Copyright::             2012, Bryan W. Berry  
+Copyright::             2012, Richard Clamp  
+Copyright::             2012, Juanje Ojeda  
 
 
 Licensed under the Apache License, Version 2.0 (the "License");
