@@ -6,7 +6,7 @@ def hash_to_stash(blocks)
       stanza << "\t#{name} {\n"
       hash.each do |k,v|
         if v.class.to_s == "String"
-          stanza << "\t\t#{k} => \"#{v}\"\n"
+          stanza << "\t\t#{k} => \'#{v}\'\n"
         else
           stanza << "\t\t#{k} => #{v.inspect} \n"
         end

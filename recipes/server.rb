@@ -138,4 +138,3 @@ logrotate_app "logstash" do
 end
 
 
-
