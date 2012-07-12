@@ -6,7 +6,7 @@ exec 2>&1
 LOGSTASH_HOME="<%= node[:logstash][:basedir] %>/agent"
 GC_OPTS="-XX:+UseParallelOldGC"
 JAVA_OPTS="-server -Xms<%= node[:logstash][:agent][:xms] %> -Xmx<%= node[:logstash][:agent][:xmx] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/"
-LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/logstash.conf -l $LOGSTASH_HOME/log/logstash.log"
+LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/shipper.conf -l $LOGSTASH_HOME/log/logstash.log"
 <% if node[:logstash][:agent][:debug] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS -v"
 <% end -%>
