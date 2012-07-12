@@ -5,11 +5,14 @@ def hash_to_stash(blocks)
     block.each do |name,hash|
       stanza << "\t#{name} {\n"
       hash.each do |k,v|
-        if v.class.to_s == "String"
-          stanza << "\t\t#{k} => \'#{v}\'\n"
-        else
-          stanza << "\t\t#{k} => #{v.inspect} \n"
-        end
+        stanza << "\t\t#{k} => " 
+        stanza << case v
+                  when String
+                    "'#{v}'"
+                  when TrueClass, FalseClass, Hash, Numeric, Array
+                    v.to_s
+                  end
+        stanza << "\n"
       end
       stanza << "\t}\n"
     end
