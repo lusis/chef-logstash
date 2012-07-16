@@ -134,16 +134,18 @@ The `pyshipper` recipe will work as well but it is NOT wired up to anything yet.
 
 ## Using attributes to template your logstash configurationi
 
-The current templates for the agent and server are written so that you can provide ruby hashes in your roles that map to inputs, filters, and outputs. Here is a simple example of using templating an input w/ a role
+The current templates for the agent and server are written so that you can provide ruby hashes in your roles that map to inputs, filters, and outputs. Here is a simple example of using templating an input w/ a role. WARNING, each ruby hash must be a full hash, like { :foo => "bar" } and not <strike> :foo => 'bar' </strike>
 
     default_attributes(
          :logstash => {
             :server => {
               :inputs => [
-                 :amqp => {
-                    :type => "all",
-                    :host => "localhost",
-                    :exchange => "rawlogs"
+                 {
+                   :amqp => {
+                     :type => "all",
+                     :host => "localhost",
+                     :exchange => "rawlogs"
+                   }
                  }
               ]
              } 
@@ -171,35 +173,47 @@ Here is a more complex example
                    :logstash => {
                      :server => {
                        :inputs => [
-                                   :amqp => {
-                                     :type => "all",
-                                     :host => "localhost",
-                                     :exchange => "rawlogs"
-                                   }
+                                   {
+                                      :amqp => {
+                                        :type => "all",
+                                        :host => "localhost",
+                                        :exchange => "rawlogs"
+                                      }
+                                    }
                                   ],
                        :filters => [
-                                    :grok => {
-                                      :type => "haproxy",
-                                      :pattern => "%{HAPROXYHTTP}",
-                                      :patterns_dir => '/opt/logstash/server/etc/patterns/'
+                                    {
+                                      :grok => {
+                                        :type => "haproxy",
+                                        :pattern => "%{HAPROXYHTTP}",
+                                        :patterns_dir => '/opt/logstash/server/etc/patterns/'
+                                      }
                                     }
                                    ],
                        :outputs => [
-                                    :stdout => {
-                                      :debug => true,
-                                      :debug_format => "json"
+                                    {
+                                      :stdout => {
+                                        :debug => true,
+                                        :debug_format => "json"
+                                      }
                                     },
-                                    :elasticsearch => {
-                                      :host => "localhost"
+                                    {
+                                      :elasticsearch => {
+                                         :host => "localhost"
+                                      }
                                     },
-                                    :file => {
-                                      :type => 'haproxy',
-                                      :path => '/opt/logstash/server/logs/%{request_header_host}.log',
-                                      :message_format => '%{client_ip} - - [%{haproxy_monthday}/%{haproxy_month}/%{haproxy_year}:%{haproxy_time} +0000] "%{http_verb} %{http_request}" %{http_status_code} %{bytes_read} "%{request_header_referer}" "%{request_header_user_agent}"'
+                                    {
+                                      :file => {
+                                        :type => 'haproxy',
+                                        :path => '/opt/logstash/server/logs/%{request_header_host}.log',
+                                        :message_format => '%{client_ip} - - [%{haproxy_monthday}/%{haproxy_month}/%{haproxy_year}:%{haproxy_time} +0000] "%{http_verb} %{http_request}" %{http_status_code} %{bytes_read} "%{request_header_referer}" "%{request_header_user_agent}"'
+                                      }
                                     },
-                                    :graphite => {
-                                      :host => "127.0.0.1",
-                                      :metrics =>  [ "stats.%{request_header_host}.haproxy.request_type.%{http_verb}", "1"]
+                                    { 
+                                      :graphite => {
+                                        :host => "127.0.0.1",
+                                        :metrics =>  [ "stats.%{request_header_host}.haproxy.request_type.%{http_verb}", "1"]
+                                      }
                                     }
                                    ]
                      }
