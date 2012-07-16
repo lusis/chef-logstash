@@ -33,6 +33,14 @@ input {
 <%= hash_to_stash(node['logstash']['agent']['inputs']) %>
 }
 
+
+<% unless  node['logstash']['agent']['filters'].empty? -%>
+filter {
+   <%= hash_to_stash(node['logstash']['agent']['filters'])%>
+}
+<% end -%>
+
+
 output {
    <%= hash_to_stash(node['logstash']['agent']['outputs']) %>
 }
