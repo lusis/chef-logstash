@@ -34,7 +34,7 @@ filter {
    <%= hash_to_stash(node['logstash']['server']['filters'])%>
 }
 <% end -%>
-
+ 
 output {
       <%= hash_to_stash(node['logstash']['server']['outputs']) %>
 }
