@@ -86,7 +86,18 @@ end
 
 
 if platform?  "debian", "ubuntu"
-  runit_service "logstash_server"
+  if node["platform_version"] == "12.04"
+    template "/etc/init/logstash_server.conf" do
+      mode "0644"
+      source "logstash_server.conf.erb"
+    end
+    service "logstash_server" do
+      provider Chef::Provider::Service::Upstart
+      action [ :enable, :start ]
+    end
+  else
+    runit_service "logstash_server"
+  end
 elsif platform? "redhat", "centos","amazon", "fedora"
   template "/etc/init.d/logstash_server" do
     source "init.erb"
