@@ -130,7 +130,7 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
 end
 
 logrotate_app "logstash" do
-  path "/var/log/logstash/*.log"
+  path "#{node['logstash']['basedir']}/server/log/*.log"
   frequency "daily"
   rotate "30"
   create    "664 #{node['logstash']['user']} #{node['logstash']['user']}"
