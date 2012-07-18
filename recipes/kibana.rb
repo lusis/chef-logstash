@@ -38,7 +38,7 @@ git "#{node['logstash']['basedir']}/kibana/#{kibana_version}" do
   group node['logstash']['group']
 end
 
-if platform? "centos", "redhat"
+if platform? "centos", "redhat", "amazon"
   arch = node['kernel']['machine']    == "x86_64" ? "64" : ""
   file '/etc/httpd/mods-available/php5.load' do
     content "LoadModule php5_module /usr/lib#{arch}/httpd/modules/libphp5.so"
