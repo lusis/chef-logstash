@@ -6,7 +6,7 @@
 include_recipe "logstash::default"
 
 # check if running chef-solo
-if Chef::Config[:solo]
+if Chef::Config[:solo] || node['logstash']['agent']['use_fixed_server_address']
   logstash_server_ip = node['logstash']['agent']['server_ipaddress']
 else
   logstash_server_results = search(:node, "roles:#{node['logstash']['agent']['server_role']}")
