@@ -104,7 +104,7 @@ elsif platform? "redhat", "centos","amazon", "fedora"
   end
 end
 
-template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
+template "#{node['logstash']['basedir']}/server/etc/conf.d/logstash.conf" do
   source node['logstash']['server']['base_config']
   cookbook node['logstash']['server']['base_config_cookbook']
   owner node['logstash']['user']
