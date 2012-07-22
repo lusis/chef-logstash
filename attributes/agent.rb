@@ -15,3 +15,4 @@ default['logstash']['agent']['server_role'] = "logstash_server"
 default['logstash']['agent']['server_ipaddress'] = ""
 
 default['logstash']['agent']['inputs'] = []
+default['logstash']['agent']['outputs'] = []
