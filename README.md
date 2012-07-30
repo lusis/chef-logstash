@@ -4,6 +4,9 @@ Description
 ===========
 This is the semi-official 'all-in-one' Logstash cookbook.
 
+'''Warning''' this cookbook requires Ruby 1.9, we recommend you use
+the Omnibus client Installer to get the proper version of Ruby on to
+your system with minimal fuss.
 
 Requirements
 ============
