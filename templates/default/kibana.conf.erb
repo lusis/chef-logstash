@@ -1,6 +1,6 @@
 NameVirtualHost *:80
 <VirtualHost *:80>
-  ServerName <%= node['kibana']['server_name'] %>
+  ServerName <%= @server_name %>
 	DocumentRoot "<%= @docroot %>"
 	
 

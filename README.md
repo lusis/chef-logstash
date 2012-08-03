@@ -209,7 +209,7 @@ It will produce the following logstash.conf file
 
 # BIG WARNING
 
-* Currently only tested on Ubuntu Natty on RHEL 6.2.
+* Currently only tested on Ubuntu Natty, Precise, and RHEL 6.2.
 
 
 ## License and Author
