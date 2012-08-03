@@ -2,7 +2,7 @@
 # Cookbook Name:: logstash
 # Recipe:: default
 #
-include_recipe "runit"
+include_recipe "runit" unless node["platform_version"] == "12.04"
 include_recipe "java"
 
 group node['logstash']['group'] do

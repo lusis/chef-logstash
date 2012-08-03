@@ -1,0 +1,27 @@
+description "Logstash"
+author "Chef"
+
+start on (filesystem and net-device-up)
+stop on runlevel [!2345]
+
+respawn
+respawn limit 5 30
+
+chdir <%= node[:logstash][:basedir] %>/server
+setuid <%= node[:logstash][:user] %>
+
+script
+  export LOGSTASH_HOME="<%= node[:logstash][:basedir] %>/server"
+  export HOME=$LOGSTASH_HOME
+  export GC_OPTS="-XX:+UseParallelOldGC"
+  export JAVA_OPTS="-server -Xms<%= node[:logstash][:server][:xms] %> -Xmx<%= node[:logstash][:server][:xmx] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/"
+  export LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/logstash.conf -l $LOGSTASH_HOME/log/logstash.log"
+  <% if node[:logstash][:server][:debug] -%>
+  export LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
+  <% end -%>
+  export OPTS="$JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS"
+
+  exec /usr/bin/java $OPTS
+end script
+
+emits logstash-server-running
