@@ -10,7 +10,6 @@
 #
 
 include_recipe "logstash::default"
-include_recipe "logrotate"
 include_recipe "rabbitmq"
 
 if Chef::Config[:solo] 
@@ -118,11 +117,10 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
   action :create
 end
 
-logrotate_app "logstash" do
-  path "/var/log/logstash/*.log"
-  frequency "daily"
-  rotate "30"
-  create    "664 #{node['logstash']['user']} #{node['logstash']['user']}"
+cron "compress and remove logs rotated by log4j" do
+  minute "0"
+  hour   "0"
+  command  "find /var/log/logstash -name '*.gz' -mtime +30 -exec rm -f '{}' \\; ; \
+  find /var/log/logstash ! -name '*.gz' -mtime +2 -exec gzip '{}' \\;"
 end
-
 
