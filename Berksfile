@@ -1,5 +1,4 @@
 metadata
-cookbook 'logrotate'
 cookbook 'vim'
 cookbook 'monit'
 cookbook 'nginx'

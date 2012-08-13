@@ -113,11 +113,9 @@ template "#{node['logstash']['basedir']}/agent/etc/shipper.conf" do
   notifies :restart, "service[logstash_agent]"
 end
 
-logrotate_app "logstash" do
-  path "#{node['logstash']['basedir']}/agent/log/*.log"
-  frequency "daily"
-  rotate "30"
-  create "664 #{node['logstash']['user']} #{node['logstash']['user']}"
-  notifies :restart, "service[rsyslog]"
+cron "compress and remove logs rotated by log4j" do
+  minute "0"
+  hour   "0"
+  command  "find /var/log/logstash -name '*.gz' -mtime +30 -exec rm -f '{}' \\; ; \
+  find /var/log/logstash ! -name '*.gz' -mtime +2 -exec gzip '{}' \\;"
 end
-
