@@ -214,14 +214,16 @@ It will produce the following logstash.conf file
 
 ## License and Author
 
-Author::                John E. Vincent 
-Author::                Bryan W. Berry (<bryan.berry@gmail.com>)
-Author::                Richard Clamp (@richardc)
-Author::                Juanje Ojeda (@juanje)
-Copyright::             2012, John E. Vincent
-Copyright::             2012, Bryan W. Berry
-Copyright::             2012, Richard Clamp
-Copyright::             2012, Juanje Ojeda
+- Author::                John E. Vincent
+- Author::                Bryan W. Berry (<bryan.berry@gmail.com>)
+- Author::                Richard Clamp (@richardc)
+- Author::                Juanje Ojeda (@juanje)
+- Author::                @benattar
+- Copyright::             2012, John E. Vincent
+- Copyright::             2012, Bryan W. Berry
+- Copyright::             2012, Richard Clamp
+- Copyright::             2012, Juanje Ojeda
+- Copyright::             2012, @benattar
 
 
 Licensed under the Apache License, Version 2.0 (the "License");
