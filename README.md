@@ -43,6 +43,9 @@ Attributes
 * `node[:logstash][:agent][:base_config_cookbook]` - Where to find the base\_config template.
 * `node[:logstash][:agent][:xms]` - The minimum memory to assign the JVM.
 * `node[:logstash][:agent][:xmx]` - The maximum memory to assign the JVM.
+* `node[:logstash][:agent][:java_opts]` - Additional params you want to pass to the JVM
+* `node[:logstash][:agent][:gc_opts]` - Specify your garbage collection options to pass to the JVM
+* `node[:logstash][:agent][:ipv4_only]` - Add jvm option preferIPv4Stack?
 * `node[:logstash][:agent][:debug]` - Run logstash with `-v` option?
 * `node[:logstash][:agent][:server_role]` - The role of the node behaving as a Logstash `server`/`indexer`
 
@@ -56,6 +59,9 @@ Attributes
 * `node[:logstash][:server][:base_config_cookbook]` - Where to find the base\_config template.
 * `node[:logstash][:server][:xms]` - The minimum memory to assign the JVM.
 * `node[:logstash][:server][:xmx]` - The maximum memory to assign the JVM.
+* `node[:logstash][:server][:java_opts]` - Additional params you want to pass to the JVM
+* `node[:logstash][:server][:gc_opts]` - Specify your garbage collection options to pass to the JVM
+* `node[:logstash][:server][:ipv4_only]` - Add jvm option preferIPv4Stack?
 * `node[:logstash][:server][:debug]` - Run logstash with `-v` option?
 * `node[:logstash][:server][:enable_embedded_es]` - Should Logstash run with the embedded ElasticSearch server or not?
 
