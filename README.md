@@ -73,6 +73,7 @@ Attributes
 * `node[:logstash][:kibana][:apache_template]` - The name of the template file to use for the Apache site file
 * `node[:logstash][:kibana][:config]` - The name of the template to use for the Kibana `config.php` file
 * `node[:logstash][:kibana][:server_name]` - The value to use for the Apache `ServerName` variable to use for the Kibana Apache virtual host.
+* `node[:logstash][:kibana][:http_port]` - The port the virtualhost kibana listens on
 
 ## Source
 
