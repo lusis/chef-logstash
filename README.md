@@ -64,6 +64,7 @@ Attributes
 * `node[:logstash][:server][:ipv4_only]` - Add jvm option preferIPv4Stack?
 * `node[:logstash][:server][:debug]` - Run logstash with `-v` option?
 * `node[:logstash][:server][:enable_embedded_es]` - Should Logstash run with the embedded ElasticSearch server or not?
+* `node[:logstash][:server][:install_rabbitmq]` - Should this recipe install rabbitmq?
 
 ## Kibana
 
