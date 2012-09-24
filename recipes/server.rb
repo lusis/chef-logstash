@@ -11,7 +11,8 @@
 
 include_recipe "logstash::default"
 include_recipe "logrotate"
-include_recipe "rabbitmq"
+
+include_recipe "rabbitmq" if node['logstash']['server']['install_rabbitmq']
 
 if Chef::Config[:solo] 
   es_server_ip = node['logstash']['elasticsearch_ip']
