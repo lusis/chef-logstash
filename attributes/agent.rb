@@ -1,6 +1,6 @@
 default['logstash']['agent']['version'] = "1.1.1"
-default['logstash']['agent']['source_url'] = 'http://databits.net/petef/tmp/logstash-1.1.1-pre-monolithic-jruby1.7.0pre1.jar'
-default['logstash']['agent']['checksum'] = '6ca41718706c118ee6abb339bec9225b5d56cc3dc258d5053e64d00e24cdb918'
+default['logstash']['agent']['source_url'] = 'http://semicomplete.com/files/logstash/logstash-1.1.1-monolithic.jar'
+default['logstash']['agent']['checksum'] =  '36f462b50efad0773b3ff94920d1de500faa236cb0d81439110b50b08978444d'
 default['logstash']['agent']['install_method'] = "jar" # Either `source` or `jar`
 default['logstash']['agent']['base_config'] = "agent.conf.erb"
 default['logstash']['agent']['base_config_cookbook'] = "logstash"
@@ -16,3 +16,8 @@ default['logstash']['agent']['server_role'] = "logstash_server"
 
 # for use in case recipe used w/ chef-solo, default to self
 default['logstash']['agent']['server_ipaddress'] = ""
+default['logstash']['agent']['inputs'] = []
+default['logstash']['agent']['filters'] = []
+default['logstash']['agent']['outputs'] = []
+
+
