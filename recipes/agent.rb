@@ -114,7 +114,7 @@ template "#{node['logstash']['basedir']}/agent/etc/shipper.conf" do
 end
 
 logrotate_app "logstash" do
-  path [ "/var/log/logstash.log" ]
+  path [ "/var/log/logstash/logstash.log" ]
   frequency "daily"
   create "644 logstash logstash"
   rotate 30
