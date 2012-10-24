@@ -81,6 +81,10 @@ Attributes
 * `node[:logstash][:source][:sha]` - The sha/branch of the repo you wish to clone.
 * `node[:logstash][:source][:java_home]` - your `JAVA_HOME` location. Needed explicity for `ant` when building JRuby
 
+## Index Cleaner
+
+* `node[:logstash[:index_cleaner][:days_to_keep]` - Integer number of days from today of Logstash index to keep.
+
 Usage
 =====
 A proper readme is forthcoming but in the interim....
