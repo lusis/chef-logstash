@@ -23,3 +23,13 @@ directory node['logstash']['basedir'] do
   group "root"
   mode "0755"
 end
+
+node['logstash']['join_groups'].each do |grp|
+  group grp do
+    members node['logstash']['user']
+    action :modify
+    append true
+    only_if "grep -Fq '^#{grp}:' /etc/group"
+  end
+end
+
