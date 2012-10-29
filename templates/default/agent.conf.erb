@@ -10,12 +10,12 @@ input {
     exclude => ["*.gz"]
     debug => true
   }
-  <% else %>    
+  <% else %>
     <% node['logstash']['agent']['inputs'].each do |input| -%>
-     
-        <% input.each do |name,hash| -%> 
+
+        <% input.each do |name,hash| -%>
              <%= name %> {
-                 <% hash.each do |k,v| -%>         
+                 <% hash.each do |k,v| -%>
                        <%= k %> => '<%= v %>'
                  <% end -%>
         <% end -%>
@@ -34,16 +34,16 @@ output {
 
     <% unless  node['logstash']['agent']['outputs'].empty? -%>
       <% node['logstash']['agent']['outputs'].each do |output| -%>
-        <% output.each do |name,hash| -%> 
+        <% output.each do |name,hash| -%>
            <%= name %> {
-           <% hash.each do |k,v| -%>         
+           <% hash.each do |k,v| -%>
               <%= k %> => '<%= v %>'
             <% end -%>
         <% end -%>
            }
       <% end -%>
-    <% else -%> 
-  
+    <% else -%>
+
     tcp { host => "<%= @logstash_server_ip %>" port => "5959" }
 
     <% end -%>

@@ -17,16 +17,18 @@ Vagrant::Config.run do |config|
       chef.provisioning_path = '/etc/vagrant-chef'
       chef.log_level         = :debug
 
-      chef.run_list = %w| minitest-handler
-      		        apt
-                        java
-                        monit
-                        erlang
-			git
-			elasticsearch
-         		php::module_curl
-			logstash::server
-			logstash::kibana|
+      chef.run_list = %w[
+        minitest-handler
+        apt
+        java
+        monit
+        erlang
+        git
+        elasticsearch
+        php::module_curl
+        logstash::server
+        logstash::kibana
+      ]
 
       chef.json = {
         elasticsearch: {
@@ -36,9 +38,8 @@ Vagrant::Config.run do |config|
           limits: {
             nofile:  1024,
             memlock: 512
-            }
-		
-          },
+          }
+        },
         logstash: {
           server: {
             xms: '128m',
@@ -50,7 +51,6 @@ Vagrant::Config.run do |config|
       }
     end
   end
-
 
   config.vm.define :lucid64 do |dist_config|
     dist_config.vm.box       = 'lucid64'
@@ -64,22 +64,22 @@ Vagrant::Config.run do |config|
     dist_config.vm.network :bridged, '33.33.33.10'
 
     dist_config.vm.provision :chef_solo do |chef|
-
       chef.cookbooks_path    = [ '/tmp/logstash-cookbooks' ]
       chef.provisioning_path = '/etc/vagrant-chef'
       chef.log_level         = :debug
 
-      chef.run_list = %w| minitest-handler
-      		        apt
-                        java
-                        monit
-                        erlang
-			git
-			elasticsearch
-         		php::module_curl
-			logstash::server
-			logstash::kibana|
-
+      chef.run_list = %w[
+        minitest-handler
+        apt
+        java
+        monit
+        erlang
+        git
+        elasticsearch
+        php::module_curl
+        logstash::server
+        logstash::kibana
+      ]
 
       chef.json = {
         elasticsearch: {
@@ -89,9 +89,8 @@ Vagrant::Config.run do |config|
           limits: {
             nofile:  1024,
             memlock: 512
-            }
-		
-          },
+          }
+        },
         logstash: {
           server: {
             xms: '128m',
@@ -116,20 +115,21 @@ Vagrant::Config.run do |config|
     dist_config.vm.network :bridged, '33.33.33.10'
 
     dist_config.vm.provision :chef_solo do |chef|
-
       chef.cookbooks_path    = [ '/tmp/logstash-cookbooks' ]
       chef.provisioning_path = '/etc/vagrant-chef'
       chef.log_level         = :debug
 
-      chef.run_list = %w| minitest-handler
-                        java
-			yum::epel
-                        erlang
-			git
-                        elasticsearch
-         		php::module_curl
-			logstash::server
-			logstash::kibana|
+      chef.run_list = %w[
+        minitest-handler
+        java
+        yum::epel
+        erlang
+        git
+        elasticsearch
+        php::module_curl
+        logstash::server
+        logstash::kibana
+      ]
 
       chef.json = {
         elasticsearch: {
@@ -140,8 +140,7 @@ Vagrant::Config.run do |config|
             nofile:  1024,
             memlock: 512
             }
-		
-          },
+        },
         logstash: {
           server: {
             xms: '128m',
@@ -151,8 +150,6 @@ Vagrant::Config.run do |config|
           }
         }
       }
- 
     end
   end
-
 end
