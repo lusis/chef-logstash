@@ -31,6 +31,7 @@ Attributes
 * `node[:logstash][:elasticsearch_cluster]` - the cluster name assigned to your preexisting ElasticSearch cluster. Only applies to external ES clusters.
 * `node['logstash']['elasticsearch_ip']` - the IP address that will be used for your elasticsearch server in case you are using Chef-solo
 * `node['logstash']['graphite_ip']` - the IP address that will be used for your graphite server in case you are using Chef-solo 
+* `node[:logstash][:join_groups]` - An array of Operative System groups to join. Usefull to gain read privileges on some logfiles.
 
 
 ## Agent
