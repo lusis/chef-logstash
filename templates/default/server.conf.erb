@@ -1,68 +1,34 @@
 input {
-  <% if  node['logstash']['server']['inputs'].empty? -%>
+  <% if node['logstash']['server']['inputs'].empty? -%>
   tcp {
     type => "tcp-input"
     port => "5959"
     format => "json_event"
   }
-  <% else %>    
-    <% node['logstash']['server']['inputs'].each do |input| -%>
-     
-        <% input.each do |name,hash| -%> 
-             <%= name %> {
-                 <% hash.each do |k,v| -%>         
-                       <%= k %> => '<%= v %>'
-                 <% end -%>
-        <% end -%>
-        }
-     <% end -%>
+  <% else -%> 
+    <%= LogstashConf.section_to_str(node['logstash']['server']['inputs']) %>
   <% end -%>
 }
 
-<% unless  node['logstash']['server']['filters'].empty? -%>
+<% unless node['logstash']['server']['filters'].empty? -%>
 filter {
-   <% node['logstash']['server']['filters'].each do |filter| -%>
-      <% filter.each do |name,hash| -%> 
-         <%= name %> {
-           <% hash.each do |k,v| -%>         
-             <%= k %> => '<%= v %>'
-           <% end -%>
-      <% end -%>
-              }
-   <% end -%>
+  <%= LogstashConf.section_to_str(node['logstash']['server']['filters']) %>
 }
 <% end -%>
 
-
 output {
-	stdout { debug => true debug_format => "json" }
-	<% if @enable_embedded_es -%>
-	elasticsearch { embedded => true }
-	<% else -%>
-	elasticsearch { host => "<%= @es_server_ip %>" cluster => "<%= @es_cluster %>" }
-	<% end -%>
-	<% unless @graphite_server_ip.empty? -%>
-	graphite { host => "<%= @graphite_server_ip %>" metrics => ["logstash.events", "1"] }
-	<% end -%>
-
-  <% unless  node['logstash']['server']['outputs'].empty? -%>
-      <% node['logstash']['server']['outputs'].each do |output| -%>
-        <% output.each do |name,hash| -%> 
-             <%= name %> {
-                 <% hash.each do |k,v| -%>         
-                    <% case v.class.to_s -%>
-                    <% when "String" -%>
-                       <%= k %> => '<%= v %>'
-                    <% when "Array" -%>
-                       <%= k %> => <%= v.inspect %>
-                    <% when "Trueclass", "FalseClass", "Fixnum" -%>
-                       <%= k %> => <%= v %>                    
-                    <% end -%>
-                 <% end -%>
-                   }    
-        <% end -%>
-            
-      <% end -%>
+  <% if node['logstash']['server']['debug'] -%>
+  stdout { debug => true debug_format => "json" }
   <% end -%>
-
+  <% if @enable_embedded_es -%>
+  elasticsearch { embedded => true }
+  <% elsif not @es_server_ip.empty? -%>
+  elasticsearch { host => "<%= @es_server_ip %>" cluster => "<%= @es_cluster %>" }
+  <% end -%>
+  <% unless @graphite_server_ip.empty? -%>
+  graphite { host => "<%= @graphite_server_ip %>" metrics => ["logstash.events", "1"] }
+  <% end -%>
+  <% # unless node['logstash']['server']['outputs'].empty? -%>
+    <%= LogstashConf.section_to_str(node['logstash']['server']['outputs']) %>
+  <% # end -%>
 }
