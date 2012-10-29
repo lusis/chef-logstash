@@ -1,11 +1,9 @@
-NameVirtualHost *:<%= node[:logstash][:kibana][:http_port] %>
-<VirtualHost *:<%= node[:logstash][:kibana][:http_port] %>>
+NameVirtualHost *:<%= node['logstash']['kibana']['http_port'] %>
+<VirtualHost *:<%= node['logstash']['kibana']['http_port'] %>>
   ServerName <%= @server_name %>
-	DocumentRoot "<%= @docroot %>"
-	
+  DocumentRoot "<%= @docroot %>"
 
-	<Directory "<%= @docroot %>">
-		DirectoryIndex index.php
-	</Directory>
-
+  <Directory "<%= @docroot %>">
+    DirectoryIndex index.php
+  </Directory>
 </VirtualHost>

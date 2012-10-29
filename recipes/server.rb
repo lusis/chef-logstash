@@ -14,7 +14,7 @@ include_recipe "logrotate"
 
 include_recipe "rabbitmq" if node['logstash']['server']['install_rabbitmq']
 
-if Chef::Config[:solo] 
+if Chef::Config[:solo]
   es_server_ip = node['logstash']['elasticsearch_ip']
   graphite_server_ip = node['logstash']['graphite_ip']
 else
@@ -26,6 +26,7 @@ else
   else
     es_server_ip = node['logstash']['elasticsearch_ip']
   end
+
   unless graphite_results.empty?
     graphite_server_ip = graphite_results[0]['ipaddress']
   else
@@ -33,7 +34,7 @@ else
   end
 end
 
-#create directory for logstash
+# Create directory for logstash
 directory "#{node['logstash']['basedir']}/server" do
   action :create
   mode "0755"
@@ -42,7 +43,6 @@ directory "#{node['logstash']['basedir']}/server" do
 end
 
 %w{bin etc lib log tmp patterns  }.each do |ldir|
-  
   directory "#{node['logstash']['basedir']}/server/#{ldir}" do
     action :create
     mode "0755"
@@ -54,8 +54,8 @@ end
     to "#{node['logstash']['basedir']}/server/#{ldir}"
   end
 end
-  
-#installation
+
+# installation
 if node['logstash']['server']['install_method'] == "jar"
   remote_file "#{node['logstash']['basedir']}/server/lib/logstash-#{node['logstash']['server']['version']}.jar" do
     owner "root"
@@ -63,8 +63,9 @@ if node['logstash']['server']['install_method'] == "jar"
     mode "0755"
     source node['logstash']['server']['source_url']
     checksum node['logstash']['server']['checksum']
-  not_if {File.exists?("#{node['logstash']['basedir']}/server/lib/logstash-#{node['logstash']['server']['version']}.jar")}
+    not_if { File.exists?("#{node['logstash']['basedir']}/server/lib/logstash-#{node['logstash']['server']['version']}.jar") }
   end
+
   link "#{node['logstash']['basedir']}/server/lib/logstash.jar" do
     to "#{node['logstash']['basedir']}/server/lib/logstash-#{node['logstash']['server']['version']}.jar"
     notifies :restart, "service[logstash_server]"
@@ -85,13 +86,13 @@ directory "#{node['logstash']['basedir']}/server/etc/conf.d" do
   group node['logstash']['group']
 end
 
-
 if platform?  "debian", "ubuntu"
   if node["platform_version"] == "12.04"
     template "/etc/init/logstash_server.conf" do
       mode "0644"
       source "logstash_server.conf.erb"
     end
+
     service "logstash_server" do
       provider Chef::Provider::Service::Upstart
       action [ :enable, :start ]
@@ -105,11 +106,10 @@ elsif platform? "redhat", "centos","amazon", "fedora"
     owner "root"
     group "root"
     mode "0774"
-    variables(
-              :config_file => "logstash.conf",
-              :basedir => "#{node['logstash']['basedir']}/server"
-              )
+    variables(:config_file => "logstash.conf",
+              :basedir => "#{node['logstash']['basedir']}/server")
   end
+
   service "logstash_server" do
     supports :restart => true, :reload => true, :status => true
     action :enable
@@ -134,8 +134,5 @@ logrotate_app "logstash" do
   path "#{node['logstash']['basedir']}/server/log/*.log"
   frequency "daily"
   rotate "30"
-  create    "664 #{node['logstash']['user']} #{node['logstash']['user']}"
+  create "664 #{node['logstash']['user']} #{node['logstash']['user']}"
 end
-
-
-

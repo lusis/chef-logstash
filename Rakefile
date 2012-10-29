@@ -1,16 +1,12 @@
 #!/usr/bin/env rake
 
 cookbook_path = '/tmp/logstash-cookbooks'
-
-
-
 @cookbook = "logstash"
 
 desc "install dependencies using Berkshelf"
 task :install_deps do
   system("berks install --shims #{cookbook_path}")
 end
-
 
 desc "Runs foodcritic linter"
 task :foodcritic do
