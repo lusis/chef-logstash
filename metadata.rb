@@ -17,4 +17,4 @@ depends "java"
 depends "ant"
 depends "logrotate"
 depends "rabbitmq"
-
+depends "logstash"
