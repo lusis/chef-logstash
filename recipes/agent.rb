@@ -65,7 +65,7 @@ if platform?  "debian", "ubuntu"
   else
     runit_service "logstash_agent"
   end
-elsif platform? "redhat", "centos", "amazon", "fedora"
+elsif platform? "redhat", "centos", "amazon", "fedora", "scientific"
   template "/etc/init.d/logstash_agent" do
     source "init.erb"
     owner "root"

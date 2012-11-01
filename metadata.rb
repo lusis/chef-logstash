@@ -7,6 +7,15 @@ long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          "0.4.0"
 name             "logstash"
 
+supports         "ubuntu"
+supports         "debian"
+
+supports         "redhat"
+supports         "centos"
+supports         "scientific"
+supports         "amazon"
+supports         "fedora"
+
 depends "apache2"
 depends "php"
 depends "build-essential"
