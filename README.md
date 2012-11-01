@@ -31,12 +31,11 @@ Attributes
 * `node['logstash']['elasticsearch_cluster']` - the cluster name assigned to your preexisting ElasticSearch cluster. Only applies to external ES clusters.
 * `node['logstash']['elasticsearch_ip']` - the IP address that will be used for your elasticsearch server in case you are using Chef-solo
 * `node['logstash']['graphite_ip']` - the IP address that will be used for your graphite server in case you are using Chef-solo
-* `node[:logstash][:join_groups]` - An array of Operative System groups to join. Usefull to gain read privileges on some logfiles.
+* `node['logstash']['join_groups']` - An array of Operative System groups to join. Usefull to gain read privileges on some logfiles.
 
 
 ## Agent
 
-<<<<<<< HEAD
 * `node['logstash']['agent']['install_method']` - The method to install logstash - either `jar` or `source`, defaults to `jar`
 * `node['logstash']['agent']['version']` - The version of Logstash to install. Only applies to `jar` install method.
 * `node['logstash']['agent']['source_url']` - The URL of the Logstash jar to download. Only applies to `jar` install method.
@@ -91,7 +90,7 @@ Attributes
 
 ## Index Cleaner
 
-* `node[:logstash[:index_cleaner][:days_to_keep]` - Integer number of days from today of Logstash index to keep.
+* `node['logstash']['index_cleaner']['days_to_keep']` - Integer number of days from today of Logstash index to keep.
 
 Usage
 =====
