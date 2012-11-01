@@ -21,21 +21,20 @@ link "/var/lib/logstash/apache_logs" do
 end
 
 directory "/opt/logstash/server/etc/patterns" do
-    owner node['logstash']['user']
-    group node['logstash']['group']
-    mode "0774"
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  mode "0774"
 end
 
-
-#create pattern_file  for haproxy
+# create pattern_file  for haproxy
 cookbook_file "/opt/logstash/server/etc/patterns/haproxy" do
-    source "haproxy"
-    owner node['logstash']['user']
-    group node['logstash']['group']
-    mode "0774"
+  source "haproxy"
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  mode "0774"
 end
 
-#set logrotate  for /opt/logstash/server/apache_logs
+# set logrotate  for /opt/logstash/server/apache_logs
 logrotate_app "apache_logs" do
   path node['logstash']['server']['logrotate_target']
   frequency "daily"

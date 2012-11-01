@@ -15,7 +15,7 @@ The same applies to integration with Graphite.
 This cookbook has been tested together with the following cookbooks
 
 * [Heavywater Graphite Cookbook](https://github.com/heavywater/chef-graphite) - This is the one I use
-* [Karmi's ElasticSearch Cookbook](https://github.com/karmi/cookbook-elasticsearch) 
+* [Karmi's ElasticSearch Cookbook](https://github.com/karmi/cookbook-elasticsearch)
 
 
 Attributes
@@ -23,63 +23,74 @@ Attributes
 
 ## Default
 
-* `node[:logstash][:basedir]` - the base directory for all the Logstash components
-* `node[:logstash][:user]` - the owner for all Logstash components
-* `node[:logstash][:group]` - the group for all Logstash components
-* `node[:logstash][:graphite_role]` - the Chef role to search for discovering your preexisting Graphite server
-* `node[:logstash][:elasticsearch_role]` - the Chef role to search for discovering your preexisting ElasticSearch cluster.
-* `node[:logstash][:elasticsearch_cluster]` - the cluster name assigned to your preexisting ElasticSearch cluster. Only applies to external ES clusters.
+* `node['logstash']['basedir']` - the base directory for all the Logstash components
+* `node['logstash']['user']` - the owner for all Logstash components
+* `node['logstash']['group']` - the group for all Logstash components
+* `node['logstash']['graphite_role']` - the Chef role to search for discovering your preexisting Graphite server
+* `node['logstash']['elasticsearch_role']` - the Chef role to search for discovering your preexisting ElasticSearch cluster.
+* `node['logstash']['elasticsearch_cluster']` - the cluster name assigned to your preexisting ElasticSearch cluster. Only applies to external ES clusters.
 * `node['logstash']['elasticsearch_ip']` - the IP address that will be used for your elasticsearch server in case you are using Chef-solo
-* `node['logstash']['graphite_ip']` - the IP address that will be used for your graphite server in case you are using Chef-solo 
+* `node['logstash']['graphite_ip']` - the IP address that will be used for your graphite server in case you are using Chef-solo
+* `node['logstash']['join_groups']` - An array of Operative System groups to join. Usefull to gain read privileges on some logfiles.
 
 
 ## Agent
 
-* `node[:logstash][:agent][:install_method]` - The method to install logstash - either `jar` or `source`, defaults to `jar`
-* `node[:logstash][:agent][:version]` - The version of Logstash to install. Only applies to `jar` install method.
-* `node[:logstash][:agent][:source_url]` - The URL of the Logstash jar to download. Only applies to `jar` install method.
-* `node[:logstash][:agent][:checksum]` - The checksum of the jar file. Only applies to `jar` install method.
-* `node[:logstash][:agent][:base_config]` - The name of the template to use for `logstash.conf` as a base config.
-* `node[:logstash][:agent][:base_config_cookbook]` - Where to find the base\_config template.
-* `node[:logstash][:agent][:xms]` - The minimum memory to assign the JVM.
-* `node[:logstash][:agent][:xmx]` - The maximum memory to assign the JVM.
-* `node[:logstash][:agent][:java_opts]` - Additional params you want to pass to the JVM
-* `node[:logstash][:agent][:gc_opts]` - Specify your garbage collection options to pass to the JVM
-* `node[:logstash][:agent][:ipv4_only]` - Add jvm option preferIPv4Stack?
-* `node[:logstash][:agent][:debug]` - Run logstash with `-v` option?
-* `node[:logstash][:agent][:server_role]` - The role of the node behaving as a Logstash `server`/`indexer`
+* `node['logstash']['agent']['install_method']` - The method to install logstash - either `jar` or `source`, defaults to `jar`
+* `node['logstash']['agent']['version']` - The version of Logstash to install. Only applies to `jar` install method.
+* `node['logstash']['agent']['source_url']` - The URL of the Logstash jar to download. Only applies to `jar` install method.
+* `node['logstash']['agent']['checksum']` - The checksum of the jar file. Only applies to `jar` install method.
+* `node['logstash']['agent']['base_config']` - The name of the template to use for `logstash.conf` as a base config.
+* `node['logstash']['agent']['base_config_cookbook']` - Where to find the base\_config template.
+* `node['logstash']['agent']['xms']` - The minimum memory to assign the JVM.
+* `node['logstash']['agent']['xmx']` - The maximum memory to assign the JVM.
+* `node['logstash']['agent']['java_opts']` - Additional params you want to pass to the JVM
+* `node['logstash']['agent']['gc_opts']` - Specify your garbage collection options to pass to the JVM
+* `node['logstash']['agent']['ipv4_only']` - Add jvm option preferIPv4Stack?
+* `node['logstash']['agent']['debug']` - Run logstash with `-v` option?
+* `node['logstash']['agent']['server_role']` - The role of the node behaving as a Logstash `server`/`indexer`
+* `node['logstash']['agent']['inputs']` - Array of input plugins configuration.
+* `node['logstash']['agent']['filters']` - Array of filter plugins configuration.
+* `node['logstash']['agent']['outputs']` - Array of output plugins configuration.
 
 ## Server
 
-* `node[:logstash][:server][:install_method]` - The method to install logstash - either `jar` or `source`
-* `node[:logstash][:server][:version]` - The version of Logstash to install. Only applies to `jar` install method.
-* `node[:logstash][:server][:source_url]` - The URL of the Logstash jar to download. Only applies to `jar` install method.
-* `node[:logstash][:server][:checksum]` - The checksum of the jar file. Only applies to `jar` install method.
-* `node[:logstash][:server][:base_config]` - The name of the template to use for `logstash.conf` as a base config.
-* `node[:logstash][:server][:base_config_cookbook]` - Where to find the base\_config template.
-* `node[:logstash][:server][:xms]` - The minimum memory to assign the JVM.
-* `node[:logstash][:server][:xmx]` - The maximum memory to assign the JVM.
-* `node[:logstash][:server][:java_opts]` - Additional params you want to pass to the JVM
-* `node[:logstash][:server][:gc_opts]` - Specify your garbage collection options to pass to the JVM
-* `node[:logstash][:server][:ipv4_only]` - Add jvm option preferIPv4Stack?
-* `node[:logstash][:server][:debug]` - Run logstash with `-v` option?
-* `node[:logstash][:server][:enable_embedded_es]` - Should Logstash run with the embedded ElasticSearch server or not?
-* `node[:logstash][:server][:install_rabbitmq]` - Should this recipe install rabbitmq?
+* `node['logstash']['server']['install_method']` - The method to install logstash - either `jar` or `source`
+* `node['logstash']['server']['version']` - The version of Logstash to install. Only applies to `jar` install method.
+* `node['logstash']['server']['source_url']` - The URL of the Logstash jar to download. Only applies to `jar` install method.
+* `node['logstash']['server']['checksum']` - The checksum of the jar file. Only applies to `jar` install method.
+* `node['logstash']['server']['base_config']` - The name of the template to use for `logstash.conf` as a base config.
+* `node['logstash']['server']['base_config_cookbook']` - Where to find the base\_config template.
+* `node['logstash']['server']['xms']` - The minimum memory to assign the JVM.
+* `node['logstash']['server']['xmx']` - The maximum memory to assign the JVM.
+* `node['logstash']['server']['java_opts']` - Additional params you want to pass to the JVM
+* `node['logstash']['server']['gc_opts']` - Specify your garbage collection options to pass to the JVM
+* `node['logstash']['server']['ipv4_only']` - Add jvm option preferIPv4Stack?
+* `node['logstash']['server']['debug']` - Run logstash with `-v` option?
+* `node['logstash']['server']['enable_embedded_es']` - Should Logstash run with the embedded ElasticSearch server or not?
+* `node['logstash']['server']['install_rabbitmq']` - Should this recipe install rabbitmq?
+* `node['logstash']['server']['inputs']` - Array of input plugins configuration.
+* `node['logstash']['server']['filters']` - Array of filter plugins configuration.
+* `node['logstash']['server']['outputs']` - Array of output plugins configuration.
 
 ## Kibana
 
-* `node[:logstash][:kibana][:repo]` - The git repo to install Kibana from.
-* `node[:logstash][:kibana][:sha]` - The sha/branch of the repo you wish to clone.
-* `node[:logstash][:kibana][:apache_template]` - The name of the template file to use for the Apache site file
-* `node[:logstash][:kibana][:config]` - The name of the template to use for the Kibana `config.php` file
-* `node[:logstash][:kibana][:server_name]` - The value to use for the Apache `ServerName` variable to use for the Kibana Apache virtual host.
-* `node[:logstash][:kibana][:http_port]` - The port the virtualhost kibana listens on
+* `node['logstash']['kibana']['repo']` - The git repo to install Kibana from.
+* `node['logstash']['kibana']['sha']` - The sha/branch of the repo you wish to clone.
+* `node['logstash']['kibana']['apache_template']` - The name of the template file to use for the Apache site file
+* `node['logstash']['kibana']['config']` - The name of the template to use for the Kibana `config.php` file
+* `node['logstash']['kibana']['server_name']` - The value to use for the Apache `ServerName` variable to use for the Kibana Apache virtual host.
+* `node['logstash']['kibana']['http_port']` - The port the virtualhost kibana listens on
 
 ## Source
 
-* `node[:logstash][:source][:repo]` - The git repo to use for the source code of Logstash
-* `node[:logstash][:source][:sha]` - The sha/branch of the repo you wish to clone.
-* `node[:logstash][:source][:java_home]` - your `JAVA_HOME` location. Needed explicity for `ant` when building JRuby
+* `node['logstash']['source']['repo']` - The git repo to use for the source code of Logstash
+* `node['logstash']['source']['sha']` - The sha/branch of the repo you wish to clone.
+* `node['logstash']['source']['java_home']` - your `JAVA_HOME` location. Needed explicity for `ant` when building JRuby
+
+## Index Cleaner
+
+* `node['logstash']['index_cleaner']['days_to_keep']` - Integer number of days from today of Logstash index to keep.
 
 Usage
 =====
@@ -103,9 +114,9 @@ This setup makes HEAVY use of roles. Additionally, ALL paths have been made into
 ## Defaults
 By default, the recipes look for the following roles (defined as attributes so they can be overridden):
 
-* `graphite_server` - `node[:logstash][:graphite_role]`
-* `elasticsearch_server` - `node[:logstash][:elasticsearch_role]`
-* `logstash_server` - `node[:logstash][:kibana][:elasticsearch_role]` and `node[:logstash][:agent[:server_role]`
+* `graphite_server` - `node['logstash']['graphite_role']`
+* `elasticsearch_server` - `node['logstash']['elasticsearch_role']`
+* `logstash_server` - `node['logstash']['kibana']['elasticsearch_role']` and `node['logstash']['agent']['server_role']`
 
 The reason for giving `kibana` its own role assignment is to allow you to point to existing ES clusters/logstash installs.
 
@@ -144,74 +155,133 @@ The `pyshipper` recipe will work as well but it is NOT wired up to anything yet.
 
 The current templates for the agent and server are written so that you can provide ruby hashes in your roles that map to inputs, filters, and outputs. Here is a role for logstash_server
 
-    name	"logstash_server"
+    name "logstash_server"
     description "Attributes and run_lists specific to FAO's logstash instance"
     default_attributes(
-                   :logstash => {
-                     :server => {
-                       :enable_embedded_es => false,
-                       :inputs => [
-                                   :amqp => {
-                                       :type => "all",
-                                       :host => "127.0.0.1",
-                                       :exchange => "rawlogs",
-                                       :name => "rawlogs_consumer"
-                                      }
-                                  ],
-                       :filters => [
-                                    :grok => {
-                                      :type => "haproxy",
-                                      :pattern => "%{HAPROXYHTTP}",
-                                      :patterns_dir => '/opt/logstash/server/etc/patterns/'
-                                    }
-                                   ],
-                       :outputs => [
-                                    :file => {
-                                      :type => 'haproxy',
-                                      :path => '/opt/logstash/server/haproxy_logs/%{request_header_host}.log',
-                                      :message_format => '%{client_ip} - - [%{accept_date}] "%{http_request}" %{http_status_code} ....'
-                                    }
-                                   ]
-                      }
-                    }
-                   )
+      :logstash => {
+        :server => {
+          :enable_embedded_es => false,
+          :inputs => [
+            :amqp => {
+              :type => "all",
+              :host => "127.0.0.1",
+              :exchange => "rawlogs",
+              :name => "rawlogs_consumer"
+            }
+          ],
+          :filters => [
+            :grok => {
+              :type => "haproxy",
+              :pattern => "%{HAPROXYHTTP}",
+              :patterns_dir => '/opt/logstash/server/etc/patterns/'
+            }
+          ],
+          :outputs => [
+            :file => {
+              :type => 'haproxy',
+              :path => '/opt/logstash/server/haproxy_logs/%{request_header_host}.log',
+              :message_format => '%{client_ip} - - [%{accept_date}] "%{http_request}" %{http_status_code} ....'
+            }
+          ]
+        }
+      }
+    )
     run_list(
-         "role[elasticsearch_server]",
-         "recipe[logstash::server]",
-         "recipe[php::module_curl]",
-         "recipe[logstash::kibana]"
-         )
+      "role[elasticsearch_server]",
+      "recipe[logstash::server]",
+      "recipe[php::module_curl]",
+      "recipe[logstash::kibana]"
+    )
 
 
 It will produce the following logstash.conf file
 
-     input {
-     
-             amqp {
-                       name => 'rawlogs_consumer'
-                       exchange => 'rawlogs'
-                       type => 'all'
-                       host => '127.0.0.1'
-             }
+    input {
+
+      amqp {
+        exchange => 'rawlogs'
+        host => '127.0.0.1'
+        name => 'rawlogs_consumer'
+        type => 'all'
+      }
+    }
+
+    filter {
+
+      grok {
+        pattern => '%{HAPROXYHTTP}'
+        patterns_dir => '/opt/logstash/server/etc/patterns/'
+        type => 'haproxy'
+      }
+    }
+
+    output {
+      stdout { debug => true debug_format => "json" }
+      elasticsearch { host => "127.0.0.1" cluster => "logstash" }
+
+      file {
+        message_format => '%{client_ip} - - [%{accept_date}] "%{http_request}" %{http_status_code} ....'
+        path => '/opt/logstash/server/haproxy_logs/%{request_header_host}.log'
+        type => 'haproxy'
+      }
+    }
+
+
+Here is an example using multiple filters
+
+    default_attributes(
+                   :logstash => {
+                     :server => {
+                       :filters => [
+                                    { :grep => {
+                                        :type => 'tomcat',
+                                        :match => { '@message' => '([Ee]xception|Failure:|Error:)' },
+                                        :add_tag => 'exception',
+                                        :drop => false
+                                    } },
+                                    { :grep => {
+                                        :type => 'tomcat',
+                                        :match => { '@message' => 'Unloading class ' },
+                                        :add_tag => 'unloading-class',
+                                        :drop => false
+                                    } },
+                                    { :multiline => {
+                                        :type => 'tomcat',
+                                        :pattern => '^\s',
+                                        :what => 'previous'
+                                    } }
+                                   ]
+                      }
+                    }
+                  }
+    )
+
+It will produce the following logstash.conf file
+
+    filter {
+
+      grep {
+        add_tag => 'exception'
+        drop => false
+        match => ['@message', '([Ee]xception|Failure:|Error:)']
+        type => 'tomcat'
       }
 
-      filter {
-         grok {
-             pattern => '%{HAPROXYHTTP}'
-             type => 'haproxy'
-             patterns_dir => '/opt/logstash/server/etc/patterns/'
-              }
+      grep {
+        add_tag => 'unloading-class'
+        drop => false
+        match => ["@message", "Unloading class "]
+        type => 'tomcat'
       }
 
-      output {
-          stdout { debug => true debug_format => "json" }
-          elasticsearch { host => "169.1.1.1" }
-          file {
-                       type => 'haproxy'
-                       message_format => '%{client_ip} - - [%{accept_date}] "%{http_request}" %{http_status_code} %{bytes_read} ....'
-                       path => '/opt/logstash/server/haproxy_logs/%{request_header_host}.log'
-              }
-       }
+      multiline {
+        patterns_dir => '/opt/logstash/patterns'
+        pattern => '^\s'
+        type => 'tomcat'
+        what => 'previous'
+      }
+
+    }
 
 
 

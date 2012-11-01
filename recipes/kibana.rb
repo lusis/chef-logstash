@@ -57,7 +57,7 @@ template "#{node['apache']['dir']}/sites-available/kibana" do
             :server_name => node['logstash']['kibana']['server_name'])
 end
 
-apache_site "kibana" 
+apache_site "kibana"
 
 template "#{node['logstash']['basedir']}/kibana/current/config.php" do
   source node['logstash']['kibana']['config']
