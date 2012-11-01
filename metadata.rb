@@ -5,6 +5,7 @@ name             "logstash"
 description      "Installs/Configures logstash"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          "0.3.0"
+name             "logstash"
 
 depends "apache2"
 depends "php"
