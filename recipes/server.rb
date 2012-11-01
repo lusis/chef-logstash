@@ -130,9 +130,17 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
   action :create
 end
 
+directory "#{node['logstash']['log_dir']}" do
+  action :create
+  mode "0755"
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  recursive true
+end
+
 logrotate_app "logstash" do
-  path "#{node['logstash']['basedir']}/server/log/*.log"
+  path "#{node['logstash']['log_dir']}/*.log"
   frequency "daily"
   rotate "30"
-  create "664 #{node['logstash']['user']} #{node['logstash']['user']}"
+  create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
 end

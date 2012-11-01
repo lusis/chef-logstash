@@ -15,6 +15,7 @@ default['logstash']['server']['install_rabbitmq'] = true
 
 # roles/flags for various autoconfig/discovery components
 default['logstash']['server']['enable_embedded_es'] = true
+
 default['logstash']['server']['inputs'] = []
 default['logstash']['server']['filters'] = []
 default['logstash']['server']['outputs'] = []
