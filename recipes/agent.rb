@@ -115,7 +115,7 @@ template "#{node['logstash']['basedir']}/agent/etc/shipper.conf" do
   notifies :restart, "service[logstash_agent]"
 end
 
-directory "#{node['logstash']['log_dir']}" do
+directory node['logstash']['log_dir'] do
   action :create
   mode "0755"
   owner node['logstash']['user']

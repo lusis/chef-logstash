@@ -130,7 +130,7 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
   action :create
 end
 
-directory "#{node['logstash']['log_dir']}" do
+directory node['logstash']['log_dir'] do
   action :create
   mode "0755"
   owner node['logstash']['user']
