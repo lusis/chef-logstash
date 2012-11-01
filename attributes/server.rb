@@ -1,6 +1,6 @@
 default['logstash']['server']['version'] = '1.1.1'
-default['logstash']['server']['source_url'] = 'http://databits.net/petef/tmp/logstash-1.1.1-pre-monolithic-jruby1.7.0pre1.jar'
-default['logstash']['server']['checksum'] = '6ca41718706c118ee6abb339bec9225b5d56cc3dc258d5053e64d00e24cdb918'
+default['logstash']['server']['source_url'] = 'http://semicomplete.com/files/logstash/logstash-1.1.4-monolithic.jar'
+default['logstash']['server']['checksum'] = '5b8c3a2f92b807f0d88184576e08099d41b1eba9d858db12000ddda5bc440551'
 default['logstash']['server']['install_method'] = 'jar' # Either `source` or `jar`
 default['logstash']['server']['base_config'] = 'server.conf.erb'
 default['logstash']['server']['base_config_cookbook'] = 'logstash'
