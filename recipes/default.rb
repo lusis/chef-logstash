@@ -29,7 +29,7 @@ node['logstash']['join_groups'].each do |grp|
     members node['logstash']['user']
     action :modify
     append true
-    only_if "grep -Fq '^#{grp}:' /etc/group"
+    only_if "grep -q '^#{grp}:' /etc/group"
   end
 end
 
