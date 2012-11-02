@@ -82,6 +82,15 @@ Attributes
 * `node['logstash']['kibana']['server_name']` - The value to use for the Apache `ServerName` variable to use for the Kibana Apache virtual host.
 * `node['logstash']['kibana']['http_port']` - The port the virtualhost kibana listens on
 
+## Beaver (alternative to Logstash Agent)
+
+* `node['logstash']['beaver']['repo']` - URL or repository to install beaver from (using pip).
+* `node['logstash']['beaver']['server_role']` - The role of the node behaving as a Logstash `server`/`indexer`.
+* `node['logstash']['beaver']['server_ipaddress']` - Server IP address to use (needed when not using server_role).
+* `node['logstash']['beaver']['inputs']` - Array of input plugins configuration (Supported: file).
+* `node['logstash']['beaver']['outputs']` - Array of output plugins configuration (Supported: amq, redis, stdout, zeromq).
+
+
 ## Source
 
 * `node['logstash']['source']['repo']` - The git repo to use for the source code of Logstash
