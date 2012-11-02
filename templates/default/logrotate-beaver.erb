@@ -1,0 +1,15 @@
+<%= @logfile %> {
+  daily
+  rotate 10
+  # copytruncate
+  delaycompress
+  compress
+  notifempty
+  missingok
+  create 640 <%= @user %> <%= @group %>
+  postrotate
+    invoke-rc.d logstash_beaver force-reload >/dev/null 2>&1 || true
+  endscript
+
+}
+
