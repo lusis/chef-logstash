@@ -11,3 +11,5 @@ default['logstash']['elasticsearch_role'] = 'elasticsearch_server'
 default['logstash']['elasticsearch_cluster'] = 'logstash'
 default['logstash']['elasticsearch_ip'] = ''
 default['logstash']['graphite_ip'] = ''
+
+default['logstash']['patterns'] = []

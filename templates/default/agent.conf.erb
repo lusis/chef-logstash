@@ -16,7 +16,7 @@ input {
 
 <% unless node['logstash']['agent']['filters'].empty? -%>
 filter {
-  <%= LogstashConf.section_to_str(node['logstash']['agent']['filters']) %>
+  <%= LogstashConf.section_to_str(node['logstash']['agent']['filters'], node['logstash']['agent']['version'], @patterns_dir) %>
 }
 <% end -%>
 
