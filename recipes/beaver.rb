@@ -81,6 +81,7 @@ template conf_file do
   variables(
             :files => files
   )
+  notifies :restart, "service[logstash_beaver]"
 end
 
 # outputs
@@ -139,7 +140,7 @@ template "/etc/init.d/logstash_beaver" do
   notifies :restart, "service[logstash_beaver]"
 end
 service "logstash_beaver" do
-  supports :restart => true, :reload => true, :status => true
+  supports :restart => true, :reload => false, :status => true
   action [:enable, :start]
 end
 
