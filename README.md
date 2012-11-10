@@ -239,30 +239,29 @@ It will produce the following logstash.conf file
 Here is an example using multiple filters
 
     default_attributes(
-                   :logstash => {
-                     :server => {
-                       :filters => [
-                                    { :grep => {
-                                        :type => 'tomcat',
-                                        :match => { '@message' => '([Ee]xception|Failure:|Error:)' },
-                                        :add_tag => 'exception',
-                                        :drop => false
-                                    } },
-                                    { :grep => {
-                                        :type => 'tomcat',
-                                        :match => { '@message' => 'Unloading class ' },
-                                        :add_tag => 'unloading-class',
-                                        :drop => false
-                                    } },
-                                    { :multiline => {
-                                        :type => 'tomcat',
-                                        :pattern => '^\s',
-                                        :what => 'previous'
-                                    } }
-                                   ]
-                      }
-                    }
-                  }
+      :logstash => {
+        :server => {
+          :filters => [
+            { :grep => {
+                :type => 'tomcat',
+                :match => { '@message' => '([Ee]xception|Failure:|Error:)' },
+                :add_tag => 'exception',
+                :drop => false
+            } },
+            { :grep => {
+                :type => 'tomcat',
+                :match => { '@message' => 'Unloading class ' },
+                :add_tag => 'unloading-class',
+                :drop => false
+            } },
+            { :multiline => {
+                :type => 'tomcat',
+                :pattern => '^\s',
+                :what => 'previous'
+            } }
+          ]
+        }
+      }
     )
 
 It will produce the following logstash.conf file
