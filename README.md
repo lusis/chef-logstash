@@ -32,6 +32,7 @@ Attributes
 * `node['logstash']['elasticsearch_ip']` - the IP address that will be used for your elasticsearch server in case you are using Chef-solo
 * `node['logstash']['graphite_ip']` - the IP address that will be used for your graphite server in case you are using Chef-solo
 * `node['logstash']['join_groups']` - An array of Operative System groups to join. Usefull to gain read privileges on some logfiles.
+* `node['logstash']['patterns']` - A hash with grok patterns to be used on grok and multiline filters.
 
 
 ## Agent
@@ -52,6 +53,7 @@ Attributes
 * `node['logstash']['agent']['inputs']` - Array of input plugins configuration.
 * `node['logstash']['agent']['filters']` - Array of filter plugins configuration.
 * `node['logstash']['agent']['outputs']` - Array of output plugins configuration.
+* `node['logstash']['agent']['patterns_dir']` - The patterns directory where pattern files will be generated. Relative to the basedir or absolute.
 
 ## Server
 
@@ -72,6 +74,7 @@ Attributes
 * `node['logstash']['server']['inputs']` - Array of input plugins configuration.
 * `node['logstash']['server']['filters']` - Array of filter plugins configuration.
 * `node['logstash']['server']['outputs']` - Array of output plugins configuration.
+* `node['logstash']['server']['patterns_dir']` - The patterns directory where pattern files will be generated. Relative to the basedir or absolute.
 
 ## Kibana
 
@@ -291,6 +294,40 @@ It will produce the following logstash.conf file
 
     }
 
+
+## Adding grok patterns
+
+Grok pattern files can be generated using attributes as follows
+
+    default_attributes(
+      :logstash => {
+        :patterns => {
+          :apache => {
+            :HTTP_ERROR_DATE => '%{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{YEAR}',
+            :APACHE_LOG_LEVEL => '[A-Za-z][A-Za-z]+',
+            :ERRORAPACHELOG => '^\[%{HTTP_ERROR_DATE:timestamp}\] \[%{APACHE_LOG_LEVEL:level}\](?: \[client %{IPORHOST:clientip}\])?',
+          },
+          :mywebapp => {
+            :MYWEBAPP_LOG => '\[mywebapp\]',
+          },
+        },
+        [...]
+      }
+    )
+
+This will generate the following files:
+
+/opt/logstash/server/etc/patterns/apache
+
+    APACHE_LOG_LEVEL [A-Za-z][A-Za-z]+
+    ERRORAPACHELOG ^\[%{HTTP_ERROR_DATE:timestamp}\] \[%{APACHE_LOG_LEVEL:level}\](?: \[client %{IPORHOST:clientip}\])?
+    HTTP_ERROR_DATE %{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{YEAR}
+
+/opt/logstash/server/etc/patterns/mywebapp
+
+    MYWEBAPP_LOG \[mywebapp\]
+
+This patterns will be included by default in the grok and multiline filters.
 
 
 # BIG WARNING

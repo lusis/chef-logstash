@@ -5,6 +5,12 @@
 #
 include_recipe "logstash::default"
 
+if node['logstash']['agent']['patterns_dir'][0] == '/'
+  patterns_dir = node['logstash']['agent']['patterns_dir']
+else
+  patterns_dir = node['logstash']['basedir'] + '/' + node['logstash']['agent']['patterns_dir']
+end
+
 # check if running chef-solo.  If not, detect the logstash server/ip by role.  If I can't do that, fall back to using ['logstash']['agent']['server_ipaddress']
 if Chef::Config[:solo]
   logstash_server_ip = node['logstash']['agent']['server_ipaddress']
@@ -44,11 +50,23 @@ directory "#{node['logstash']['basedir']}/agent/etc/conf.d" do
   group node['logstash']['group']
 end
 
-directory "#{node['logstash']['basedir']}/agent/etc/patterns" do
+directory patterns_dir do
   action :create
   mode "0755"
   owner node['logstash']['user']
   group node['logstash']['group']
+end
+
+node['logstash']['patterns'].each do |file, hash|
+  template_name = patterns_dir + '/' + file
+  template template_name do
+    source 'patterns.erb'
+    owner node['logstash']['user']
+    group node['logstash']['group']
+    variables( :patterns => hash )
+    mode '0644'
+    notifies :restart, 'service[logstash_server]'
+  end
 end
 
 if platform?  "debian", "ubuntu"
@@ -111,7 +129,9 @@ template "#{node['logstash']['basedir']}/agent/etc/shipper.conf" do
   owner node['logstash']['user']
   group node['logstash']['group']
   mode "0644"
-  variables(:logstash_server_ip => logstash_server_ip)
+  variables(
+            :logstash_server_ip => logstash_server_ip,
+            :patterns_dir => patterns_dir)
   notifies :restart, "service[logstash_agent]"
 end
 

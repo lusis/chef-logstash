@@ -14,6 +14,12 @@ include_recipe "logrotate"
 
 include_recipe "rabbitmq" if node['logstash']['server']['install_rabbitmq']
 
+if node['logstash']['server']['patterns_dir'][0] == '/'
+  patterns_dir = node['logstash']['server']['patterns_dir']
+else
+  patterns_dir = node['logstash']['basedir'] + '/' + node['logstash']['server']['patterns_dir']
+end
+
 if Chef::Config[:solo]
   es_server_ip = node['logstash']['elasticsearch_ip']
   graphite_server_ip = node['logstash']['graphite_ip']
@@ -42,7 +48,7 @@ directory "#{node['logstash']['basedir']}/server" do
   group node['logstash']['group']
 end
 
-%w{bin etc lib log tmp patterns  }.each do |ldir|
+%w{bin etc lib log tmp }.each do |ldir|
   directory "#{node['logstash']['basedir']}/server/#{ldir}" do
     action :create
     mode "0755"
@@ -86,6 +92,25 @@ directory "#{node['logstash']['basedir']}/server/etc/conf.d" do
   group node['logstash']['group']
 end
 
+directory patterns_dir do
+  action :create
+  mode "0755"
+  owner node['logstash']['user']
+  group node['logstash']['group']
+end
+
+node['logstash']['patterns'].each do |file, hash|
+  template_name = patterns_dir + '/' + file
+  template template_name do
+    source 'patterns.erb'
+    owner node['logstash']['user']
+    group node['logstash']['group']
+    variables(:patterns => hash)
+    mode '0644'
+    notifies :restart, 'service[logstash_server]'
+  end
+end
+
 if platform?  "debian", "ubuntu"
   if node["platform_version"] == "12.04"
     template "/etc/init/logstash_server.conf" do
@@ -125,7 +150,8 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
   variables(:graphite_server_ip => graphite_server_ip,
             :es_server_ip => es_server_ip,
             :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
-            :es_cluster => node['logstash']['elasticsearch_cluster'])
+            :es_cluster => node['logstash']['elasticsearch_cluster'],
+            :patterns_dir => patterns_dir)
   notifies :restart, "service[logstash_server]"
   action :create
 end
