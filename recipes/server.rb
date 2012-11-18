@@ -55,10 +55,6 @@ end
     owner node['logstash']['user']
     group node['logstash']['group']
   end
-
-  link "/var/lib/logstash/#{ldir}" do
-    to "#{node['logstash']['basedir']}/server/#{ldir}"
-  end
 end
 
 # installation
