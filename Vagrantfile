@@ -1,3 +1,5 @@
+require 'berkshelf/vagrant'
+
 Vagrant::Config.run do |config|
 
   config.vm.define :lucid32 do |dist_config|
