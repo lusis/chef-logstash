@@ -164,7 +164,7 @@ directory node['logstash']['log_dir'] do
   recursive true
 end
 
-logrotate_app "logstash" do
+logrotate_app "logstash_server" do
   path "#{node['logstash']['log_dir']}/*.log"
   frequency "daily"
   rotate "30"
