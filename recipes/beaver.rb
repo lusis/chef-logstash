@@ -6,8 +6,32 @@
 include_recipe "logstash::default"
 include_recipe "python::default"
 
+if platform?("ubuntu") && node['platform_version'].to_f == 10.04
+  apt_repository "lucid-zeromq-ppa" do
+    uri "http://ppa.launchpad.net/chris-lea/zeromq/ubuntu"
+    distribution "lucid"
+    components ["main"]
+    keyserver "keyserver.ubuntu.com"
+    key "C7917B12"
+    action :add
+    notifies :run, "execute[apt-get update]", :immediately
+  end
+
+  apt_repository "lucid-libpgm-ppa" do
+    uri "http://ppa.launchpad.net/chris-lea/libpgm/ubuntu"
+    distribution "lucid"
+    components ["main"]
+    keyserver "keyserver.ubuntu.com"
+    key "C7917B12"
+    action :add
+    notifies :run, "execute[apt-get update]", :immediately
+  end
+  package 'git-core'
+else
+  package 'git'
+end
+
 package 'libzmq-dev'
-package 'git'
 
 basedir = node['logstash']['basedir'] + '/beaver'
 
