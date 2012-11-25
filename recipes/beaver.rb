@@ -6,31 +6,34 @@
 include_recipe "logstash::default"
 include_recipe "python::default"
 
-if platform?("ubuntu") && node['platform_version'].to_f == 10.04
-  apt_repository "lucid-zeromq-ppa" do
-    uri "http://ppa.launchpad.net/chris-lea/zeromq/ubuntu"
-    distribution "lucid"
-    components ["main"]
-    keyserver "keyserver.ubuntu.com"
-    key "C7917B12"
-    action :add
-    notifies :run, "execute[apt-get update]", :immediately
+git_package = 'git'
+
+if platform?("ubuntu") 
+  if node['platform_version'].to_f <= 11.04
+    apt_repository "lucid-zeromq-ppa" do
+      uri "http://ppa.launchpad.net/chris-lea/zeromq/ubuntu"
+      distribution "lucid"
+      components ["main"]
+      keyserver "keyserver.ubuntu.com"
+      key "C7917B12"
+      action :add
+    end
+    apt_repository "lucid-libpgm-ppa" do
+      uri "http://ppa.launchpad.net/chris-lea/libpgm/ubuntu"
+      distribution "lucid"
+      components ["main"]
+      keyserver "keyserver.ubuntu.com"
+      key "C7917B12"
+      action :add
+    end
   end
 
-  apt_repository "lucid-libpgm-ppa" do
-    uri "http://ppa.launchpad.net/chris-lea/libpgm/ubuntu"
-    distribution "lucid"
-    components ["main"]
-    keyserver "keyserver.ubuntu.com"
-    key "C7917B12"
-    action :add
-    notifies :run, "execute[apt-get update]", :immediately
+  if node['platform_version'].to_f <= 10.04
+    git_package = 'git-core'
   end
-  package 'git-core'
-else
-  package 'git'
 end
 
+package git_package
 package 'libzmq-dev'
 
 basedir = node['logstash']['basedir'] + '/beaver'
