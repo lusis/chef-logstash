@@ -25,6 +25,7 @@ if platform?("ubuntu")
       keyserver "keyserver.ubuntu.com"
       key "C7917B12"
       action :add
+      notifies :run, resources(:execute => "apt-get update"), :immediately
     end
   end
 
