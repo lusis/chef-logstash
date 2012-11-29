@@ -6,7 +6,7 @@ NameVirtualHost *:<%= node['logstash']['kibana']['http_port'] %>
   <% if node['logstash']['kibana']['auth']["enabled"] %>
     AuthType Basic
     AuthName "Restricted Files"
-    AuthUserFile <%= "#{node['logstash']['basedir']}/kibana/#{kibana_version}/htpasswd" %>
+    AuthUserFile <%= "#{node['logstash']['basedir']}/kibana/#{node['logstash']['kibana']['sha']}/htpasswd" %>
     Require user <%= node['logstash']['kibana']['auth']['user'] %>
   <% end %>
 
