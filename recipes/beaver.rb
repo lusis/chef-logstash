@@ -134,6 +134,7 @@ node['logstash']['beaver']['outputs'].each do |outs|
         env << "RABBITMQ_QUEUE=#{hash['vhost']}" if hash.has_key?('vhost') # ??
         env << "RABBITMQ_KEY=#{hash['key']}" if hash.has_key?('key')
         env << "RABBITMQ_EXCHANGE=#{hash['name']}" if hash.has_key?('name')
+        env << "RABBITMQ_EXCHANGE_DURABLE=#{hash['durable']}" if hash.has_key?('durable')
       when "redis" then
         outputs << "redis"
         host = hash['host'] || logstash_server_ip || 'localhost'
@@ -159,7 +160,7 @@ if outputs.length > 1
   log("multiple outpus detected, will consider only the first: #{output}") { level :warn }
 end
 
-cmd = env.join(' ') + " beaver  -t #{output} -c #{conf_file}"
+cmd = env.join(' ') + " beaver -t #{output} -c #{conf_file}"
 
 template "/etc/init.d/logstash_beaver" do
   mode "0754"
