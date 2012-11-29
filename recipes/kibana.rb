@@ -72,7 +72,7 @@ if node['logstash']['kibana']['auth']['enabled']
   htpasswd_user     = node['logstash']['kibana']['auth']['user']
   htpasswd_password = node['logstash']['kibana']['auth']['password']
 
-  file "htpasswd_path" do
+  file htpasswd_path do
     owner node['logstash']['user']
     group node['logstash']['group']
     mode "0755"
