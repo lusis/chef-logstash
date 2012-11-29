@@ -3,7 +3,7 @@ NameVirtualHost *:<%= node['logstash']['kibana']['http_port'] %>
   ServerName <%= @server_name %>
   DocumentRoot "<%= @docroot %>"
 
-  <% if node['logstash']['kibana']['auth'] %>
+  <% if node['logstash']['kibana']['auth']["enabled"] %>
     AuthType Basic
     AuthName "Restricted Files"
     AuthUserFile <%= "#{node['logstash']['basedir']}/kibana/#{kibana_version}/htpasswd" %>
