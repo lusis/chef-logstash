@@ -70,7 +70,7 @@ end
 if node['logstash']['kibana']['auth']['enabled']
   htpasswd_path     = "#{node['logstash']['basedir']}/kibana/#{kibana_version}/htpasswd"
   htpasswd_user     = node['logstash']['kibana']['auth']['user']
-  htpasswd_password = node['logstash']['kibana']['auth']['pass']
+  htpasswd_password = node['logstash']['kibana']['auth']['password']
   execute "add htpasswd file" do
     command "/usr/bin/htpasswd -b #{htpasswd_path} #{htpasswd_user} #{htpasswd_password}"
   end
