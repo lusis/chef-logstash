@@ -1,10 +1,10 @@
 #
+# Author:: John E. Vincent
+# Copyright 2012, John E. Vincent
+# License: Apache 2.0
 # Cookbook Name:: logstash
 # Recipe:: pyshipper
 #
-# Copyright 2012, enStratus Networks, Inc
-#
-# All rights reserved - Do Not Redistribute
 #
 include_recipe "build-essential"
 include_recipe "logstash::default"
