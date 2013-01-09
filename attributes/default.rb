@@ -4,6 +4,7 @@ default['logstash']['group'] = 'logstash'
 default['logstash']['join_groups'] = []
 default['logstash']['log_dir'] = '/var/log/logstash'
 default['logstash']['pid_dir'] = '/var/run/logstash'
+default['logstash']['create_account'] = true
 
 # roles/flags for various search/discovery
 default['logstash']['graphite_role'] = 'graphite_server'

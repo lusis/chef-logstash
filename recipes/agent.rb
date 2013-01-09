@@ -70,7 +70,7 @@ node['logstash']['patterns'].each do |file, hash|
 end
 
 if platform?  "debian", "ubuntu"
-  if node["platform_version"] == "12.04"
+  if ["12.04", "12.10"].include? node["platform_version"]
     template "/etc/init/logstash_agent.conf" do
       mode "0644"
       source "logstash_agent.conf.erb"
