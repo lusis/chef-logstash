@@ -107,52 +107,54 @@ node['logstash']['beaver']['inputs'].each do |ins|
     end
   end
 end
-template conf_file do
-  source 'beaver.conf.erb'
-  mode 0640
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  variables(
-            :files => files
-  )
-  notifies :restart, "service[logstash_beaver]"
-end
 
 # outputs
 outputs = []
-env = []
+config = []
 node['logstash']['beaver']['outputs'].each do |outs|
   outs.each do |name, hash|
     case name
       when "rabbitmq", "amq" then
         outputs << "rabbitmq"
         host = hash['host'] || logstash_server_ip || 'localhost'
-        env << "RABBITMQ_HOST=#{host}"
-        env << "RABBITMQ_PORT=#{hash['port']}" if hash.has_key?('port')
-        env << "RABBITMQ_USERNAME=#{hash['user']}" if hash.has_key?('user')
-        env << "RABBITMQ_PASSWORD=#{hash['pass']}" if hash.has_key?('pass')
-        env << "RABBITMQ_QUEUE=#{hash['vhost']}" if hash.has_key?('vhost') # ??
-        env << "RABBITMQ_KEY=#{hash['key']}" if hash.has_key?('key')
-        env << "RABBITMQ_EXCHANGE=#{hash['name']}" if hash.has_key?('name')
-        env << "RABBITMQ_EXCHANGE_DURABLE=#{hash['durable']}" if hash.has_key?('durable')
+        config << "rabbitmq_host: #{host}"
+        config << "rabbitmq_port: #{hash['port']}" if hash.has_key?('port')
+        config << "rabbitmq_username: #{hash['user']}" if hash.has_key?('user')
+        config << "rabbitmq_password: #{hash['pass']}" if hash.has_key?('pass')
+        config << "rabbitmq_queue: #{hash['vhost']}" if hash.has_key?('vhost') # ??
+        config << "rabbitmq_key: #{hash['key']}" if hash.has_key?('key')
+        config << "rabbitmq_exchange: #{hash['name']}" if hash.has_key?('name')
+        config << "rabbitmq_exchange_durable: #{hash['durable']}" if hash.has_key?('durable')
       when "redis" then
         outputs << "redis"
         host = hash['host'] || logstash_server_ip || 'localhost'
         port = hash['port'] || '6379'
         db = hash['db'] || '0'
-        env << "REDIS_URL=redis://#{host}:#{port}/#{db}"
-        env << "REDIS_NAMESPACE=#{hash['key']}" if hash.has_key?('key')
+        config << "redis_url: redis://#{host}:#{port}/#{db}"
+        config << "redis_namespace: #{hash['key']}" if hash.has_key?('key')
       when "stdout" then
         outputs << "stdout"
       when "zmq", "zeromq" then
         outputs << "zmq"
         host = hash['host'] || logstash_server_ip || 'localhost'
         port = hash['port'] || '2120'
-        env << "ZEROMQ_ADDRESS=tcp://#{host}:#{port}"
+        config << "zeromq_address: tcp://#{host}:#{port}"
       else
         log("output type not supported: #{name}") { level :warn }
     end
   end
+end
+
+template conf_file do
+  source 'beaver.conf.erb'
+  mode 0640
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  variables(
+    :files => files,
+    :config => config.join("\n")
+  )
+  notifies :restart, "service[logstash_beaver]"
 end
 
 output = outputs[0]
@@ -160,7 +162,7 @@ if outputs.length > 1
   log("multiple outpus detected, will consider only the first: #{output}") { level :warn }
 end
 
-cmd = env.join(' ') + " beaver -t #{output} -c #{conf_file}"
+cmd = "beaver -t #{output} -c #{conf_file}"
 
 template "/etc/init.d/logstash_beaver" do
   mode "0754"
@@ -190,4 +192,3 @@ template '/etc/logrotate.d/logstash_beaver' do
             :group => node['logstash']['group']
             )
 end
-
