@@ -1,5 +1,6 @@
 [beaver]
-<%= @config -%>
+<%= @config %>
+
 <% @files.each do |file| -%>
 <%   file['path'].each do |path| -%>
 [<%= path %>]
