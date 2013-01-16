@@ -24,8 +24,8 @@ if Chef::Config[:solo]
   es_server_ip = node['logstash']['elasticsearch_ip']
   graphite_server_ip = node['logstash']['graphite_ip']
 else
-  es_results = search(:node, "roles:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
-  graphite_results = search(:node, "roles:#{node['logstash']['graphite_role']} AND chef_environment:#{node.chef_environment}")
+  es_results = search(:node, node['logstash']['elasticsearch_query'])
+  graphite_results = search(:node, node['logstash']['graphite_query'])
 
   unless es_results.empty?
     es_server_ip = es_results[0]['ipaddress']
