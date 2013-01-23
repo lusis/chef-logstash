@@ -17,18 +17,27 @@ class Erubis::RubyEvaluator::LogstashConf
     return k
   end
 
-  def self.key_value_to_str(k, v)
+  def self.value_to_str(v)
     case v.class.to_s
-    when "String", "Fixnum", "Float"
-      return key_to_str(k) + " => '" + v + "'"
-    when "Array", "Regex"
-      return key_to_str(k) + " => " + v.inspect
+    when "String", "Symbol", "Fixnum", "Float"
+      "'#{v}'"
+    when "Array"
+      "[#{v.map{|e| value_to_str e}.join(", ")}]"
     when "Hash", "Mash"
-      return key_to_str(k) + " => " + v.to_a.flatten.inspect
-    when "TrueClass", "FalseClass", "Fixnum"
-      return key_to_str(k) + " => " + v.to_s
+      value_to_str(v.to_a.flatten)
+    when "TrueClass", "FalseClass"
+      v.to_s
+    else
+      v.inspect
     end
-    return key_to_str(k)
+  end
+
+  def self.key_value_to_str(k, v)
+    unless v.nil?
+      key_to_str(k) + " => " + value_to_str(v)
+    else
+      key_to_str(k)
+    end
   end
 
   public
@@ -54,6 +63,6 @@ class Erubis::RubyEvaluator::LogstashConf
     end
     return result.join("\n")
   end
-  
+
 end
-  
+
