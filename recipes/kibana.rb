@@ -67,4 +67,19 @@ template "#{node['logstash']['basedir']}/kibana/current/config.php" do
   variables(:es_server_ip => es_server_ip)
 end
 
+if node['logstash']['kibana']['auth']['enabled']
+  htpasswd_path     = "#{node['logstash']['basedir']}/kibana/#{kibana_version}/htpasswd"
+  htpasswd_user     = node['logstash']['kibana']['auth']['user']
+  htpasswd_password = node['logstash']['kibana']['auth']['password']
+
+  file htpasswd_path do
+    owner node['logstash']['user']
+    group node['logstash']['group']
+    mode "0755"
+  end
+
+  execute "add htpasswd file" do
+    command "/usr/bin/htpasswd -b #{htpasswd_path} #{htpasswd_user} #{htpasswd_password}"
+  end
+end
 service "apache2"
