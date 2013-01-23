@@ -72,7 +72,7 @@ beaver_pid() {
 
 is_up() {
     PID="$(beaver_pid)"
-    [ x"${PID}" != x ] && ps -p "${PID}" -o comm h 2> /dev/null | grep -qFw "${BEAVER_NAME}"
+    [ x"${PID}" != x ] && ps -p "${PID}" -o comm,args h 2> /dev/null | grep -qFw "${BEAVER_NAME}"
 }
 
 do_kill() {
