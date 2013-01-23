@@ -1,4 +1,3 @@
-
 require 'rubygems'
 
 class Erubis::RubyEvaluator::LogstashConf
@@ -19,13 +18,13 @@ class Erubis::RubyEvaluator::LogstashConf
 
   def self.key_value_to_str(k, v)
     case v.class.to_s
-    when "String", "Fixnum", "Float"
+    when "String"
       return key_to_str(k) + " => '" + v + "'"
     when "Array", "Regex"
       return key_to_str(k) + " => " + v.inspect
     when "Hash", "Mash"
       return key_to_str(k) + " => " + v.to_a.flatten.inspect
-    when "TrueClass", "FalseClass", "Fixnum"
+    when "TrueClass", "FalseClass", "Fixnum", "Float"
       return key_to_str(k) + " => " + v.to_s
     end
     return key_to_str(k)
