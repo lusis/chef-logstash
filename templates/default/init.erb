@@ -8,12 +8,12 @@
 
 
 PIDDIR="<%= node['logstash']['pid_dir'] %>"
-export PIDFILE="$PIDDIR/logstash.pid"
-export LS_HOME="<%= @basedir %>"
+export PIDFILE="$PIDDIR/<%= @name %>.pid"
+export LS_HOME="<%= "#{node['logstash']['basedir']}/#{@name}" %>"
 export LS_CONFIG="$LS_HOME/etc/<%= @config_file %>"
 LS_USER="<%= node['logstash']['user'] %>"
 LOGDIR="<%= node['logstash']['log_dir'] %>"
-LS_LOG="$LOGDIR/logstash.log"
+LS_LOG="$LOGDIR/<%= @name %>.log"
 BIN_SCRIPT="/usr/bin/env java -jar $LS_HOME/lib/logstash.jar agent -f $LS_CONFIG > $LS_LOG 2>&1 &  echo \$! > $PIDFILE"
 
 if [ -f /etc/init.d/functions ] ; then

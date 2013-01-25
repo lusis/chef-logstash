@@ -91,7 +91,7 @@ elsif platform_family? "rhel", "fedora"
     mode "0774"
     variables(
       :config_file => "shipper.conf",
-      :basedir => "#{node['logstash']['basedir']}/agent"
+      :name => 'agent'
     )
   end
 
