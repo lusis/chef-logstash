@@ -15,6 +15,61 @@ else
   end
 end
 
+
+
+
+#install new kibana version only if is true
+if node['logstash']['kibana']['ruby']  == true
+
+ directory "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}" do
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  recursive true
+ end
+
+ git "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}" do
+   repository node['logstash']['kibana']['repo']
+   branch "kibana-ruby"
+   action :sync
+   user node['logstash']['user']
+   group node['logstash']['group']
+ end
+
+ template "/etc/init.d/kibana" do
+   source "kibana.init.erb"
+   owner 'root'
+   mode 0755
+ end
+
+ template "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}/KibanaConfig.rb" do
+   source "kibana-config.rb.erb"
+   owner 'root'
+   mode 075
+ end
+
+
+ script "bundle-install" do
+  interpreter "bash"
+  user "root"
+  cwd "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}"
+  code <<-EOH
+  bundle install
+  EOH
+ end
+
+
+ service "kibana" do
+  supports :status => true, :restart => true
+  action [:enable, :start]
+ end
+
+else
+
+
+
+
+
+
 kibana_version = node['logstash']['kibana']['sha']
 
 apache_module "php5" do
@@ -83,3 +138,5 @@ if node['logstash']['kibana']['auth']['enabled']
   end
 end
 service "apache2"
+
+end
