@@ -2,7 +2,7 @@ include_recipe "apache2"
 include_recipe "apache2::mod_php5"
 include_recipe "php::module_curl"
 include_recipe "git"
-
+chef_gem "bundler"
 
 if Chef::Config[:solo]
   es_server_ip = node['logstash']['elasticsearch_ip']
