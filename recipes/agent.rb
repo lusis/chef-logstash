@@ -69,7 +69,7 @@ node['logstash']['patterns'].each do |file, hash|
   end
 end
 
-if platform?  "debian", "ubuntu"
+if platform_family? "debian"
   if ["12.04", "12.10"].include? node["platform_version"]
     template "/etc/init/logstash_agent.conf" do
       mode "0644"
@@ -83,7 +83,7 @@ if platform?  "debian", "ubuntu"
   else
     runit_service "logstash_agent"
   end
-elsif platform? "redhat", "centos", "amazon", "fedora", "scientific"
+elsif platform_family? "rhel", "fedora"
   template "/etc/init.d/logstash_agent" do
     source "init.erb"
     owner "root"
@@ -108,6 +108,7 @@ if node['logstash']['agent']['install_method'] == "jar"
     mode "0755"
     source node['logstash']['agent']['source_url']
     checksum  node['logstash']['agent']['checksum']
+    action :create_if_missing
   end
 
   link "#{node['logstash']['basedir']}/agent/lib/logstash.jar" do
