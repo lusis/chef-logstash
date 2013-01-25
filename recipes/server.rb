@@ -107,7 +107,7 @@ node['logstash']['patterns'].each do |file, hash|
   end
 end
 
-if platform?  "debian", "ubuntu"
+if platform_family? "debian"
   if node["platform_version"] == "12.04"
     template "/etc/init/logstash_server.conf" do
       mode "0644"
@@ -121,14 +121,14 @@ if platform?  "debian", "ubuntu"
   else
     runit_service "logstash_server"
   end
-elsif platform? "redhat", "centos", "amazon", "fedora", "scientific"
+elsif platform_family? "rhel","fedora"
   template "/etc/init.d/logstash_server" do
     source "init.erb"
     owner "root"
     group "root"
     mode "0774"
     variables(:config_file => "logstash.conf",
-              :basedir => "#{node['logstash']['basedir']}/server")
+              :name => 'server')
   end
 
   service "logstash_server" do
