@@ -44,7 +44,7 @@ if node['logstash']['kibana']['ruby']  == true
  template "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}/KibanaConfig.rb" do
    source "kibana-config.rb.erb"
    owner 'root'
-   mode 075
+   mode 0755
  end
 
 
