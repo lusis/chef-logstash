@@ -164,21 +164,48 @@ end
 
 cmd = "beaver -t #{output} -c #{conf_file}"
 
-template "/etc/init.d/logstash_beaver" do
-  mode "0754"
-  source "init-beaver.erb"
-  variables(
-            :cmd => cmd,
-            :pid_file => pid_file,
-            :user => node['logstash']['user'],
-            :log => log_file,
-            :platform => node['platform']
-            )
-  notifies :restart, "service[logstash_beaver]"
-end
-service "logstash_beaver" do
-  supports :restart => true, :reload => false, :status => true
-  action [:enable, :start]
+if platform?("ubuntu") && node['platform_version'].to_f >= 10.04
+  service "logstash_beaver" do
+    supports :restart => true, :reload => false
+    action [:enable, :start]
+    provider Chef::Provider::Service::Upstart
+  end
+  template "/etc/init/logstash_beaver.conf" do
+    mode "0755"
+    source "upstart-beaver.erb"
+    variables(
+              :cmd => cmd,
+              :pid_file => pid_file,
+              :user => node['logstash']['user'],
+              :log => log_file,
+              :platform => node['platform']
+              )
+    notifies :restart, "service[logstash_beaver]"
+  end
+  file "/etc/init.d/logstash_beaver" do
+    action :delete
+    ignore_failure true
+    only_if do
+      File.exists?("/etc/init.d/logstash_beaver")
+    end
+  end
+else
+  service "logstash_beaver" do
+    supports :restart => true, :reload => false, :status => true
+    action [:enable, :start]
+  end
+  template "/etc/init.d/logstash_beaver" do
+    mode "0755"
+    source "init-beaver.erb"
+    variables(
+              :cmd => cmd,
+              :pid_file => pid_file,
+              :user => node['logstash']['user'],
+              :log => log_file,
+              :platform => node['platform']
+              )
+    notifies :restart, "service[logstash_beaver]"
+  end
 end
 
 template '/etc/logrotate.d/logstash_beaver' do
