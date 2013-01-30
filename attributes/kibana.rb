@@ -9,9 +9,10 @@ default['logstash']['kibana']['auth']['user'] = 'admin'
 default['logstash']['kibana']['auth']['password'] = 'unauthorized'
 default['apache']['default_site_enabled'] = false
 
-default['logstash']['kibana']['ruby'] = true
+default['logstash']['kibana']['language'] = "ruby" 
+
 default['logstash']['kibana']['ruby_version']['base_dir'] = "/opt/logstash"
 default['logstash']['kibana']['ruby_version']['version'] = "ruby"
-default['logstash']['kibana']['ruby_version']['port'] = 5601
+default['logstash']['kibana']['ruby_version']['port'] = 80
 default['logstash']['kibana']['ruby_version']['home'] = "#{default['logstash']['kibana']['ruby_version']['base_dir']}/kibana-#{default['logstash']['kibana']['ruby_version']['version']}"
 
