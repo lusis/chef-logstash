@@ -8,9 +8,9 @@ respawn
 respawn limit 5 30
 
 setuid <%= @user %>
+setgid <%= @group %>
 
 console output
-pid file <%= @pid_file %>
 
 exec <%= @cmd %> >> <%= @log %> 2>&1
 
