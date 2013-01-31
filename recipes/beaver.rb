@@ -167,7 +167,7 @@ cmd = "beaver -t #{output} -c #{conf_file}"
 if platform?("ubuntu") && node['platform_version'].to_f >= 10.04
   template "/etc/init/logstash_beaver.conf" do
     mode "0755"
-    source "upstart-beaver.erb"
+    source "logstash_beaver.conf.erb"
     variables(
               :cmd => cmd,
               :pid_file => pid_file,
