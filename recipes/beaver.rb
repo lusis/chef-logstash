@@ -165,11 +165,6 @@ end
 cmd = "beaver -t #{output} -c #{conf_file}"
 
 if platform?("ubuntu") && node['platform_version'].to_f >= 10.04
-  service "logstash_beaver" do
-    supports :restart => true, :reload => false
-    action [:enable, :start]
-    provider Chef::Provider::Service::Upstart
-  end
   template "/etc/init/logstash_beaver.conf" do
     mode "0755"
     source "upstart-beaver.erb"
@@ -181,6 +176,11 @@ if platform?("ubuntu") && node['platform_version'].to_f >= 10.04
               :platform => node['platform']
               )
     notifies :restart, "service[logstash_beaver]"
+  end
+  service "logstash_beaver" do
+    supports :restart => true, :reload => false
+    action [:enable, :start]
+    provider Chef::Provider::Service::Upstart
   end
   file "/etc/init.d/logstash_beaver" do
     action :delete
