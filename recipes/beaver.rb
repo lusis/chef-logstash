@@ -178,7 +178,6 @@ if platform?("ubuntu") && node['platform_version'].to_f >= 10.04
               :group => node['logstash']['group'],
               :user => node['logstash']['user'],
               :log => log_file,
-              :platform => node['platform'],
               :supports_setuid => supports_setuid
               )
     notifies :restart, "service[logstash_beaver]"
