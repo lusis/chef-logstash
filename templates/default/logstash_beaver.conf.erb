@@ -7,8 +7,10 @@ stop on runlevel [!2345]
 respawn
 respawn limit 5 30
 
+<% if platform?("ubuntu") && node['platform_version'].to_f >= 12.04 %>
 setuid <%= @user %>
 setgid <%= @group %>
+<% end %>
 
 console output
 
