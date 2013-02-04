@@ -164,7 +164,12 @@ end
 
 cmd = "beaver -t #{output} -c #{conf_file}"
 
+supports_setuid = false
+
 if platform?("ubuntu") && node['platform_version'].to_f >= 10.04
+  if node['platform_version'].to_f >= 12.04
+    supports_setuid = true
+  end
   template "/etc/init/logstash_beaver.conf" do
     mode "0644"
     source "logstash_beaver.conf.erb"
@@ -173,7 +178,8 @@ if platform?("ubuntu") && node['platform_version'].to_f >= 10.04
               :group => node['logstash']['group'],
               :user => node['logstash']['user'],
               :log => log_file,
-              :platform => node['platform']
+              :platform => node['platform'],
+              :supports_setuid => supports_setuid
               )
     notifies :restart, "service[logstash_beaver]"
   end
