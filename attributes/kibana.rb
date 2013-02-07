@@ -9,6 +9,10 @@ default['logstash']['kibana']['auth']['user'] = 'admin'
 default['logstash']['kibana']['auth']['password'] = 'unauthorized'
 default['apache']['default_site_enabled'] = false
 
+#Smart_index_pattern = 'logstash-%Y.%m.%d'
+default['logstash']['kibana']['smart_index_pattern'] = 'logstash-%Y.%m.%d' 
+
+
 default['logstash']['kibana']['language'] = "ruby" 
 
 default['logstash']['kibana']['ruby_version']['base_dir'] = "/opt/logstash"
