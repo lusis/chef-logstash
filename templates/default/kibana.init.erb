@@ -7,19 +7,26 @@
 # process_name: kibana
 
 
-HOME=<%= node['logstash']['kibana']['ruby_version']['home'] %>
-PIDFILE='/var/run/kibana.pid'
-CHECK_PID_RUNNING=$(ps -ef | grep ruby | grep kibana.rb | awk '{print $2 }')
-cd $HOME
+KIBANA_HOME=<%= node['logstash']['kibana']['ruby_version']['home'] %>
+PIDFILE='/var/run/kibana/kibana.pid'
+mkdir /var/run/kibana
+chown -R kibana:kibana $PIDFILE
+
+check_running()
+{
+if [ -f $PIDFILE ] ; then
+ ps -ef | grep "$(cat $PIDFILE)"| grep -v grep
+fi
+}
 
 start()
 {
 
 if [ -f $PIDFILE ]; then
    echo -e "\033[31;1mPID file found in $PIDFILE,Kibana is already running?\033[0m"
-   pid_running=$(ps -ef | grep ruby | grep kibana.rb | awk '{print $2 }')
+   pid_running=check_running
 
- if [ ! -z "$pid_running" ] ; then
+ if [ $pid_running -eq 0 ] ; then
   echo -e "\033[31;1m Kibana is already (Pid : $pid_running ). Doing nothing\033[0m"
   return 1
  fi
@@ -28,32 +35,32 @@ else
   echo -e "\033[1mStarting Kibana...\033[0m"
 fi
 
-ruby $HOME/kibana.rb > /dev/null  2>&1   & 
-ps -ef | grep ruby | grep kibana.rb | awk '{print $2 }' > $PIDFILE
+su -l kibana -c "cd $KIBANA_HOME && rackup -d -P $PIDFILE"
 
-return $?   
-                    }
+}
 
 
 
 stop()
 {
 
+pid_running=check_running
+
 if [ -f "$PIDFILE" ]; then
    echo -e "\033[31;1mPID file found, stopping Kibana...\033[0m"
 
- if [ ! "$CHECK_PID_RUNNING" ]; then
+ if [ $pid_running -eq 1 ] ; then
     echo -e "\033[31;1mPID file found but no matching process running.. \033[0m"
     echo -e "\033[32;1mRemove PID file.. \033[0m"
     rm $PIDFILE
    exit 0
 fi
  echo -e "\033[31;1mStopping Kibana...\033[0m"
- kill $CHECK_PID_RUNNING  && rm $PIDFILE
+ rm $PIDFILE
 fi
 
 
-if [[ ! -f "$PIDFILE"  && ! "$CHECK_PID_RUNNING"  ]]; then
+if [[ ! -f "$PIDFILE"  && ! $pid_running -eq 0 ]]; then
 echo -e "\033[31;1mKibana is stopped...\033[0m"
 fi
 
@@ -63,6 +70,7 @@ fi
 
 
 restart()
+
 {
 stop
 start
