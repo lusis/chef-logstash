@@ -19,6 +19,8 @@ end
 case node['logstash']['kibana']['language'].downcase
 
  when "ruby" 
+  
+  package "ruby"
   chef_gem "bundler"
   
   directory "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}" do
