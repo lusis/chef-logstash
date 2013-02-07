@@ -11,59 +11,61 @@ else
   end
 end
 
-
-
-
 #install new kibana version only if is true
-
 case node['logstash']['kibana']['language'].downcase
+when "ruby"
 
- when "ruby" 
+  user "kibana"
   
-  package "ruby"
-  chef_gem "bundler"
+  node.set['rvm']['version'] = '1.17.10'
+  node.set['rvm']['user_installs'] = [ { :user => 'kibana', :global_gems => [ :name => 'bundler' ] } ]
+  include_recipe "rvm::user"
+  #  node.set['rvm']['default_ruby'] = "ruby-1.9.3-p327"
   
   directory "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}" do
-   owner node['logstash']['user']
-   group node['logstash']['group']
-   recursive true
+    owner 'kibana'
+    group 'kibana'
+    recursive true
   end
 
+  # for some annoying reason Gemfile.lock is shipped w/ kibana
+  file "gemfile_lock" do
+    path  "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}/Gemfile.lock"
+    action :nothing
+  end
+  
   git "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}" do
-   repository node['logstash']['kibana']['repo']
-   branch "kibana-ruby"
-   action :sync
-   user node['logstash']['user']
-   group node['logstash']['group']
+    repository node['logstash']['kibana']['repo']
+    branch "kibana-ruby"
+    action :sync
+    user 'kibana'
+    group 'kibana'
+    notifies :delete, "file[gemfile_lock]"
   end
 
   template "/etc/init.d/kibana" do
-   source "kibana.init.erb"
-   owner 'root'
-   mode 0755
+    source "kibana.init.erb"
+    owner 'root'
+    mode 0755
   end
 
   template "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}/KibanaConfig.rb" do
    source "kibana-config.rb.erb"
-   owner 'root'
+   owner 'kibana'
    mode 0755
   end
 
-  script "bundle-install" do
-   interpreter "bash"
-   user "root"
-   cwd "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}"
-   code <<-EOH
-   bundle install
-   EOH
+  rvm_shell "bundle install" do
+    user "kibana"
+    cwd "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}"
+    code "bundle install"
+    not_if { ::File.exists? "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}/Gemfile.lock" }
   end
-
+  
   service "kibana" do
    supports :status => true, :restart => true
    action [:enable, :start]
   end
-
-
 
  when "php"
  
