@@ -3,6 +3,7 @@ include_recipe "apache2::mod_php5"
 include_recipe "php::module_curl"
 include_recipe "git"
 
+include_recipe "logstash::default"
 
 if Chef::Config[:solo]
   es_server_ip = node['logstash']['elasticsearch_ip']
