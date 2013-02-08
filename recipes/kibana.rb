@@ -11,10 +11,11 @@ else
   unless es_server_results.empty?
     es_server_ip = es_server_results[0]['ipaddress']
   else
-    es_server_ip = node['logstash']['elasticsearch_ip']
+    es_server_ip = node['logstash']['elasticsearch_ip'].empty? ? '127.0.0.1' : node['logstash']['elasticsearch_ip']
   end
 end
 
+es_server_port = node['logstash']['elasticsearch_port'].empty? ? '9200' : node['logstash']['elasticsearch_port']
 
 #install new kibana version only if is true
 case node['logstash']['kibana']['language'].downcase
@@ -75,7 +76,11 @@ when "ruby"
               :pid_dir => "/var/run/kibana",
               :log_dir => "/var/log/kibana",
               :app_name => "kibana",
-              :port => node['logstash']['kibana']['http_port'],
+              :kibana_port => node['logstash']['kibana']['http_port'],
+              :smart_index => node['logstash']['kibana']['smart_index_pattern'],
+              :es_ip => es_server_ip,
+              :es_port => es_server_port,
+              :server_name => node['logstash']['kibana']['server_name'],
               :user => 'kibana'
               )
   end
@@ -84,14 +89,8 @@ when "ruby"
     source "kibana-config.rb.erb"
     owner 'kibana'
     mode 0755
-    variables(
-              :es_ip => es_server_ip,
-              :es_port => node['logstash']['elasticsearch_port'],
-              :server_name => node['logstash']['kibana']['server_name'],
-              :smart_index => node['logstash']['kibana']['smart_index_pattern']
-              )
   end
-
+  
   template "#{kibana_home}/kibana-daemon.rb" do
     source "kibana-daemon.rb.erb"
     owner 'kibana'

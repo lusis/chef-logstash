@@ -15,7 +15,13 @@ KIBANA_HOME=<%= @kibana_home %>
 USER=<%= @user %>
 export PID_DIR="<%= @pid_dir %>"
 export LOG_DIR="<%= @log_dir %>"
+export ES_PORT="<%= @es_port %>"
+export ES_IP="<%= @es_ip %>"
+export KIBANA_HOST="<%= @server_name %>"
+export SMART_INDEX="<%= @smart_index %>"
 export KIBANA_APP="<%= @app_name %>"
+export KIBANA_PORT="<%= @kibana_port %>"
+export RACK_ENV="production"
 mkdir -p $PID_DIR $LOG_DIR
 chown -R kibana:kibana $PID_DIR $LOG_DIR
 
