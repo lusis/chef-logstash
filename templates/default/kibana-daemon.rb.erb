@@ -19,11 +19,10 @@ options = {
           :dir_mode => :normal,
           :dir => pid_dir,
           :log_output => log_output,
-          :log_dir => log_dir,
-          :app_name => app_name
+          :log_dir => log_dir
           }
 
-Daemons.run_proc('kibana.rb', options) do
+Daemons.run_proc(app_name, options) do
   Dir.chdir(scriptdir)
   exec "ruby kibana.rb"
 end
