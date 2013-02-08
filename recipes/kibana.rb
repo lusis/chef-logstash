@@ -33,12 +33,25 @@ when "ruby"
     recursive true
   end
 
-  # for some annoying reason Gemfile.lock is shipped w/ kibana
-  file "gemfile_lock" do
-    path  "#{kibana_home}/kibana/Gemfile.lock"
+  # this is a hack to be used until https://github.com/rashidkpc/Kibana/pull/284
+  # is closed
+  file "gemfile" do
+    owner "kibana"
+    group "kibana"
+    content <<-EOF
+    source "http://rubygems.org"
+    gem 'daemons'
+    gemspec
+    EOF
     action :nothing
   end
-
+  
+  # for some annoying reason Gemfile.lock is shipped w/ kibana
+  file "gemfile_lock" do
+    path  "#{node['logstash']['kibana']['basedir']}/#{node['logstash']['kibana']['sha']}/Gemfile.lock"
+    action :nothing
+    notifies :create, "file[gemfile]", :immediately
+  end
   
   git "#{node['logstash']['kibana']['basedir']}/#{node['logstash']['kibana']['sha']}" do
     repository node['logstash']['kibana']['repo']
@@ -46,7 +59,7 @@ when "ruby"
     action :sync
     user 'kibana'
     group 'kibana'
-    notifies :delete, "file[gemfile_lock]"
+    notifies :delete, "file[gemfile_lock]", :immediately
   end
 
   link kibana_home do
@@ -57,7 +70,14 @@ when "ruby"
     source "kibana.init.erb"
     owner 'root'
     mode 0755
-    variables(:kibana_home => kibana_home, :pidfile => "/var/run/kibana/kibana.pid" )
+    variables(
+              :kibana_home => kibana_home,
+              :pid_dir => "/var/run/kibana",
+              :log_dir => "/var/log/kibana",
+              :app_name => "kibana",
+              :port => node['logstash']['kibana']['http_port'],
+              :user => 'kibana'
+              )
   end
 
   template "#{kibana_home}/KibanaConfig.rb" do
@@ -67,10 +87,15 @@ when "ruby"
     variables(
               :es_ip => es_server_ip,
               :es_port => node['logstash']['elasticsearch_port'],
-              :kibana_port => node['logstash']['kibana']['http_port'],
               :server_name => node['logstash']['kibana']['server_name'],
               :smart_index => node['logstash']['kibana']['smart_index_pattern']
               )
+  end
+
+  template "#{kibana_home}/kibana-daemon.rb" do
+    source "kibana-daemon.rb.erb"
+    owner 'kibana'
+    mode 0755
   end
 
   rvm_shell "bundle install" do
@@ -83,7 +108,7 @@ when "ruby"
   service "kibana" do
     supports :status => true, :restart => true
     action [:enable, :start]
-    subscribes :restart, [ "link[#{kibana_home}]", "template[#{kibana_home}/KibanaConfig.rb]" ]  
+    subscribes :restart, [ "link[#{kibana_home}]", "template[#{kibana_home}/KibanaConfig.rb]", "template[#{kibana_home}/kibana-daemon.rb]" ]
   end
 
   
