@@ -26,32 +26,17 @@ when "ruby"
   node.set['rvm']['version'] = '1.17.10'
   node.set['rvm']['user_installs'] = [ { :user => 'kibana', :global_gems => [ :name => 'bundler' ] } ]
   include_recipe "rvm::user"
-  #  node.set['rvm']['default_ruby'] = "ruby-1.9.3-p327"
   
   directory kibana_base do
     owner 'kibana'
     group 'kibana'
     recursive true
   end
-
-  # this is a hack to be used until https://github.com/rashidkpc/Kibana/pull/284
-  # is closed
-  file "gemfile" do
-    owner "kibana"
-    group "kibana"
-    content <<-EOF
-    source "http://rubygems.org"
-    gem 'daemons'
-    gemspec
-    EOF
-    action :nothing
-  end
   
   # for some annoying reason Gemfile.lock is shipped w/ kibana
   file "gemfile_lock" do
     path  "#{node['logstash']['kibana']['basedir']}/#{node['logstash']['kibana']['sha']}/Gemfile.lock"
     action :nothing
-    notifies :create, "file[gemfile]", :immediately
   end
   
   git "#{node['logstash']['kibana']['basedir']}/#{node['logstash']['kibana']['sha']}" do
