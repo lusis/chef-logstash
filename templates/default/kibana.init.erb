@@ -9,13 +9,14 @@
 
 KIBANA_HOME=<%= @kibana_home %>
 PIDFILE="<%= @pidfile %>"
-mkdir -p $<%= @kibana_home %>
-chown -R kibana:kibana $<%= @kibana_home %>
+PORT="<%= @port %>"
+mkdir -p /var/run/kibana
+chown -R kibana:kibana /var/run/kibana
 
 check_running()
 {
 if [ -f $PIDFILE ] ; then
-    ps -ef | grep "$(cat $PIDFILE)"| grep -v grep
+    ps -ef | grep "$(cat $PIDFILE)"| grep -v grep 2>&1 > /dev/null
 fi
 }
 
@@ -35,7 +36,7 @@ else
     echo -e "\033[1mStarting Kibana...\033[0m"
 fi
 
-su -l kibana -c "cd $KIBANA_HOME && rackup -d -P $PIDFILE"
+su kibana -c "cd $KIBANA_HOME && source ~/.bash_profile && bundle exec rackup -d -P $PIDFILE -p $PORT 2>&1 >> /dev/null &" 
 
 }
 
@@ -57,6 +58,7 @@ if [ -f "$PIDFILE" ]; then
         exit 0
     fi
     echo -e "\033[31;1mStopping Kibana...\033[0m"
+    
     rm $PIDFILE
 fi
 
