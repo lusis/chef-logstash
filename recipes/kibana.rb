@@ -1,5 +1,5 @@
 include_recipe "git"
-include_recipe "logstash::default"
+include_recipe "logrotate"
 
 kibana_base = node['logstash']['kibana']['basedir']
 kibana_home = node['logstash']['kibana']['home']
@@ -109,7 +109,14 @@ when "ruby"
     action [:enable, :start]
     subscribes :restart, [ "link[#{kibana_home}]", "template[#{kibana_home}/KibanaConfig.rb]", "template[#{kibana_home}/kibana-daemon.rb]" ]
   end
-
+    
+  logrotate_app "kibana" do
+    cookbook "logrotate"
+    path "/var/log/kibana/kibana.output"
+    frequency "daily"
+    rotate 30
+    create "644 kibana kibana"
+  end
   
 when "php"
   
