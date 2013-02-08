@@ -1,122 +1,55 @@
 #!/usr/bin/env bash
-#
-# kibana
-#
-# chkconfig:   - 80 81
-# description: kibana
-# process_name: kibana
+### BEGIN INIT INFO
+# Provides:          kibana
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Make sense of a mountain of logs.
+### END INIT INFO
 
-
+#
+# chkconfig: 2345 20 80
+#
 KIBANA_HOME=<%= @kibana_home %>
-PIDFILE="<%= @pidfile %>"
-PORT="<%= @port %>"
-mkdir -p /var/run/kibana
-chown -R kibana:kibana /var/run/kibana
+USER=<%= @user %>
+export PID_DIR="<%= @pid_dir %>"
+export LOG_DIR="<%= @log_dir %>"
+export KIBANA_APP="<%= @app_name %>"
+mkdir -p $PID_DIR $LOG_DIR
+chown -R kibana:kibana $PID_DIR $LOG_DIR
 
-check_running()
-{
-if [ -f $PIDFILE ] ; then
-    ps -ef | grep "$(cat $PIDFILE)"| grep -v grep 2>&1 > /dev/null
-fi
-}
-
-start()
-{
-
-if [ -f $PIDFILE ]; then
-    echo -e "\033[31;1mPID file found in $PIDFILE,Kibana is already running?\033[0m"
-    check_running
-    pid_running=$(echo $?)
-    if [ $pid_running -eq 0 ] ; then
-        echo -e "\033[31;1m Kibana is already (Pid : $pid_running ). Doing nothing\033[0m"
-        return 1
-    fi
-else 
-    echo -e "\033[1mKibana is not running, proceeding normally\033[0m"     
-    echo -e "\033[1mStarting Kibana...\033[0m"
-fi
-
-su kibana -c "cd $KIBANA_HOME && source ~/.bash_profile && bundle exec rackup -d -P $PIDFILE -p $PORT 2>&1 >> /dev/null &" 
-
-}
-
-
-
-stop()
-{
-
-check_running
-pid_running=$(echo $?)
-
-if [ -f "$PIDFILE" ]; then
-    echo -e "\033[31;1mPID file found, stopping Kibana...\033[0m"
-
-    if [ $pid_running -ne 0 ] ; then
-        echo -e "\033[31;1mPID file found but no matching process running.. \033[0m"
-        echo -e "\033[32;1mRemove PID file.. \033[0m"
-        rm $PIDFILE
-        exit 0
-    fi
-    echo -e "\033[31;1mStopping Kibana...\033[0m"
-    
-    rm $PIDFILE
-fi
-
-
-if [[ ! -f "$PIDFILE"  && $pid_running -ne 0 ]]; then
-    echo -e "\033[31;1mKibana is stopped...\033[0m"
-fi
-
-}
-
-restart()
-{
-stop
-start
-}
-
-
-status()
-{
-
-check_running
-pid_running=$(echo $?)
-
-if [[  $pid_running -eq 0  && -f $PIDFILE ]]; then
-    echo -e "\033[36;1mKibana is running  (Pid : $(cat $PIDFILE) )\033[0m"
-    exit 0
-elif [[ $pid_running -ne 0 && ! -f $PIDFILE ]];then
-    echo -e "\033[31;1mKibana is not running \033[0m"
-    exit 1
-elif [[ $pid_running -ne 0 &&  -f $PIDFILE ]];then
-    echo -e "\033[31;1mKibana is not running... found PID file.. \033[0m"
-    echo -e "\033[31;1mDeleting PID file.. \033[0m"
-    rm $PIDFILE
-    exit 1
-fi
-
-}
-
+KIBANA_CMD="cd $KIBANA_HOME && source ~/.bash_profile && bundle exec ruby kibana-daemon.rb $1"
 
 case "$1" in
-  start)
-        start
-        ;;
-  stop)
-        stop
-        ;;
-  restart)
-        restart
-        ;;
-  status)
-        status $2
-        RETVAL=$?   
-     ;;
-  *)
-        echo $"Usage: $0 {start|stop|restart|status [-v]|}"
-        exit 1
+start)
+  su kibana -c "$KIBANA_CMD"
+  RETVAL=$?
+;;
+
+stop)
+  su kibana -c "$KIBANA_CMD"
+  RETVAL=$?
+;;
+
+restart)
+  su kibana -c "$KIBANA_CMD"
+  RETVAL=$?
+;;
+
+status)
+  su kibana -c "$KIBANA_CMD"
+;;
+
+force-reload)
+  su kibana -c "cd $KIBANA_HOME && source ~/.bash_profile && bundle exec kibana-daemon.rb zap"
+  su kibana -c "cd $KIBANA_HOME && source ~/.bash_profile && bundle exec kibana-daemon.rb start"
+  RETVAL=$?
+;;
+
+*)
+  echo "Usage: $0 {start|stop|restart|status|force-reload}"
+  exit 1
 esac
 
-exit $?
-
-
+exit $RETVAL

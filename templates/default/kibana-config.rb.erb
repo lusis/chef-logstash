@@ -102,7 +102,7 @@ module KibanaConfig
   # indexes.  
   # Smart_index_pattern = ['logstash-web-%Y.%m.%d', 'logstash-mail-%Y.%m.%d'] 
   # Smart_index_pattern = 'logstash-%Y.%m.%d'
-  Smart_index_pattern = <%= @smart_index %>
+  Smart_index_pattern = "<%= @smart_index %>"
  
   # Number of seconds between each index. 86400 = 1 day.
   Smart_index_step = 86400 
