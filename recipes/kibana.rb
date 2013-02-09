@@ -84,7 +84,7 @@ when "ruby"
 
   rvm_shell "bundle install" do
     user "kibana"
-    cwd "#{kibana_home}"
+    cwd kibana_home
     code "bundle install"
     not_if { ::File.exists? "#{kibana_home}/Gemfile.lock" }
   end
