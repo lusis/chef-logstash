@@ -58,10 +58,19 @@ do_stop() {
     fi
     echo -n $"Stopping Log Sender server daemon: ${BEAVER_NAME}"
     do_kill
+    local I='0'
     while is_up
     do
         echo -n '.'
+        if [ "${I}" -gt 10 ]
+        then
+            do_kill_force
+            I='0'
+        else
+            do_kill
+        fi
         sleep 1
+        I="$((I+1))"
     done
     echo '.'
 }
@@ -78,6 +87,12 @@ is_up() {
 do_kill() {
     PID="$(beaver_pid)"
     [ x"${PID}" != x ] && su - "${BEAVER_USER}" -c "kill -TERM ${PID}"
+}
+
+do_kill_force() {
+    PID="$(beaver_pid)"
+    echo -n 'force'
+    [ x"${PID}" != x ] && su - "${BEAVER_USER}" -c "kill -KILL ${PID}"
 }
 
 do_restart() {

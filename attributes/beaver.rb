@@ -1,5 +1,5 @@
 
-default['logstash']['beaver']['repo'] = "git+git://github.com/josegonzalez/beaver.git#egg=beaver"
+default['logstash']['beaver']['repo'] = "beaver==22"
 
 default['logstash']['beaver']['server_role'] = "logstash_server"
 
