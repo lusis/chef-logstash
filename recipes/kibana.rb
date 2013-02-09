@@ -1,4 +1,5 @@
 include_recipe "git"
+include_recipe "logstash::default"
 
 if Chef::Config[:solo]
   es_server_ip = node['logstash']['elasticsearch_ip']
