@@ -55,7 +55,7 @@ when "ruby"
   template "/etc/init.d/kibana" do
     source "kibana.init.erb"
     owner 'root'
-    mode 0755
+    mode "755"
     variables(
               :kibana_home => kibana_home,
               :pid_dir => "/var/run/kibana",
