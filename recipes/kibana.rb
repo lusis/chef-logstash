@@ -20,7 +20,7 @@ when "ruby"
   
   node.set['rvm']['version'] = '1.17.10'
   node.set['rvm']['user_installs'] = [ { :user => 'kibana', :global_gems => [ :name => 'bundler' ] } ]
-  include_recipe "rvm::ruby_193"
+  include_recipe "rvm::user"
   #  node.set['rvm']['default_ruby'] = "ruby-1.9.3-p327"
   
   directory "#{node['logstash']['basedir']}/kibana-#{node['logstash']['kibana']['ruby_version']['version']}" do
