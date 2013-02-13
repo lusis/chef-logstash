@@ -34,10 +34,15 @@ if platform?("ubuntu")
   end
 end
 
-%w{argparse pika}.each do |pypkg|
+%w{argparse}.each do |pypkg|
   python_pip pypkg do
     action :install
   end
+end
+
+python_pip "pika" do
+  action :install
+  version "0.9.8"
 end
 
 package git_package
@@ -110,35 +115,37 @@ end
 
 # outputs
 outputs = []
-config = []
+conf = {}
 node['logstash']['beaver']['outputs'].each do |outs|
   outs.each do |name, hash|
     case name
       when "rabbitmq", "amq" then
         outputs << "rabbitmq"
         host = hash['host'] || logstash_server_ip || 'localhost'
-        config << "rabbitmq_host: #{host}"
-        config << "rabbitmq_port: #{hash['port']}" if hash.has_key?('port')
-        config << "rabbitmq_username: #{hash['user']}" if hash.has_key?('user')
-        config << "rabbitmq_password: #{hash['pass']}" if hash.has_key?('pass')
-        config << "rabbitmq_queue: #{hash['vhost']}" if hash.has_key?('vhost') # ??
-        config << "rabbitmq_key: #{hash['key']}" if hash.has_key?('key')
-        config << "rabbitmq_exchange: #{hash['name']}" if hash.has_key?('name')
-        config << "rabbitmq_exchange_durable: #{hash['durable']}" if hash.has_key?('durable')
+        conf['rabbitmq_host'] = hash['host'] if hash.has_key?('host')
+        conf['rabbitmq_port'] = hash['port'] if hash.has_key?('port')
+        conf['rabbitmq_vhost'] = hash['vhost'] if hash.has_key?('vhost')
+        conf['rabbitmq_username'] = hash['user'] if hash.has_key?('user')
+        conf['rabbitmq_password'] = hash['password'] if hash.has_key?('password')
+        conf['rabbitmq_queue'] = hash['queue'] if hash.has_key?('queue')
+        conf['rabbitmq_exchange_type'] = hash['rabbitmq_exchange_type'] if hash.has_key?('rabbitmq_exchange_type')
+        conf['rabbitmq_exchange'] = hash['exchange'] if hash.has_key?('exchange')
+        conf['rabbitmq_exchange_durable'] = hash['durable'] if hash.has_key?('durable')
+        conf['rabbitmq_key'] = hash['key'] if hash.has_key?('key') # ??
       when "redis" then
         outputs << "redis"
         host = hash['host'] || logstash_server_ip || 'localhost'
         port = hash['port'] || '6379'
         db = hash['db'] || '0'
-        config << "redis_url: redis://#{host}:#{port}/#{db}"
-        config << "redis_namespace: #{hash['key']}" if hash.has_key?('key')
+        conf['redis_url'] = "redis://#{host}:#{port}/#{db}"
+        conf['redis_namespace'] = hash['key'] if hash.has_key?('key')
       when "stdout" then
         outputs << "stdout"
       when "zmq", "zeromq" then
         outputs << "zmq"
         host = hash['host'] || logstash_server_ip || 'localhost'
         port = hash['port'] || '2120'
-        config << "zeromq_address: tcp://#{host}:#{port}"
+        conf['zeromq_address'] = "tcp://#{host}:#{port}"
       else
         log("output type not supported: #{name}") { level :warn }
     end
@@ -162,7 +169,19 @@ if outputs.length > 1
   log("multiple outpus detected, will consider only the first: #{output}") { level :warn }
 end
 
-cmd = "beaver -t #{output} -c #{conf_file}"
+cmd = "beaver  -t #{output} -c #{conf_file}"
+
+template conf_file do
+  source 'beaver.conf.erb'
+  mode 0640
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  variables(
+            :conf => conf,  
+            :files => files
+  )
+  notifies :restart, "service[logstash_beaver]"
+end
 
 supports_setuid = false
 

@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+#
+# kibana
+#
+# chkconfig:   - 80 81
+# description: kibana
+# process_name: kibana
+
+
+KIBANA_HOME=<%= node['logstash']['kibana']['ruby_version']['home'] %>
+PIDFILE='/var/run/kibana/kibana.pid'
+mkdir /var/run/kibana
+chown -R kibana:kibana $PIDFILE
+
+check_running()
+{
+if [ -f $PIDFILE ] ; then
+ ps -ef | grep "$(cat $PIDFILE)"| grep -v grep
+fi
+}
+
+start()
+{
+
+if [ -f $PIDFILE ]; then
+   echo -e "\033[31;1mPID file found in $PIDFILE,Kibana is already running?\033[0m"
+   pid_running=check_running
+
+ if [ $pid_running -eq 0 ] ; then
+  echo -e "\033[31;1m Kibana is already (Pid : $pid_running ). Doing nothing\033[0m"
+  return 1
+ fi
+else 
+  echo -e "\033[1mKibana is not running, proceeding normally\033[0m"     
+  echo -e "\033[1mStarting Kibana...\033[0m"
+fi
+
+su -l kibana -c "cd $KIBANA_HOME && rackup -d -P $PIDFILE"
+
+}
+
+
+
+stop()
+{
+
+pid_running=check_running
+
+if [ -f "$PIDFILE" ]; then
+   echo -e "\033[31;1mPID file found, stopping Kibana...\033[0m"
+
+ if [ $pid_running -eq 1 ] ; then
+    echo -e "\033[31;1mPID file found but no matching process running.. \033[0m"
+    echo -e "\033[32;1mRemove PID file.. \033[0m"
+    rm $PIDFILE
+   exit 0
+fi
+ echo -e "\033[31;1mStopping Kibana...\033[0m"
+ rm $PIDFILE
+fi
+
+
+if [[ ! -f "$PIDFILE"  && ! $pid_running -eq 0 ]]; then
+echo -e "\033[31;1mKibana is stopped...\033[0m"
+fi
+
+
+}
+
+
+
+restart()
+
+{
+stop
+start
+}
+
+
+status()
+{
+
+if [[ ! -z $CHECK_PID_RUNNING  && -f $PIDFILE ]]; then
+echo -e "\033[36;1mKibana is running  (Pid : $CHECK_PID_RUNNING )\033[0m"
+exit 0
+
+elif [[  -z $CHECK_PID_RUNNING  && ! -f $PIDFILE ]];then
+
+echo -e "\033[31;1mKibana is not running \033[0m"
+exit 1
+
+elif [[  -z $CHECK_PID_RUNNING  &&  -f $PIDFILE ]];then
+
+echo -e "\033[31;1mKibana is not running... found PID file.. \033[0m"
+echo -e "\033[31;1mDeleting PID file.. \033[0m"
+rm $PIDFILE
+exit 1
+fi
+
+
+
+}
+
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart)
+        restart
+        ;;
+  status)
+        status $2
+        RETVAL=$?   
+     ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|status [-v]|}"
+        exit 1
+esac
+
+exit $?
+
+
