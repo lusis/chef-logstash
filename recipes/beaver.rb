@@ -152,18 +152,6 @@ node['logstash']['beaver']['outputs'].each do |outs|
   end
 end
 
-template conf_file do
-  source 'beaver.conf.erb'
-  mode 0640
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  variables(
-    :files => files,
-    :config => config.join("\n")
-  )
-  notifies :restart, "service[logstash_beaver]"
-end
-
 output = outputs[0]
 if outputs.length > 1
   log("multiple outpus detected, will consider only the first: #{output}") { level :warn }
