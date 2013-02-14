@@ -16,7 +16,10 @@ end
 case node['logstash']['kibana']['language'].downcase
 when "ruby"
 
-  user "kibana"
+  user "kibana" do
+    supports :manage_home => true
+    home "/home/kibana"
+  end
   
   node.set['rvm']['version'] = '1.17.10'
   node.set['rvm']['user_installs'] = [ { :user => 'kibana', :global_gems => [ :name => 'bundler' ] } ]

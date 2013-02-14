@@ -6,8 +6,47 @@
 include_recipe "logstash::default"
 include_recipe "python::default"
 
+git_package = 'git'
+
+if platform?("ubuntu") 
+  if node['platform_version'].to_f <= 11.04
+    apt_repository "lucid-zeromq-ppa" do
+      uri "http://ppa.launchpad.net/chris-lea/zeromq/ubuntu"
+      distribution "lucid"
+      components ["main"]
+      keyserver "keyserver.ubuntu.com"
+      key "C7917B12"
+      action :add
+    end
+    apt_repository "lucid-libpgm-ppa" do
+      uri "http://ppa.launchpad.net/chris-lea/libpgm/ubuntu"
+      distribution "lucid"
+      components ["main"]
+      keyserver "keyserver.ubuntu.com"
+      key "C7917B12"
+      action :add
+      notifies :run, "execute[apt-get update]", :immediately
+    end
+  end
+
+  if node['platform_version'].to_f <= 10.04
+    git_package = 'git-core'
+  end
+end
+
+%w{argparse}.each do |pypkg|
+  python_pip pypkg do
+    action :install
+  end
+end
+
+python_pip "pika" do
+  action :install
+  version "0.9.8"
+end
+
+package git_package
 package 'libzmq-dev'
-package 'git'
 
 basedir = node['logstash']['basedir'] + '/beaver'
 
@@ -132,21 +171,53 @@ template conf_file do
   notifies :restart, "service[logstash_beaver]"
 end
 
-template "/etc/init.d/logstash_beaver" do
-  mode "0754"
-  source "init-beaver.erb"
-  variables(
-            :cmd => cmd,
-            :pid_file => pid_file,
-            :user => node['logstash']['user'],
-            :log => log_file,
-            :platform => node['platform']
-            )
-  notifies :restart, "service[logstash_beaver]"
-end
-service "logstash_beaver" do
-  supports :restart => true, :reload => false, :status => true
-  action [:enable, :start]
+supports_setuid = false
+
+if platform?("ubuntu") && node['platform_version'].to_f >= 10.04
+  if node['platform_version'].to_f >= 12.04
+    supports_setuid = true
+  end
+  template "/etc/init/logstash_beaver.conf" do
+    mode "0644"
+    source "logstash_beaver.conf.erb"
+    variables(
+              :cmd => cmd,
+              :group => node['logstash']['group'],
+              :user => node['logstash']['user'],
+              :log => log_file,
+              :supports_setuid => supports_setuid
+              )
+    notifies :restart, "service[logstash_beaver]"
+  end
+  service "logstash_beaver" do
+    supports :restart => true, :reload => false
+    action [:enable, :start]
+    provider Chef::Provider::Service::Upstart
+  end
+  file "/etc/init.d/logstash_beaver" do
+    action :delete
+    ignore_failure true
+    only_if do
+      File.exists?("/etc/init.d/logstash_beaver")
+    end
+  end
+else
+  service "logstash_beaver" do
+    supports :restart => true, :reload => false, :status => true
+    action [:enable, :start]
+  end
+  template "/etc/init.d/logstash_beaver" do
+    mode "0755"
+    source "init-beaver.erb"
+    variables(
+              :cmd => cmd,
+              :pid_file => pid_file,
+              :user => node['logstash']['user'],
+              :log => log_file,
+              :platform => node['platform']
+              )
+    notifies :restart, "service[logstash_beaver]"
+  end
 end
 
 template '/etc/logrotate.d/logstash_beaver' do
@@ -160,4 +231,3 @@ template '/etc/logrotate.d/logstash_beaver' do
             :group => node['logstash']['group']
             )
 end
-

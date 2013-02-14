@@ -18,3 +18,5 @@ supports         "fedora"
 %w{ apache2 php build-essential git rvm runit python java ant logrotate rabbitmq }.each do |ckbk|
   depends ckbk
 end
+
+recommends "apt"
