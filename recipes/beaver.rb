@@ -6,7 +6,12 @@
 include_recipe "logstash::default"
 include_recipe "python::default"
 
-package 'libzmq-dev'
+
+if node['logstash']['agent']['install_zeromq']
+  include_recipe "yumrepo::zeromq" if platform_family?("rhel")
+  node['logstash']['server']['zeromq_packages'].each {|p| package p }
+end
+
 package 'git'
 
 basedir = node['logstash']['basedir'] + '/beaver'
@@ -53,8 +58,8 @@ end
   end
 end
 
-python_pip node['logstash']['beaver']['repo'] do
-  action :install
+node['logstash']['beaver']['pip_packages'].each do |ppkg|
+  python_pip ppkg
 end
 
 # inputs

@@ -21,3 +21,4 @@ default['logstash']['agent']['server_ipaddress'] = ''
 default['logstash']['agent']['inputs'] = []
 default['logstash']['agent']['filters'] = []
 default['logstash']['agent']['outputs'] = []
+default['logstash']['agent']['install_zeromq'] = false

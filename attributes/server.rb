@@ -13,6 +13,7 @@ default['logstash']['server']['ipv4_only'] = false
 default['logstash']['server']['debug'] = false
 default['logstash']['server']['home'] = '/opt/logstash/server'
 default['logstash']['server']['install_rabbitmq'] = true
+default['logstash']['server']['install_zeromq'] = false
 
 # roles/flags for various autoconfig/discovery components
 default['logstash']['server']['enable_embedded_es'] = true
@@ -20,3 +21,11 @@ default['logstash']['server']['enable_embedded_es'] = true
 default['logstash']['server']['inputs'] = []
 default['logstash']['server']['filters'] = []
 default['logstash']['server']['outputs'] = []
+
+case
+when platform_family?("rhel")
+  node['logstash']['server']['zeromq_packages'] = [ "zeromq",  "zeromq-devel"]
+when platform_family?("debian")
+  node['logstash']['server']['zeromq_packages'] = [ "zeromq",  "libzmq-dev"]
+end
+  
