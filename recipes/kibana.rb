@@ -21,7 +21,10 @@ es_server_port = node['logstash']['elasticsearch_port'].empty? ? '9200' : node['
 case node['logstash']['kibana']['language'].downcase
 when "ruby"
 
-  user "kibana"
+  user "kibana" do
+    supports :manage_home => true
+    home "/home/kibana"
+  end
   
   node.set['rvm']['user_installs'] = [ { :user => 'kibana', :global_gems => [ :name => 'bundler' ] } ]
   include_recipe "rvm::user"
