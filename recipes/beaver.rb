@@ -5,7 +5,7 @@
 #
 include_recipe "logstash::default"
 include_recipe "python::default"
-
+include_recipe "logrotate"
 
 if node['logstash']['agent']['install_zeromq']
   include_recipe "yumrepo::zeromq" if platform_family?("rhel")
@@ -17,8 +17,8 @@ package 'git'
 basedir = node['logstash']['basedir'] + '/beaver'
 
 conf_file = "#{basedir}/etc/beaver.conf"
-log_file = "#{basedir}/log/logstash_beaver.log"
-pid_file = "#{basedir}/run/logstash_beaver.pid"
+log_file = "#{node['logstash']['log_dir']}/logstash_beaver.log"
+pid_file = "#{node['logstash']['pid_dir']}/logstash_beaver.pid"
 
 logstash_server_ip = nil
 if Chef::Config[:solo]
@@ -37,6 +37,7 @@ directory basedir do
   group node['logstash']['group']
   recursive true
 end
+
 [
   File.dirname(conf_file),
   File.dirname(log_file),
@@ -49,6 +50,7 @@ end
     not_if do ::File.exists?(dir) end
   end
 end
+
 [ log_file, pid_file ].each do |f|
   file f do
     action :touch
@@ -59,7 +61,9 @@ end
 end
 
 node['logstash']['beaver']['pip_packages'].each do |ppkg|
-  python_pip ppkg
+  python_pip ppkg do
+    action :install
+  end
 end
 
 # inputs
@@ -85,7 +89,7 @@ conf = {}
 node['logstash']['beaver']['outputs'].each do |outs|
   outs.each do |name, hash|
     case name
-      when "rabbitmq", "amq" then
+      when "rabbitmq", "amqp" then
         outputs << "rabbitmq"
         host = hash['host'] || logstash_server_ip || 'localhost'
         conf['rabbitmq_host'] = hash['host'] if hash.has_key?('host')
@@ -97,7 +101,7 @@ node['logstash']['beaver']['outputs'].each do |outs|
         conf['rabbitmq_exchange_type'] = hash['rabbitmq_exchange_type'] if hash.has_key?('rabbitmq_exchange_type')
         conf['rabbitmq_exchange'] = hash['exchange'] if hash.has_key?('exchange')
         conf['rabbitmq_exchange_durable'] = hash['durable'] if hash.has_key?('durable')
-        conf['rabbitmq_key'] = hash['key'] if hash.has_key?('key') # ??
+        conf['rabbitmq_key'] = hash['key'] if hash.has_key?('key')
       when "redis" then
         outputs << "redis"
         host = hash['host'] || logstash_server_ip || 'localhost'
@@ -154,15 +158,12 @@ service "logstash_beaver" do
   action [:enable, :start]
 end
 
-template '/etc/logrotate.d/logstash_beaver' do
-  source 'logrotate-beaver.erb'
-  owner 'root'
-  group 'root'
-  mode '0440'
-  variables(
-            :logfile => log_file,
-            :user => node['logstash']['user'],
-            :group => node['logstash']['group']
-            )
+logrotate_app "logstash_beaver" do
+  cookbook "logrotate"
+  path log_file
+  frequency "daily"
+  postrotate "invoke-rc.d logstash_beaver force-reload >/dev/null 2>&1 || true"
+  options [ "delaycompress", "missingok", "notifempty" ]
+  rotate 30
+  create "0440 #{node['logstash']['user']} #{node['logstash']['group']}"
 end
-
