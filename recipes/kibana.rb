@@ -23,7 +23,6 @@ when "ruby"
 
   user "kibana"
   
-  node.set['rvm']['version'] = '1.17.10'
   node.set['rvm']['user_installs'] = [ { :user => 'kibana', :global_gems => [ :name => 'bundler' ] } ]
   include_recipe "rvm::user"
   
