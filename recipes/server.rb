@@ -112,6 +112,21 @@ node['logstash']['patterns'].each do |file, hash|
   end
 end
 
+template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
+  source node['logstash']['server']['base_config']
+  cookbook node['logstash']['server']['base_config_cookbook']
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  mode "0644"
+  variables(:graphite_server_ip => graphite_server_ip,
+            :es_server_ip => es_server_ip,
+            :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
+            :es_cluster => node['logstash']['elasticsearch_cluster'],
+            :patterns_dir => patterns_dir)
+  notifies :restart, "service[logstash_server]"
+  action :create
+end
+
 if platform_family? "debian"
   if node["platform_version"] == "12.04"
     template "/etc/init/logstash_server.conf" do
@@ -141,23 +156,8 @@ elsif platform_family? "rhel","fedora"
 
   service "logstash_server" do
     supports :restart => true, :reload => true, :status => true
-    action :enable
+    action [:enable, :start]
   end
-end
-
-template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
-  source node['logstash']['server']['base_config']
-  cookbook node['logstash']['server']['base_config_cookbook']
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  mode "0644"
-  variables(:graphite_server_ip => graphite_server_ip,
-            :es_server_ip => es_server_ip,
-            :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
-            :es_cluster => node['logstash']['elasticsearch_cluster'],
-            :patterns_dir => patterns_dir)
-  notifies :restart, "service[logstash_server]"
-  action :create
 end
 
 directory node['logstash']['log_dir'] do
@@ -174,3 +174,4 @@ logrotate_app "logstash_server" do
   rotate "30"
   create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
 end
+
