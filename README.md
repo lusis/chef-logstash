@@ -15,10 +15,12 @@ However if you wish to use an external ElasticSearch cluster, you will
 need to install that yourself and change the relevant attributes for
 discovery. The same applies to integration with Graphite.
 
-This cookbook has been tested together with the following cookbooks
+This cookbook has been tested together with the following cookbooks,
+see the Berksfile for more details
 
 * [Heavywater Graphite Cookbook](https://github.com/heavywater/chef-graphite)   - This is the one I use
 * [Karmi's ElasticSearch Cookbook](https://github.com/karmi/cookbook-elasticsearch)
+* [Fletcher Nichol's RVM cookbook](https://github.com/fnichol/chef-rvm)
 
 Attributes
 ==========
