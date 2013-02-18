@@ -31,7 +31,7 @@ if node['logstash']['agent']['install_zeromq']
     end
   end
   node['logstash']['server']['zeromq_packages'].each {|p| package p }
-  package node['logstash']['beaver']['zmq']['pip_package'] do
+  python_pip node['logstash']['beaver']['zmq']['pip_package'] do
     action :install
   end
 end
