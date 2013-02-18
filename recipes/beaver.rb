@@ -10,6 +10,9 @@ include_recipe "logrotate"
 if node['logstash']['agent']['install_zeromq']
   include_recipe "yumrepo::zeromq" if platform_family?("rhel")
   node['logstash']['server']['zeromq_packages'].each {|p| package p }
+  package node['logstash']['beaver']['zmq']['pip_package'] do
+    action :install
+  end
 end
 
 package 'git'
@@ -60,10 +63,8 @@ end
   end
 end
 
-node['logstash']['beaver']['pip_packages'].each do |ppkg|
-  python_pip ppkg do
-    action :install
-  end
+python_pip node['logstash']['beaver']['pip_package'] do
+  action :install
 end
 
 # inputs
