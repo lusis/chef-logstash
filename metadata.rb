@@ -13,3 +13,7 @@ end
 %w{ apache2 php build-essential git rvm runit python java ant logrotate rabbitmq yumrepo }.each do |ckbk|
   depends ckbk
 end
+
+%w{ yumrepo apt }.each do |ckbk|
+  recommends ckbk
+end
