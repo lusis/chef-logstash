@@ -20,7 +20,12 @@ see the Berksfile for more details
 
 * [Heavywater Graphite Cookbook](https://github.com/heavywater/chef-graphite)   - This is the one I use
 * [Karmi's ElasticSearch Cookbook](https://github.com/karmi/cookbook-elasticsearch)
-* [Fletcher Nichol's RVM cookbook](https://github.com/fnichol/chef-rvm)
+* [RiotGames RBENV cookbook](https://github.com/RiotGames/rbenv-cookbook)
+* This cookbook also uses BryanWB's fork of Atomic-Penguin's
+  [Yumrepo cookbook](https://github.com/bryanwb/cookbook-yumrepo)
+  until such time as BryanWB's yumrepo::zeromq cookbook is accepted upstream
+
+
 
 Attributes
 ==========

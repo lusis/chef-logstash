@@ -4,6 +4,25 @@ include_recipe "logrotate"
 kibana_base = node['logstash']['kibana']['basedir']
 kibana_home = node['logstash']['kibana']['home']
 
+node.set[:rbenv][:group_users] = [ "kibana" ]
+
+user "kibana" do
+  supports :manage_home => true
+  home "/home/kibana"
+end
+
+
+include_recipe "rbenv::default"
+include_recipe "rbenv::ruby_build"
+
+rbenv_ruby "1.9.3-p194" do
+  global true
+end
+
+rbenv_gem "bundler" do
+  ruby_version "1.9.3-p194"
+end
+
 if Chef::Config[:solo]
   es_server_ip = node['logstash']['elasticsearch_ip']
 else
@@ -25,9 +44,6 @@ when "ruby"
     supports :manage_home => true
     home "/home/kibana"
   end
-  
-  node.set['rvm']['user_installs'] = [ { :user => 'kibana', :global_gems => [ :name => 'bundler' ] } ]
-  include_recipe "rvm::user"
   
   directory kibana_base do
     owner 'kibana'
@@ -84,12 +100,12 @@ when "ruby"
     mode 0755
   end
 
-  rvm_shell "bundle install" do
-    user "kibana"
+  bash "bundle install" do
     cwd kibana_home
-    code "bundle install"
+    code "source /etc/profile.d/rbenv.sh && bundle install"
     not_if { ::File.exists? "#{kibana_home}/Gemfile.lock" }
   end
+
   
   service "kibana" do
     supports :status => true, :restart => true
