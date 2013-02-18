@@ -76,6 +76,24 @@ when "ruby"
     source "kibana-config.rb.erb"
     owner 'kibana'
     mode 0755
+    variables(
+              :kibana_home => kibana_home,
+              :pid_dir => "/var/run/kibana",
+              :log_dir => "/var/log/kibana",
+              :app_name => "kibana",
+              :kibana_port => node['logstash']['kibana']['http_port'],
+              :smart_index => node['logstash']['kibana']['smart_index_pattern'],
+              :es_ip => es_server_ip,
+              :es_port => es_server_port,
+              :server_name => node['logstash']['kibana']['server_name'],
+              :user => 'kibana'
+              )
+  end
+
+  template "#{kibana_home}/KibanaConfig.rb" do
+    source "kibana-config.rb.erb"
+    owner 'kibana'
+    mode 0755
   end
   
   template "#{kibana_home}/kibana-daemon.rb" do
