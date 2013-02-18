@@ -91,7 +91,9 @@ elsif platform_family? "rhel", "fedora"
     mode "0774"
     variables(
       :config_file => "shipper.conf",
-      :name => 'agent'
+      :name => 'agent',
+      :max_heap => node['logstash']['agent']['xmx'],
+      :min_heap => node['logstash']['agent']['xms']
     )
   end
 
