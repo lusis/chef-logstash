@@ -163,12 +163,22 @@ template conf_file do
   notifies :restart, "service[logstash_beaver]"
 end
 
+use_upstart = false
+supports_setuid = false
 case platform_family
-when "rhel", "debian"
-  if platform?("ubuntu") && node['platform_version'].to_f >= 12.04
-    supports_setuid = true
+when "rhel"
+  if node['platform_version'].to_i >= 6
+    use_upstart = true
   end
-
+when "debian"
+  if platform?("ubuntu") && node['platform_version'].to_f >= 10.04
+    use_upstart = true
+    if node['platform_version'].to_f >= 12.04
+      supports_setuid = true
+    end
+  end
+end
+if use_upstart
   template "/etc/init/logstash_beaver.conf" do
     mode "0644"
     source "logstash_beaver.conf.erb"
