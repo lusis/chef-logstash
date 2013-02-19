@@ -163,19 +163,22 @@ template conf_file do
   notifies :restart, "service[logstash_beaver]"
 end
 
+# use upstart when supported to get nice things like automatic respawns
 use_upstart = false
 supports_setuid = false
 case node.platform_family
-when "rhel","fedora"
+when "rhel"
   if node['platform_version'].to_i >= 6
     use_upstart = true
   end
-when "debian"
-  if platform?("ubuntu") && node['platform_version'].to_f >= 10.04
+when "fedora"
+  if node['platform_version'].to_i >= 9
     use_upstart = true
-    if node['platform_version'].to_f >= 12.04
-      supports_setuid = true
-    end
+  end
+when "ubuntu"
+  use_upstart = true
+  if node['platform_version'].to_f >= 12.04
+    supports_setuid = true
   end
 end
 if use_upstart
