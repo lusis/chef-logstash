@@ -163,10 +163,12 @@ template conf_file do
   notifies :restart, "service[logstash_beaver]"
 end
 
-if platform?("ubuntu") && node['platform_version'].to_f >= 10.04
-  if node['platform_version'].to_f >= 12.04
+case platform_family
+when "rhel", "debian"
+  if platform?("ubuntu") && node['platform_version'].to_f >= 12.04
     supports_setuid = true
   end
+
   template "/etc/init/logstash_beaver.conf" do
     mode "0644"
     source "logstash_beaver.conf.erb"
@@ -179,23 +181,18 @@ if platform?("ubuntu") && node['platform_version'].to_f >= 10.04
               )
     notifies :restart, "service[logstash_beaver]"
   end
+
   service "logstash_beaver" do
     supports :restart => true, :reload => false
     action [:enable, :start]
     provider Chef::Provider::Service::Upstart
-  end
-  file "/etc/init.d/logstash_beaver" do
-    action :delete
-    ignore_failure true
-    only_if do
-      File.exists?("/etc/init.d/logstash_beaver")
-    end
   end
 else
   service "logstash_beaver" do
     supports :restart => true, :reload => false, :status => true
     action [:enable, :start]
   end
+
   template "/etc/init.d/logstash_beaver" do
     mode "0755"
     source "init-beaver.erb"
