@@ -165,8 +165,8 @@ end
 
 use_upstart = false
 supports_setuid = false
-case platform_family
-when "rhel"
+case node.platform_family
+when "rhel","fedora"
   if node['platform_version'].to_i >= 6
     use_upstart = true
   end
