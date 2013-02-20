@@ -132,6 +132,7 @@ when "ruby"
     cookbook "logrotate"
     path "/var/log/kibana/kibana.output"
     frequency "daily"
+    options [ "missingok", "notifempty" ]
     rotate 30
     create "644 kibana kibana"
   end

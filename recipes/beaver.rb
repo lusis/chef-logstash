@@ -181,6 +181,7 @@ when "ubuntu"
     supports_setuid = true
   end
 end
+
 if use_upstart
   template "/etc/init/logstash_beaver.conf" do
     mode "0644"
@@ -225,7 +226,7 @@ logrotate_app "logstash_beaver" do
   path log_file
   frequency "daily"
   postrotate "invoke-rc.d logstash_beaver force-reload >/dev/null 2>&1 || true"
-  options [ "delaycompress", "missingok", "notifempty" ]
+  options [ "missingok", "notifempty" ]
   rotate 30
   create "0440 #{node['logstash']['user']} #{node['logstash']['group']}"
 end
