@@ -14,9 +14,9 @@ include_recipe "logrotate"
 
 include_recipe "rabbitmq" if node['logstash']['server']['install_rabbitmq']
 
-if node['logstash']['server']['install_zeromq']
+if node['logstash']['install_zeromq']
   include_recipe "yumrepo::zeromq" if platform_family?("rhel")
-  node['logstash']['server']['zeromq_packages'].each {|p| package p }
+  node['logstash']['zeromq_packages'].each {|p| package p }
 end
 
 if node['logstash']['server']['patterns_dir'][0] == '/'

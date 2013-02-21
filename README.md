@@ -57,7 +57,13 @@ Attributes
   groups to join. Usefull to gain read privileges on some logfiles.
 * `node['logstash']['patterns']` - A hash with grok patterns to be
   used on grok and multiline filters.
-* `node['logstash']['create_account']` - create the account info from `user` and `group`; this is `true` by default. Disable it to use an existing account!
+* `node['logstash']['create_account']` - create the account info from
+  `user` and `group`; this is `true` by default. Disable it to use an
+  existing account!
+* `node['logstash']['install_zeromq']` - Should this
+  recipe install zeromq packages?
+* `node['logstash']['zeromq_packages']` - zeromq_packages to install
+  if 
 
 ## Agent
 
