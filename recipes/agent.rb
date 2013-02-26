@@ -120,8 +120,9 @@ if node['logstash']['agent']['install_method'] == "jar"
 else
   include_recipe "logstash::source"
 
+  logstash_version = node['logstash']['source']['sha'] || "v#{node['logstash']['server']['version']}"
   link "#{node['logstash']['basedir']}/agent/lib/logstash.jar" do
-    to "#{node['logstash']['basedir']}/source/build/logstash-#{node['logstash']['source']['sha']}-monolithic.jar"
+    to "#{node['logstash']['basedir']}/source/build/logstash-#{logstash_version}-monolithic.jar"
     notifies :restart, "service[logstash_agent]"
   end
 end
