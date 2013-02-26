@@ -32,7 +32,6 @@ output {
     tcp { host => "<%= @logstash_server_ip %>" port => "5959" }
     <% end -%>
   <% else -%>
-    <% unless  node['logstash']['agent']['outputs'].empty? -%>
-      <%= LogstashConf.section_to_str(node['logstash']['agent']['outputs']) %>
+    <%= LogstashConf.section_to_str(node['logstash']['agent']['outputs']) %>
   <% end -%>
 }
