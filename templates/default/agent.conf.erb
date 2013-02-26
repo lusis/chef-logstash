@@ -24,16 +24,14 @@ output {
   <% if node['logstash']['agent']['debug'] -%>
   stdout { }
   <% end -%>
-  <% if @logstash_server_ip.empty? -%>
-  # Provide a sane default
-  null { }
-  <% else -%>
-    <% unless  node['logstash']['agent']['outputs'].empty? -%>
-      <%= LogstashConf.section_to_str(node['logstash']['agent']['outputs']) %>
+  <% if node['logstash']['agent']['outputs'].empty? -%>
+    <% if @logstash_server_ip.empty? -%>
+    # Provide a sane default
+    null { }
     <% else -%>
-
-  tcp { host => "<%= @logstash_server_ip %>" port => "5959" }
+    tcp { host => "<%= @logstash_server_ip %>" port => "5959" }
     <% end -%>
+  <% else -%>
+    <%= LogstashConf.section_to_str(node['logstash']['agent']['outputs']) %>
   <% end -%>
 }
-
