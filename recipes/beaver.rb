@@ -157,7 +157,7 @@ template conf_file do
   owner node['logstash']['user']
   group node['logstash']['group']
   variables(
-            :conf => conf,  
+            :conf => conf,
             :files => files
   )
   notifies :restart, "service[logstash_beaver]"
@@ -166,7 +166,7 @@ end
 # use upstart when supported to get nice things like automatic respawns
 use_upstart = false
 supports_setuid = false
-case node.platform_family
+case node['platform_family']
 when "rhel"
   if node['platform_version'].to_i >= 6
     use_upstart = true
