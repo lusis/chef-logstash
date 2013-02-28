@@ -3,14 +3,8 @@ include_recipe "logrotate"
 
 kibana_base = node['logstash']['kibana']['basedir']
 kibana_home = node['logstash']['kibana']['home']
-
-node.set[:rbenv][:group_users] = [ "kibana" ]
-
-user "kibana" do
-  supports :manage_home => true
-  home "/home/kibana"
-end
-
+kibana_log_dir = node['logstash']['kibana']['log_dir']
+kibana_pid_dir = node['logstash']['kibana']['pid_dir']
 
 include_recipe "rbenv::default"
 include_recipe "rbenv::ruby_build"
@@ -43,8 +37,21 @@ when "ruby"
   user "kibana" do
     supports :manage_home => true
     home "/home/kibana"
+    shell "/bin/bash"
   end
   
+  node.set[:rbenv][:group_users] = [ "kibana" ]
+
+  [ kibana_pid_dir, kibana_log_dir ].each do |dir|
+    Chef::Log.debug(dir)
+    directory dir do
+      owner 'kibana'
+      group 'kibana'
+      recursive true
+    end
+  end
+
+  Chef::Log.debug(kibana_base)
   directory kibana_base do
     owner 'kibana'
     group 'kibana'
@@ -54,7 +61,7 @@ when "ruby"
   # for some annoying reason Gemfile.lock is shipped w/ kibana
   file "gemfile_lock" do
     path  "#{node['logstash']['kibana']['basedir']}/#{node['logstash']['kibana']['sha']}/Gemfile.lock"
-    action :nothing
+    action :delete
   end
   
   git "#{node['logstash']['kibana']['basedir']}/#{node['logstash']['kibana']['sha']}" do
@@ -70,20 +77,28 @@ when "ruby"
     to "#{node['logstash']['kibana']['basedir']}/#{node['logstash']['kibana']['sha']}"
   end
   
+  template '/home/kibana/.bash_profile' do # let bash handle our env vars
+    source 'kibana-bash_profile.erb'
+    owner 'kibana'
+    group 'kibana'
+    variables(
+              :pid_dir => kibana_pid_dir,
+              :log_dir => kibana_log_dir,
+              :app_name => "kibana",
+              :kibana_port => node['logstash']['kibana']['http_port'],
+              :smart_index => node['logstash']['kibana']['smart_index_pattern'],
+              :es_ip => es_server_ip,
+              :es_port => es_server_port,
+              :server_name => node['logstash']['kibana']['server_name']
+              )
+  end
+
   template "/etc/init.d/kibana" do
     source "kibana.init.erb"
     owner 'root'
     mode "755"
     variables(
               :kibana_home => kibana_home,
-              :pid_dir => "/var/run/kibana",
-              :log_dir => "/var/log/kibana",
-              :app_name => "kibana",
-              :kibana_port => node['logstash']['kibana']['http_port'],
-              :smart_index => node['logstash']['kibana']['smart_index_pattern'],
-              :es_ip => es_server_ip,
-              :es_port => es_server_port,
-              :server_name => node['logstash']['kibana']['server_name'],
               :user => 'kibana'
               )
   end
