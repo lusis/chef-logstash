@@ -163,21 +163,61 @@ template conf_file do
   notifies :restart, "service[logstash_beaver]"
 end
 
-template "/etc/init.d/logstash_beaver" do
-  mode "0754"
-  source "init-beaver.erb"
-  variables(
-            :cmd => cmd,
-            :pid_file => pid_file,
-            :user => node['logstash']['user'],
-            :log => log_file,
-            :platform => node['platform']
-            )
-  notifies :restart, "service[logstash_beaver]"
+# use upstart when supported to get nice things like automatic respawns
+use_upstart = false
+supports_setuid = false
+case node.platform_family
+when "rhel"
+  if node['platform_version'].to_i >= 6
+    use_upstart = true
+  end
+when "fedora"
+  if node['platform_version'].to_i >= 9
+    use_upstart = true
+  end
+when "ubuntu"
+  use_upstart = true
+  if node['platform_version'].to_f >= 12.04
+    supports_setuid = true
+  end
 end
-service "logstash_beaver" do
-  supports :restart => true, :reload => false, :status => true
-  action [:enable, :start]
+if use_upstart
+  template "/etc/init/logstash_beaver.conf" do
+    mode "0644"
+    source "logstash_beaver.conf.erb"
+    variables(
+              :cmd => cmd,
+              :group => node['logstash']['group'],
+              :user => node['logstash']['user'],
+              :log => log_file,
+              :supports_setuid => supports_setuid
+              )
+    notifies :restart, "service[logstash_beaver]"
+  end
+
+  service "logstash_beaver" do
+    supports :restart => true, :reload => false
+    action [:enable, :start]
+    provider Chef::Provider::Service::Upstart
+  end
+else
+  service "logstash_beaver" do
+    supports :restart => true, :reload => false, :status => true
+    action [:enable, :start]
+  end
+
+  template "/etc/init.d/logstash_beaver" do
+    mode "0755"
+    source "init-beaver.erb"
+    variables(
+              :cmd => cmd,
+              :pid_file => pid_file,
+              :user => node['logstash']['user'],
+              :log => log_file,
+              :platform => node['platform']
+              )
+    notifies :restart, "service[logstash_beaver]"
+  end
 end
 
 logrotate_app "logstash_beaver" do
