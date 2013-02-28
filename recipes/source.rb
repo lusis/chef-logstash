@@ -6,7 +6,7 @@ include_recipe "logstash::default"
 
 package "wget"
 
-logstash_version = node['logstash']['source']['sha']
+logstash_version = node['logstash']['source']['sha'] || "v#{node['logstash']['server']['version']}"
 
 directory "#{node['logstash']['basedir']}/source" do
   action :create

@@ -141,8 +141,8 @@ Attributes
 
 * `node['logstash']['kibana']['repo']` - The git repo to install
   Kibana from.
-* `node['logstash']['kibana']['sha']` - The sha/branch of the repo you
-  wish to clone.
+* `node['logstash']['kibana']['sha']` - The sha/branch/tag of the repo
+  you wish to clone.
 * `node['logstash']['kibana']['apache_template']` - The name of the
   template file to use for the Apache site file
 * `node['logstash']['kibana']['config']` - The name of the template to
@@ -170,8 +170,9 @@ Attributes
 
 * `node['logstash']['source']['repo']` - The git repo to use for the
   source code of Logstash
-* `node['logstash']['source']['sha']` - The sha/branch of the repo you
-  wish to clone.
+* `node['logstash']['source']['sha']` - The sha/branch/tag of the repo
+  you wish to clone. Uses `node['logstash']['server']['version']` by
+  default.
 * `node['logstash']['source']['java_home']` - your `JAVA_HOME`
   location. Needed explicity for `ant` when building JRuby
 
