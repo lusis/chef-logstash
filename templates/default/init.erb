@@ -11,11 +11,15 @@ PIDDIR="<%= node['logstash']['pid_dir'] %>"
 export PIDFILE="$PIDDIR/<%= @name %>.pid"
 export LS_HOME="<%= "#{node['logstash']['basedir']}/#{@name}" %>"
 export LS_CONFIG="$LS_HOME/etc/<%= @config_file %>"
+export LS_CLASSPATH="$LS_HOME/lib/logstash.jar"
+<% if node.recipe?('logstash::cloud-aws') %>
+export LS_CLASSPATH="$LS_CLASSPATH:cloud-aws-plugin/*"
+<% end %>
 LS_USER="<%= node['logstash']['user'] %>"
 LOGDIR="<%= node['logstash']['log_dir'] %>"
 LS_LOG="$LOGDIR/<%= @name %>.log"
 export JAVA_OPTS="-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=$LS_HOME/tmp/"
-BIN_SCRIPT="/usr/bin/env java $JAVA_OPTS -jar $LS_HOME/lib/logstash.jar agent -f $LS_CONFIG > $LS_LOG 2>&1 &  echo \$! > $PIDFILE"
+BIN_SCRIPT="/usr/bin/env java $JAVA_OPTS -cp $LS_CLASSPATH logstash.runner agent -f $LS_CONFIG > $LS_LOG 2>&1 &  echo \$! > $PIDFILE"
 
 if [ -f /etc/init.d/functions ] ; then
   . /etc/init.d/functions
