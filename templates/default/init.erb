@@ -47,11 +47,11 @@ start() {
   fi
 
   echo -e "\033[1mStarting logstash...\033[0m"
-  pushd $LS_HOME
+  pushd $LS_HOME  > /dev/null 2>&1
   su $LS_USER -c "$BIN_SCRIPT" > /dev/null 2>&1
   ls_pid=$!
   result=$?
-  popd
+  popd  > /dev/null 2>&1
 
   if [ $result -ne 0 ] ; then
     failure
