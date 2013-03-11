@@ -30,7 +30,7 @@ if node['logstash']['agent']['install_zeromq']
       notifies :run, "execute[apt-get update]", :immediately
     end
   end
-  node['logstash']['server']['zeromq_packages'].each {|p| package p }
+  node['logstash']['zeromq_packages'].each {|p| package p }
   python_pip node['logstash']['beaver']['zmq']['pip_package'] do
     action :install
   end
