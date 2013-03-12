@@ -21,7 +21,7 @@ default['logstash']['install_zeromq'] = false
 
 case
 when platform_family?("rhel")
-  node['logstash']['zeromq_packages'] = [ "zeromq",  "zeromq-devel"]
+  node.set['logstash']['zeromq_packages'] = [ "zeromq",  "zeromq-devel"]
 when platform_family?("debian")
-  node['logstash']['zeromq_packages'] = [ "zeromq",  "libzmq-dev"]
+  node.set['logstash']['zeromq_packages'] = [ "zeromq",  "libzmq-dev"]
 end
