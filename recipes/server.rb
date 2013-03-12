@@ -128,37 +128,41 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
   action :create
 end
 
-if platform_family? "debian"
-  if node["platform_version"] == "12.04"
-    template "/etc/init/logstash_server.conf" do
-      mode "0644"
-      source "logstash_server.conf.erb"
-    end
+case node["logstash"]["server"]["init_style"]
+when "upstart", "upstart-1.5"
+  template "/etc/init/logstash_server.conf" do
+    mode "0644"
+    source "#{node["logstash"]["server"]["init_style"]}.server.erb"
+  end
 
-    service "logstash_server" do
-      provider Chef::Provider::Service::Upstart
-      action [ :enable, :start ]
+  service "logstash_server" do
+    provider Chef::Provider::Service::Upstart
+    action [ :enable, :start ]
+  end
+when "init"
+  case node["platform_family"]
+  when "rhel", "fedora"
+    template "/etc/init.d/logstash_server" do
+      source "init.erb"
+      owner "root"
+      group "root"
+      mode "0774"
+      variables(:config_file => "logstash.conf",
+                :name => 'server',
+                :max_heap => node['logstash']['server']['xmx'],
+                :min_heap => node['logstash']['server']['xms']
+                )
     end
   else
-    runit_service "logstash_server"
-  end
-elsif platform_family? "rhel","fedora"
-  template "/etc/init.d/logstash_server" do
-    source "init.erb"
-    owner "root"
-    group "root"
-    mode "0774"
-    variables(:config_file => "logstash.conf",
-              :name => 'server',
-              :max_heap => node['logstash']['server']['xmx'],
-              :min_heap => node['logstash']['server']['xms']
-              )
+    raise "plateform not supported for init"
   end
 
   service "logstash_server" do
     supports :restart => true, :reload => true, :status => true
     action [:enable, :start]
   end
+when "runit"
+  runit_service "logstash_server"
 end
 
 directory node['logstash']['log_dir'] do

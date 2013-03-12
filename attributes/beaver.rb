@@ -6,3 +6,4 @@ default['logstash']['beaver']['server_ipaddress'] = nil
 default['logstash']['beaver']['inputs'] = []
 default['logstash']['beaver']['outputs'] = []
 
+default['logstash']['beaver']['init_style'] = node["logstash"]["init_style"]

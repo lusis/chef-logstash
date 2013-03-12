@@ -7,10 +7,6 @@ stop on runlevel [!2345]
 respawn
 respawn limit 5 30
 
-<% if @supports_setuid %>
-setuid <%= @user %>
-setgid <%= @group %>
-<% end %>
 chdir <%= node['logstash']['basedir'] %>/beaver
 
 console output

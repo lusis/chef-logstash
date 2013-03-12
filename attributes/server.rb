@@ -21,4 +21,4 @@ default['logstash']['server']['inputs'] = []
 default['logstash']['server']['filters'] = []
 default['logstash']['server']['outputs'] = []
 
-  
+default['logstash']['server']['init_style'] = node["logstash"]["init_style"]
