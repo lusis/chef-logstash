@@ -22,4 +22,4 @@ default['logstash']['agent']['inputs'] = []
 default['logstash']['agent']['filters'] = []
 default['logstash']['agent']['outputs'] = []
 
-default['logstash']['agent']['init_style'] = node["logstash"]["init_style"]
+default['logstash']['agent']['init_style'] = nil # Default same than node["logstash"]["init_style"]

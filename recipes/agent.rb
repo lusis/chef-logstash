@@ -5,6 +5,8 @@
 #
 include_recipe "logstash::default"
 
+init_style = node["logstash"]["agent"]["init_style"] || node["logstash"]["init_style"]
+
 if node['logstash']['agent']['patterns_dir'][0] == '/'
   patterns_dir = node['logstash']['agent']['patterns_dir']
 else
@@ -95,7 +97,7 @@ node['logstash']['patterns'].each do |file, hash|
   end
 end
 
-case node["logstash"]["agent"]["init_style"]
+case init_style
 when "upstart-1.5"
   template "/etc/init/logstash_agent.conf" do
     mode "0644"

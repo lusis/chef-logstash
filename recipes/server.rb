@@ -14,6 +14,8 @@ include_recipe "logrotate"
 
 include_recipe "rabbitmq" if node['logstash']['server']['install_rabbitmq']
 
+init_style = node["logstash"]["server"]["init_style"] || node["logstash"]["init_style"]
+
 if node['logstash']['install_zeromq']
   include_recipe "yumrepo::zeromq" if platform_family?("rhel")
   node['logstash']['zeromq_packages'].each {|p| package p }
@@ -128,11 +130,11 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
   action :create
 end
 
-case node["logstash"]["server"]["init_style"]
+case init_style
 when "upstart", "upstart-1.5"
   template "/etc/init/logstash_server.conf" do
     mode "0644"
-    source "#{node["logstash"]["server"]["init_style"]}.server.erb"
+    source "#{init_style}.server.erb"
   end
 
   service "logstash_server" do

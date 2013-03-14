@@ -7,6 +7,11 @@ include_recipe "logstash::default"
 include_recipe "python::default"
 include_recipe "logrotate"
 
+beaver_user = node["logstash"]["beaver"]["user"] || node["logstash"]["user"]
+beaver_group = node["logstash"]["beaver"]["group"] || node["logstash"]["group"]
+
+init_style = node["logstash"]["beaver"]["init_style"] || node["logstash"]["init_style"]
+
 if node['logstash']['agent']['install_zeromq']
   case
   when platform_family?("rhel")
@@ -59,8 +64,8 @@ end
 
 # create some needed directories and files
 directory basedir do
-  owner node['logstash']['user']
-  group node['logstash']['group']
+  owner beaver_user
+  group beaver_group
   recursive true
 end
 
@@ -70,8 +75,8 @@ end
   File.dirname(pid_file),
 ].each do |dir|
   directory dir do
-    owner node['logstash']['user']
-    group node['logstash']['group']
+    owner beaver_user
+    group beaver_group
     recursive true
     not_if do ::File.exists?(dir) end
   end
@@ -80,8 +85,8 @@ end
 [ log_file, pid_file ].each do |f|
   file f do
     action :touch
-    owner node['logstash']['user']
-    group node['logstash']['group']
+    owner beaver_user
+    group beaver_group
     mode '0640'
   end
 end
@@ -156,8 +161,8 @@ cmd = "beaver  -t #{output} -c #{conf_file}"
 template conf_file do
   source 'beaver.conf.erb'
   mode 0640
-  owner node['logstash']['user']
-  group node['logstash']['group']
+  owner beaver_user
+  group beaver_group
   variables(
             :conf => conf,
             :files => files
@@ -165,15 +170,15 @@ template conf_file do
   notifies :restart, "service[logstash_beaver]"
 end
 
-case node["logstash"]["beaver"]["init_style"]
+case init_style
 when "upstart", "upstart-1.5"
   template "/etc/init/logstash_beaver.conf" do
     mode "0644"
-    source "#{node["logstash"]["beaver"]["init_style"]}.beaver.erb"
+    source "#{init_style}.beaver.erb"
     variables(
               :cmd => cmd,
-              :group => node['logstash']['group'],
-              :user => node['logstash']['user'],
+              :group => beaver_group,
+              :user => beaver_user,
               :log => log_file
              )
     notifies :restart, "service[logstash_beaver]"
@@ -191,7 +196,7 @@ when "init"
     variables(
               :cmd => cmd,
               :pid_file => pid_file,
-              :user => node['logstash']['user'],
+              :user => beaver_user,
               :log => log_file,
               :platform => node['platform']
               )
@@ -211,5 +216,5 @@ logrotate_app "logstash_beaver" do
   postrotate "invoke-rc.d logstash_beaver force-reload >/dev/null 2>&1 || true"
   options [ "missingok", "notifempty" ]
   rotate 30
-  create "0440 #{node['logstash']['user']} #{node['logstash']['group']}"
+  create "0440 #{beaver_user} #{beaver_group}"
 end
