@@ -96,10 +96,10 @@ node['logstash']['patterns'].each do |file, hash|
 end
 
 case node["logstash"]["agent"]["init_style"]
-when "upstart", "upstart-1.5"
+when "upstart-1.5"
   template "/etc/init/logstash_agent.conf" do
     mode "0644"
-    source "upstart.agent.erb"
+    source "upstart-1.5.agent.erb"
   end
 
   service "logstash_agent" do
@@ -128,6 +128,7 @@ when "init"
     end
   else
     raise "platform not supported for init"
+  end
 when "runit"
   runit_service "logstash_agent"
 end
