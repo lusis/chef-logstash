@@ -10,10 +10,4 @@ respawn limit 5 30
 setuid <%= @user %>
 setgid <%= @group %>
 
-chdir <%= node['logstash']['basedir'] %>/beaver
-
-console output
-
 exec <%= @cmd %> >> <%= @log %> 2>&1
-
-emits logstash-beaver-running
