@@ -174,8 +174,8 @@ when "upstart", "upstart-1.5"
               :cmd => cmd,
               :group => node['logstash']['group'],
               :user => node['logstash']['user'],
-              :log => log_file,
-              )
+              :log => log_file
+             )
     notifies :restart, "service[logstash_beaver]"
   end
 
