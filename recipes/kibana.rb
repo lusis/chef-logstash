@@ -9,12 +9,12 @@ kibana_pid_dir = node['logstash']['kibana']['pid_dir']
 include_recipe "rbenv::default"
 include_recipe "rbenv::ruby_build"
 
-rbenv_ruby "1.9.3-p194" do
+rbenv_ruby node['logstash']['kibana']['ruby_version'] do
   global true
 end
 
 rbenv_gem "bundler" do
-  ruby_version "1.9.3-p194"
+  ruby_version node['logstash']['kibana']['ruby_version']
 end
 
 if Chef::Config[:solo]

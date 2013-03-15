@@ -11,6 +11,7 @@ default['logstash']['kibana']['http_port'] = 80
 default['logstash']['kibana']['auth']['enabled'] = false
 default['logstash']['kibana']['auth']['user'] = 'admin'
 default['logstash']['kibana']['auth']['password'] = 'unauthorized'
+default['logstash']['kibana']['ruby_version'] = '1.9.3-p392'
 default['apache']['default_site_enabled'] = false
 
 #Smart_index_pattern = 'logstash-%Y.%m.%d'
