@@ -5,6 +5,8 @@
 #
 include_recipe "logstash::default"
 
+init_style = node["logstash"]["agent"]["init_style"] || node["logstash"]["init_style"]
+
 if node['logstash']['agent']['patterns_dir'][0] == '/'
   patterns_dir = node['logstash']['agent']['patterns_dir']
 else
@@ -95,38 +97,42 @@ node['logstash']['patterns'].each do |file, hash|
   end
 end
 
-if platform_family? "debian"
-  if ["12.04", "12.10"].include? node["platform_version"]
-    template "/etc/init/logstash_agent.conf" do
-      mode "0644"
-      source "logstash_agent.conf.erb"
-    end
-
-    service "logstash_agent" do
-      provider Chef::Provider::Service::Upstart
-      action [ :enable, :start ]
-    end
-  else
-    runit_service "logstash_agent"
-  end
-elsif platform_family? "rhel", "fedora"
-  template "/etc/init.d/logstash_agent" do
-    source "init.erb"
-    owner "root"
-    group "root"
-    mode "0774"
-    variables(
-      :config_file => "shipper.conf",
-      :name => 'agent',
-      :max_heap => node['logstash']['agent']['xmx'],
-      :min_heap => node['logstash']['agent']['xms']
-    )
+case init_style
+when "upstart-1.5"
+  template "/etc/init/logstash_agent.conf" do
+    mode "0644"
+    source "upstart-1.5.agent.erb"
   end
 
   service "logstash_agent" do
-    supports :restart => true, :reload => true, :status => true
-    action :enable
+    provider Chef::Provider::Service::Upstart
+    action [ :enable, :start ]
   end
+when "init"
+  case node["platform_family"]
+  when "rhel", "fedora"
+    template "/etc/init.d/logstash_agent" do
+      source "init.erb"
+      owner "root"
+      group "root"
+      mode "0774"
+      variables(
+        :config_file => "shipper.conf",
+        :name => 'agent',
+        :max_heap => node['logstash']['agent']['xmx'],
+        :min_heap => node['logstash']['agent']['xms']
+      )
+    end
+
+    service "logstash_agent" do
+      supports :restart => true, :reload => true, :status => true
+      action :enable
+    end
+  else
+    raise "platform not supported for init"
+  end
+when "runit"
+  runit_service "logstash_agent"
 end
 
 if node['logstash']['agent']['install_method'] == "jar"

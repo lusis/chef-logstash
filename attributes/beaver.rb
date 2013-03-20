@@ -6,3 +6,7 @@ default['logstash']['beaver']['server_ipaddress'] = nil
 default['logstash']['beaver']['inputs'] = []
 default['logstash']['beaver']['outputs'] = []
 
+default['logstash']['beaver']['init_style'] = nil # Same than node['logstash']['init_style']
+
+default['logstash']['beaver']['user'] = nil # Same than node['logstash']['user']
+default['logstash']['beaver']['group'] = nil # Same than node['logstash']['group']

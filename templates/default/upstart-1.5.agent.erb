@@ -1,0 +1,22 @@
+description "Logstash agent"
+author "Chef"
+
+start on (filesystem and net-device-up)
+stop on runlevel [!2345]
+
+respawn
+respawn limit 5 30
+
+env HOME="<%= node['logstash']['basedir'] %>/agent"
+
+env GC_OPTS="<%= node['logstash']['agent']['gc_opts'] %>"
+env JAVA_OPTS="-server -Xms<%= node['logstash']['agent']['xms'] %> -Xmx<%= node['logstash']['agent']['xmx'] %> -Djava.io.tmpdir=$HOME/tmp/ <%= node['logstash']['agent']['java_opts'] %> <%= '-Djava.net.preferIPv4Stack=true' if node['logstash']['agent']['ipv4_only'] %>"
+
+chdir <%= node['logstash']['basedir'] %>/agent
+setuid <%= node['logstash']['user'] %>
+setgid <%= node['logstash']['group'] %>
+
+script
+  exec java $JAVA_OPTS $GC_OPTS -jar $HOME/lib/logstash.jar agent -f $HOME/etc/shipper.conf -l <%= node['logstash']['log_dir'] %>/logstash.log <%= '-vv' if node['logstash']['agent']['debug'] %>
+end script
+

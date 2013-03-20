@@ -19,9 +19,32 @@ default['logstash']['graphite_ip'] = ''
 default['logstash']['patterns'] = {}
 default['logstash']['install_zeromq'] = false
 
-case
-when platform_family?("rhel")
-  node.set['logstash']['zeromq_packages'] = [ "zeromq",  "zeromq-devel"]
-when platform_family?("debian")
-  node.set['logstash']['zeromq_packages'] = [ "zeromq",  "libzmq-dev"]
+case node['platform_family']
+when "rhel"
+  default['logstash']['zeromq_packages'] = [ "zeromq",  "zeromq-devel"]
+  if node['platform_version'].to_i >= 6
+    default['logstash']['init_style'] = 'upstart'
+  else
+    default['logstash']['init_style'] = 'init'
+  end
+when "fedora"
+  default['logstash']['zeromq_packages'] = [ "zeromq",  "zeromq-devel"]
+  if node['platform_version'].to_i >= 9
+    default['logstash']['init_style'] = 'upstart'
+  else
+    default['logstash']['init_style'] = 'init'
+  end
+when "debian"
+  default['logstash']['zeromq_packages'] = [ "zeromq",  "libzmq-dev"]
+  if node["platform"] == "ubuntu"
+    if node['platform_version'].to_f >= 12.04
+      default['logstash']['init_style'] = 'upstart-1.5'
+    elsif node['platform_version'].to_f >= 9.04
+      default['logstash']['init_style'] = 'upstart'
+    else
+      default['logstash']['init_style'] = 'runit'
+    end
+  else
+    default['logstash']['init_style'] = 'runit'
+  end
 end

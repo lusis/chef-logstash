@@ -7,6 +7,11 @@ include_recipe "logstash::default"
 include_recipe "python::default"
 include_recipe "logrotate"
 
+beaver_user = node["logstash"]["beaver"]["user"] || node["logstash"]["user"]
+beaver_group = node["logstash"]["beaver"]["group"] || node["logstash"]["group"]
+
+init_style = node["logstash"]["beaver"]["init_style"] || node["logstash"]["init_style"]
+
 if node['logstash']['agent']['install_zeromq']
   case
   when platform_family?("rhel")
@@ -59,8 +64,8 @@ end
 
 # create some needed directories and files
 directory basedir do
-  owner node['logstash']['user']
-  group node['logstash']['group']
+  owner beaver_user
+  group beaver_group
   recursive true
 end
 
@@ -70,8 +75,8 @@ end
   File.dirname(pid_file),
 ].each do |dir|
   directory dir do
-    owner node['logstash']['user']
-    group node['logstash']['group']
+    owner beaver_user
+    group beaver_group
     recursive true
     not_if do ::File.exists?(dir) end
   end
@@ -80,8 +85,8 @@ end
 [ log_file, pid_file ].each do |f|
   file f do
     action :touch
-    owner node['logstash']['user']
-    group node['logstash']['group']
+    owner beaver_user
+    group beaver_group
     mode '0640'
   end
 end
@@ -156,8 +161,8 @@ cmd = "beaver  -t #{output} -c #{conf_file}"
 template conf_file do
   source 'beaver.conf.erb'
   mode 0640
-  owner node['logstash']['user']
-  group node['logstash']['group']
+  owner beaver_user
+  group beaver_group
   variables(
             :conf => conf,
             :files => files
@@ -165,36 +170,17 @@ template conf_file do
   notifies :restart, "service[logstash_beaver]"
 end
 
-# use upstart when supported to get nice things like automatic respawns
-use_upstart = false
-supports_setuid = false
-case node['platform_family']
-when "rhel"
-  if node['platform_version'].to_i >= 6
-    use_upstart = true
-  end
-when "fedora"
-  if node['platform_version'].to_i >= 9
-    use_upstart = true
-  end
-when "ubuntu"
-  use_upstart = true
-  if node['platform_version'].to_f >= 12.04
-    supports_setuid = true
-  end
-end
-
-if use_upstart
+case init_style
+when "upstart", "upstart-1.5"
   template "/etc/init/logstash_beaver.conf" do
     mode "0644"
-    source "logstash_beaver.conf.erb"
+    source "#{init_style}.beaver.erb"
     variables(
               :cmd => cmd,
-              :group => node['logstash']['group'],
-              :user => node['logstash']['user'],
-              :log => log_file,
-              :supports_setuid => supports_setuid
-              )
+              :group => beaver_group,
+              :user => beaver_user,
+              :log => log_file
+             )
     notifies :restart, "service[logstash_beaver]"
   end
 
@@ -203,23 +189,23 @@ if use_upstart
     action [:enable, :start]
     provider Chef::Provider::Service::Upstart
   end
-else
-  service "logstash_beaver" do
-    supports :restart => true, :reload => false, :status => true
-    action [:enable, :start]
-  end
-
+when "init"
   template "/etc/init.d/logstash_beaver" do
     mode "0755"
     source "init-beaver.erb"
     variables(
               :cmd => cmd,
               :pid_file => pid_file,
-              :user => node['logstash']['user'],
+              :user => beaver_user,
               :log => log_file,
               :platform => node['platform']
               )
     notifies :restart, "service[logstash_beaver]"
+  end
+  
+  service "logstash_beaver" do
+    supports :restart => true, :reload => false, :status => true
+    action [:enable, :start]
   end
 end
 
@@ -230,5 +216,5 @@ logrotate_app "logstash_beaver" do
   postrotate "invoke-rc.d logstash_beaver force-reload >/dev/null 2>&1 || true"
   options [ "missingok", "notifempty" ]
   rotate 30
-  create "0440 #{node['logstash']['user']} #{node['logstash']['group']}"
+  create "0440 #{beaver_user} #{beaver_group}"
 end
