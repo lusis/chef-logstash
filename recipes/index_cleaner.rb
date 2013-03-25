@@ -31,10 +31,7 @@ file index_cleaner_bin do
 end
 
 cron "logstash_index_cleaner" do
-  command %Q{
-    cd #{base_dir} &&
-    ./logstash_index_cleaner.py -d #{days_to_keep} &> #{log_file}
-  }
+  command "#{index_cleaner_bin} -d #{days_to_keep} &> #{log_file}"
   minute  node['logstash']['index_cleaner']['cron']['minute']
   hour    node['logstash']['index_cleaner']['cron']['hour']
 end
