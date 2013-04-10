@@ -1,0 +1,16 @@
+<VirtualHost *:80>
+  ServerName <%= @vhost_server_name %>
+
+  <Location "/">
+      Order allow,deny
+      AuthType Basic
+      AuthName "Password Required"
+      AuthUserFile "<%= @htpasswd_path %>"
+      Require valid-user
+      Allow from all
+  </Location>
+
+  ProxyPreserveHost On
+  ProxyPass / http://<%= @server_name %>:<%= @http_port %>/
+  ProxyPassReverse / http://<%= @server_name %>:<%= @http_port %>/
+</VirtualHost>

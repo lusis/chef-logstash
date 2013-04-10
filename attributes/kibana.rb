@@ -7,6 +7,7 @@ default['logstash']['kibana']['pid_dir'] = '/var/run/kibana'
 default['logstash']['kibana']['home'] = "#{node['logstash']['kibana']['basedir']}/current"
 default['logstash']['kibana']['config'] = 'kibana-config.php.erb'
 default['logstash']['kibana']['server_name'] = node['ipaddress']
+default['logstash']['kibana']['vhost_server_name'] = node['ipaddress']
 default['logstash']['kibana']['http_port'] = 80
 default['logstash']['kibana']['auth']['enabled'] = false
 default['logstash']['kibana']['auth']['user'] = 'admin'
