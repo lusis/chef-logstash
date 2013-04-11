@@ -90,8 +90,7 @@ when "ruby"
               :smart_index => node['logstash']['kibana']['smart_index_pattern'],
               :es_ip => es_server_ip,
               :es_port => es_server_port,
-              :server_name => node['logstash']['kibana']['server_name'],
-              :vhost_server_name => node['logstash']['kibana']['vhost_server_name']
+              :server_name => node['logstash']['kibana']['server_name']
               )
   end
 
@@ -152,6 +151,7 @@ when "ruby"
       source node['logstash']['kibana']['apache_template']
       variables(:server_name => node['logstash']['kibana']['server_name'],
                 :htpasswd_path => htpasswd_path,
+                :vhost_server_name => node['logstash']['kibana']['vhost_server_name'],
                 :http_port => node['logstash']['kibana']['http_port'])
     end
 
