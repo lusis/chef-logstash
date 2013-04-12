@@ -27,8 +27,10 @@
   <% end -%>
 
   <Location />
+    Order allow,deny
     AuthType CAS
     require valid-user
+    Allow from all
   </Location>
 <% when "ldap" -%>
   <Location />
