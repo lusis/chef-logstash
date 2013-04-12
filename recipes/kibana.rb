@@ -5,7 +5,6 @@ kibana_base = node['logstash']['kibana']['basedir']
 kibana_home = node['logstash']['kibana']['home']
 kibana_log_dir = node['logstash']['kibana']['log_dir']
 kibana_pid_dir = node['logstash']['kibana']['pid_dir']
-kibana_version = node['logstash']['kibana']['sha']
 
 include_recipe "rbenv::default"
 include_recipe "rbenv::ruby_build"
@@ -138,34 +137,36 @@ when "ruby"
     create "644 kibana kibana"
   end
 
-  if node['logstash']['kibana']['auth']['enabled']
+  server_auth_method = node['logstash']['kibana']['auth']['server_auth_method']
+  if server_auth_method
     include_recipe "apache2"
     include_recipe "apache2::mod_proxy"
     include_recipe "apache2::mod_proxy_http"
 
-    htpasswd_path     = "#{node['logstash']['basedir']}/kibana/#{kibana_version}/htpasswd"
-    htpasswd_user     = node['logstash']['kibana']['auth']['user']
-    htpasswd_password = node['logstash']['kibana']['auth']['password']
+    if server_auth_method == "basic"
+      htpasswd_path     = "#{node['logstash']['basedir']}/kibana/#{kibana_version}/htpasswd"
+      htpasswd_user     = node['logstash']['kibana']['auth']['user']
+      htpasswd_password = node['logstash']['kibana']['auth']['password']
+
+      execute "add htpasswd file" do
+        command "/usr/bin/htpasswd -b #{htpasswd_path} #{htpasswd_user} #{htpasswd_password}"
+      end
   
+      file htpasswd_path do
+        owner node['logstash']['user']
+        group node['logstash']['group']
+        mode "0755"
+      end
+    end
+
     template "#{node['apache']['dir']}/sites-available/kibana" do
       source node['logstash']['kibana']['apache_template']
       variables(:server_name => node['logstash']['kibana']['server_name'],
-                :htpasswd_path => htpasswd_path,
-                :vhost_server_name => node['logstash']['kibana']['vhost_server_name'],
+                :server_hostname => node['logstash']['kibana']['server_hostname'],
                 :http_port => node['logstash']['kibana']['http_port'])
     end
 
     apache_site "kibana", :enabled => true
-  
-    file htpasswd_path do
-      owner node['logstash']['user']
-      group node['logstash']['group']
-      mode "0755"
-    end
-
-    execute "add htpasswd file" do
-      command "/usr/bin/htpasswd -b #{htpasswd_path} #{htpasswd_user} #{htpasswd_password}"
-    end
 
     service "apache2"
   end
@@ -175,6 +176,8 @@ when "php"
   include_recipe "apache2"
   include_recipe "apache2::mod_php5"
   include_recipe "php::module_curl"
+
+  kibana_version = node['logstash']['kibana']['sha']
 
   apache_module "php5" do
     action :enable
