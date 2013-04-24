@@ -183,6 +183,12 @@ Attributes
 
 * `node['logstash']['index_cleaner']['days_to_keep']` - Integer number
   of days from today of Logstash index to keep.
+* `node['logstash']['index_cleaner']['cron']['minute'] - Minute to run
+  the index_cleaner cron job
+* `node['logstash']['index_cleaner']['cron']['hour'] - Hour to run the
+  index_cleaner cron job
+* `node['logstash']['index_cleaner']['cron']['log_file'] - Path to direct
+  the index_cleaner cron job's stdout and stderr
 
 Usage
 =====
