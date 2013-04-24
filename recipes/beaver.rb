@@ -41,6 +41,7 @@ package 'git'
 basedir = node['logstash']['basedir'] + '/beaver'
 
 conf_file = "#{basedir}/etc/beaver.conf"
+format = "#{node['logstash']['beaver']['format']}"
 log_file = "#{node['logstash']['log_dir']}/logstash_beaver.log"
 pid_file = "#{node['logstash']['pid_dir']}/logstash_beaver.pid"
 
@@ -151,7 +152,7 @@ if outputs.length > 1
   log("multiple outpus detected, will consider only the first: #{output}") { level :warn }
 end
 
-cmd = "beaver  -t #{output} -c #{conf_file}"
+cmd = "beaver  -t #{output} -c #{conf_file} -F #{format}"
 
 template conf_file do
   source 'beaver.conf.erb'
