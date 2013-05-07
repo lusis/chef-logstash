@@ -155,6 +155,18 @@ Attributes
   virtual host.
 * `node['logstash']['kibana']['http_port']` - The port the virtualhost
   kibana listens on
+* `node['logstash']['kibana']['auth']['server_auth_method']` - Authentication
+   with the server can be done with openid (using `apache2::mod_auth_openid`),
+   cas (using `apache2::mod_auth_cas`), or htauth (basic). The default is
+   no auth.
+* `node['logstash']['kibana']['auth']['cas_login_url']` - Login url for cas 
+   if using cas authentication.
+* `node['logstash']['kibana']['auth']['cas_validate_url']` - Validation url for
+   cas if using cas authentication.
+* `node['logstash']['kibana']['auth']['cas_validate_server']` - Whether to
+   validate the server cert. Defaults to off.
+* `node['logstash']['kibana']['auth']['cas_root_proxy_url']` - If set, sets the
+   url that the cas server redirects to after auth.
 
 ## Beaver (alternative to Logstash Agent)
 
