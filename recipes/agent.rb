@@ -95,7 +95,10 @@ node['logstash']['patterns'].each do |file, hash|
   end
 end
 
-if platform_family? "debian"
+if node['use_runit']
+  include_recipe "runit"
+  runit_service "logstash_agent"
+elsif platform_family? "debian"
   if ["12.04", "12.10"].include? node["platform_version"]
     template "/etc/init/logstash_agent.conf" do
       mode "0644"
@@ -107,6 +110,7 @@ if platform_family? "debian"
       action [ :enable, :start ]
     end
   else
+    include_recipe "runit"
     runit_service "logstash_agent"
   end
 elsif platform_family? "rhel", "fedora"
