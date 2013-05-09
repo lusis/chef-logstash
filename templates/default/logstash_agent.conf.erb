@@ -9,6 +9,7 @@ respawn limit 5 30
 
 chdir <%= node['logstash']['basedir'] %>/agent
 setuid <%= node['logstash']['user'] %>
+setgid <%= node['logstash']['group'] %>
 
 script
   export LOGSTASH_HOME="<%= node['logstash']['basedir'] %>/agent"
