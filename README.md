@@ -99,6 +99,8 @@ Attributes
 * `node['logstash']['agent']['patterns_dir']` - The patterns directory
   where pattern files will be generated. Relative to the basedir or
   absolute.
+* `node['logstash']['agent']['use_runit']` - Use runit instead of the
+  default distro launch system.
 
 ## Server
 
