@@ -1,2 +1,2 @@
 #!/bin/sh
-exec svlogd -tt node['logstash']['agent']['log_dir']
+exec svlogd -tt <%= node['logstash']['agent']['log_dir'] %>
