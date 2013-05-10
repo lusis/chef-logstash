@@ -101,6 +101,12 @@ Attributes
   absolute.
 * `node['logstash']['agent']['use_runit']` - Use runit instead of the
   default distro launch system.
+* `node['logstash']['agent']['runit_cookbook']` - Optionally, use the runit templates from an alternative cookbook.
+* `node['logstash']['agent']['runit_run_template']` - Optionally, use an alternative runit run template
+* `node['logstash']['agent']['runit_log_template']` - Optionally, use an alternative runit log template
+
+
+
 
 ## Server
 
