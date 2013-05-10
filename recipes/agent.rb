@@ -95,9 +95,12 @@ node['logstash']['patterns'].each do |file, hash|
   end
 end
 
+Chef::Log.info("Use_runit ????????")
+Chef::Log.info("Using runit??? #{node["use_runit"]}")
 if node['use_runit']
   include_recipe "runit"
   runit_service "logstash_agent"
+  Chef::Log.info("I am a runit baby")
 elsif platform_family? "debian"
   if ["12.04", "12.10"].include? node["platform_version"]
     template "/etc/init/logstash_agent.conf" do
