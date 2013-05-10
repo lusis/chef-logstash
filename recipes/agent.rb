@@ -97,7 +97,7 @@ end
 
 Chef::Log.info("Use_runit ????????")
 Chef::Log.info("Using runit??? #{node["use_runit"]}")
-if node['use_runit']
+if node['logstash']['agent']['use_runit']
   include_recipe "runit"
   runit_service "logstash_agent"
   Chef::Log.info("I am a runit baby")
