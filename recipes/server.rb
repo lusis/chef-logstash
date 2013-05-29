@@ -173,7 +173,7 @@ logrotate_app "logstash_server" do
   path "#{node['logstash']['log_dir']}/*.log"
   frequency "daily"
   rotate "30"
-  options [ "missingok", "notifempty" ]
+  options [ "missingok", "notifempty", "compress", "copytruncate" ]
   create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
 end
 
