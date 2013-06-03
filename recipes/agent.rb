@@ -177,8 +177,18 @@ logrotate_app "logstash" do
   path "#{node['logstash']['log_dir']}/*.log"
   frequency "daily"
   rotate "30"
-  options [ "missingok", "notifempty" ]
+  options node['logstash']['agent']['logrotate']['options']
   create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
   notifies :restart, "service[rsyslog]"
+  if node['logstash']['agent']['logrotate']['stopstartprepost']
+    prerotate <<-EOF
+      service logstash_agent stop
+      logger stopped logstash_agent service for log rotation
+    EOF
+    postrotate <<-EOF
+      service logstash_agent start
+      logger started logstash_agent service after log rotation
+    EOF
+  end
 end
 
