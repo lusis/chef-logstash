@@ -33,13 +33,13 @@ else
   graphite_results = search(:node, node['logstash']['graphite_query'])
 
   unless es_results.empty?
-    es_server_ip = es_results[0]['ipaddress']
+    es_server_ip = LogstashIpResolver.ipaddress_of(es_results[0])
   else
     es_server_ip = node['logstash']['elasticsearch_ip']
   end
 
   unless graphite_results.empty?
-    graphite_server_ip = graphite_results[0]['ipaddress']
+    graphite_server_ip = LogstashIpResolver.ipaddress_of(graphite_results[0])
   else
     graphite_server_ip = node['logstash']['graphite_ip']
   end

@@ -6,6 +6,7 @@ default['logstash']['log_dir'] = '/var/log/logstash'
 default['logstash']['pid_dir'] = '/var/run/logstash'
 default['logstash']['create_account'] = true
 default['logstash']['chef_solo_with_search'] = false
+default['logstash']['ipaddress_path'] = ['ipaddress']
 
 # roles/flags for various search/discovery
 default['logstash']['graphite_role'] = 'graphite_server'

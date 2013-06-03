@@ -22,7 +22,7 @@ if Chef::Config[:solo] && !node['logstash']['chef_solo_with_search']
 else
   es_server_results = search(:node, "roles:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
   unless es_server_results.empty?
-    es_server_ip = es_server_results[0]['ipaddress']
+    es_server_ip = LogstashIpResolver.ipaddress_of(es_server_results[0])
   else
     es_server_ip = node['logstash']['elasticsearch_ip'].empty? ? '127.0.0.1' : node['logstash']['elasticsearch_ip']
   end

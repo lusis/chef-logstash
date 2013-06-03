@@ -53,7 +53,7 @@ elsif !node['logstash']['beaver']['server_ipaddress'].nil?
 elsif node['logstash']['beaver']['server_role']
   logstash_server_results = search(:node, "roles:#{node['logstash']['beaver']['server_role']}")
   unless logstash_server_results.empty?
-    logstash_server_ip = logstash_server_results[0]['ipaddress']
+    logstash_server_ip = LogstashIpResolver.ipaddress_of(logstash_server_results[0])
   end
 end
 

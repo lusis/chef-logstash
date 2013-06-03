@@ -43,7 +43,7 @@ if Chef::Config[:solo] && !node['logstash']['chef_solo_with_search']
 else
   logstash_server_results = search(:node, "roles:#{node['logstash']['agent']['server_role']}")
   unless logstash_server_results.empty?
-    logstash_server_ip = logstash_server_results[0]['ipaddress']
+    logstash_server_ip = LogstashIpResolver.ipaddress_of(logstash_server_results[0])
   else
     logstash_server_ip = node['logstash']['agent']['server_ipaddress']
   end
