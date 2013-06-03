@@ -62,6 +62,16 @@ Attributes
 * `node['logstash']['zeromq_packages']` - zeromq_packages to install
   if you use zeromq
 
+## Running with chef solo
+You can use this cookbook with chef-solo, by defining
+* `node['logstash']['agent']['server_ipaddress']`
+* `node['logstash']['beaver']['server_ipaddress']`
+* `node['logstash']['elasticsearch_ip']`
+
+It is also possible to use the chef_solo_search plugin. In order to
+do that, you have to set the following attribute:
+`node['logstash']['chef_solo_with_search'] = true`
+
 ## Agent
 
 * `node['logstash']['agent']['install_method']` - The method to

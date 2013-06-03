@@ -17,7 +17,7 @@ rbenv_gem "bundler" do
   ruby_version "1.9.3-p194"
 end
 
-if Chef::Config[:solo]
+if Chef::Config[:solo] && !node['logstash']['chef_solo_with_search']
   es_server_ip = node['logstash']['elasticsearch_ip']
 else
   es_server_results = search(:node, "roles:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")

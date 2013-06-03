@@ -25,7 +25,7 @@ else
   patterns_dir = node['logstash']['basedir'] + '/' + node['logstash']['server']['patterns_dir']
 end
 
-if Chef::Config[:solo]
+if Chef::Config[:solo] && !node['logstash']['chef_solo_with_search']
   es_server_ip = node['logstash']['elasticsearch_ip']
   graphite_server_ip = node['logstash']['graphite_ip']
 else
