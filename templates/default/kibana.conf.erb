@@ -1,4 +1,6 @@
+<% unless node['apache']['listen_ports'].include?(node['logstash']['kibana']['http_port']) %>
 NameVirtualHost *:<%= node['logstash']['kibana']['http_port'] %>
+<% end %>
 <VirtualHost *:<%= node['logstash']['kibana']['http_port'] %>>
   ServerName <%= @server_name %>
   DocumentRoot "<%= @docroot %>"
