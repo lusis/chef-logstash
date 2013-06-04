@@ -1,0 +1,16 @@
+cluster:
+  name: <%= node['logstash']['elasticsearch_cluster'] %>
+
+cloud:
+  aws:
+    access_key: <%= node['logstash']['elasticsearch']['cloud']['aws']['access_key'] %>
+    secret_key: <%= node['logstash']['elasticsearch']['cloud']['aws']['secret_key'] %>
+    region: <%= node['logstash']['elasticsearch']['cloud']['aws']['region'] %>
+  node:
+    auto_attributes: true
+
+discovery:
+  type: ec2
+  ec2:
+    groups: <%= node['logstash']['elasticsearch']['discovery']['ec2']['groups'] %>
+    ping_timeout: <%= node['logstash']['elasticsearch']['discovery']['ec2']['ping_timeout'] %>

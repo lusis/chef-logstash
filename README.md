@@ -202,6 +202,19 @@ Attributes
 * `node['logstash']['index_cleaner']['cron']['log_file'] - Path to direct
   the index_cleaner cron job's stdout and stderr
 
+## AWS Cloud Discovery For Elasticsearch
+
+Works for output client discovering an external cluster or multiple
+logstash instances with embedded elasticsearch nodes.
+
+* `node['logstash']['es-cloud-aws-plugin']['version']` - The plugin version to download and symlink
+* `node['logstash']['es-cloud-aws-plugin']['download_url']` - The download URL for the plugin binaries zip file
+* `node['logstash']['elasticsearch']['cloud']['aws']['access_key']` - AWS account access key
+* `node['logstash']['elasticsearch']['cloud']['aws']['secret_key']` - AWS account secret key
+* `node['logstash']['elasticsearch']['cloud']['aws']['region']` - AWS region (mandatory if outside of us-east)
+* `node['logstash']['elasticsearch']['discovery']['ec2']['groups']` - AWS security groups to search in
+* `node['logstash']['elasticsearch']['discovery']['ec2']['ping_timeout']` - AWS discovery ping timeout
+
 Usage
 =====
 
