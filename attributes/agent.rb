@@ -1,6 +1,6 @@
-default['logstash']['agent']['version'] = '1.1.9'
-default['logstash']['agent']['source_url'] = 'https://logstash.objects.dreamhost.com/release/logstash-1.1.9-monolithic.jar'
-default['logstash']['agent']['checksum'] = 'e444e89a90583a75c2d6539e5222e2803621baa0ae94cb77dbbcebacdc0c3fc7'
+default['logstash']['agent']['version'] = '1.1.12'                             
+default['logstash']['agent']['source_url'] = 'https://logstash.objects.dreamhost.com/release/logstash-1.1.12-flatjar.jar'
+default['logstash']['agent']['checksum'] = 'e75bce7c88461116fbd2c7c473d8c8999c152ab6c618caa58b3d0d88feeb77fd'
 default['logstash']['agent']['install_method'] = 'jar' # Either `source` or `jar`
 default['logstash']['agent']['patterns_dir'] = 'agent/etc/patterns'
 default['logstash']['agent']['base_config'] = 'agent.conf.erb'
@@ -21,4 +21,3 @@ default['logstash']['agent']['server_ipaddress'] = ''
 default['logstash']['agent']['inputs'] = []
 default['logstash']['agent']['filters'] = []
 default['logstash']['agent']['outputs'] = []
-default['logstash']['agent']['install_zeromq'] = false

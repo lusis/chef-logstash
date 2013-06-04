@@ -7,14 +7,18 @@ default['logstash']['kibana']['pid_dir'] = '/var/run/kibana'
 default['logstash']['kibana']['home'] = "#{node['logstash']['kibana']['basedir']}/current"
 default['logstash']['kibana']['config'] = 'kibana-config.php.erb'
 default['logstash']['kibana']['server_name'] = node['ipaddress']
+default['logstash']['kibana']['server_hostname'] = node['ipaddress']
 default['logstash']['kibana']['http_port'] = 80
-default['logstash']['kibana']['auth']['enabled'] = false
+default['logstash']['kibana']['auth']['server_auth_method'] = nil
 default['logstash']['kibana']['auth']['user'] = 'admin'
 default['logstash']['kibana']['auth']['password'] = 'unauthorized'
+default['logstash']['kibana']['auth']['cas_login_url'] = "https://example.com/cas/login"
+default['logstash']['kibana']['auth']['cas_validate_url'] = "https://example.com/cas/serviceValidate"
+default['logstash']['kibana']['auth']['cas_validate_server'] = "off"
+default['logstash']['kibana']['auth']['cas_root_proxy_url'] = nil
 default['apache']['default_site_enabled'] = false
 
 #Smart_index_pattern = 'logstash-%Y.%m.%d'
 default['logstash']['kibana']['smart_index_pattern'] = 'logstash-%Y.%m.%d' 
 default['logstash']['kibana']['primary_field'] = '_all'
 default['logstash']['kibana']['language'] = "ruby" 
-

@@ -21,9 +21,6 @@ see the Berksfile for more details
 * [Heavywater Graphite Cookbook](https://github.com/heavywater/chef-graphite)   - This is the one I use
 * [Karmi's ElasticSearch Cookbook](https://github.com/karmi/cookbook-elasticsearch)
 * [RiotGames RBENV cookbook](https://github.com/RiotGames/rbenv-cookbook)
-* This cookbook also uses BryanWB's fork of Atomic-Penguin's
-  [Yumrepo cookbook](https://github.com/bryanwb/cookbook-yumrepo)
-  until such time as BryanWB's yumrepo::zeromq cookbook is accepted upstream
 
 
 
@@ -57,7 +54,13 @@ Attributes
   groups to join. Usefull to gain read privileges on some logfiles.
 * `node['logstash']['patterns']` - A hash with grok patterns to be
   used on grok and multiline filters.
-* `node['logstash']['create_account']` - create the account info from `user` and `group`; this is `true` by default. Disable it to use an existing account!
+* `node['logstash']['create_account']` - create the account info from
+  `user` and `group`; this is `true` by default. Disable it to use an
+  existing account!
+* `node['logstash']['install_zeromq']` - Should this
+  recipe install zeromq packages?
+* `node['logstash']['zeromq_packages']` - zeromq_packages to install
+  if you use zeromq
 
 ## Agent
 
@@ -152,6 +155,18 @@ Attributes
   virtual host.
 * `node['logstash']['kibana']['http_port']` - The port the virtualhost
   kibana listens on
+* `node['logstash']['kibana']['auth']['server_auth_method']` - Authentication
+   with the server can be done with openid (using `apache2::mod_auth_openid`),
+   cas (using `apache2::mod_auth_cas`), or htauth (basic). The default is
+   no auth.
+* `node['logstash']['kibana']['auth']['cas_login_url']` - Login url for cas 
+   if using cas authentication.
+* `node['logstash']['kibana']['auth']['cas_validate_url']` - Validation url for
+   cas if using cas authentication.
+* `node['logstash']['kibana']['auth']['cas_validate_server']` - Whether to
+   validate the server cert. Defaults to off.
+* `node['logstash']['kibana']['auth']['cas_root_proxy_url']` - If set, sets the
+   url that the cas server redirects to after auth.
 
 ## Beaver (alternative to Logstash Agent)
 
@@ -180,6 +195,12 @@ Attributes
 
 * `node['logstash']['index_cleaner']['days_to_keep']` - Integer number
   of days from today of Logstash index to keep.
+* `node['logstash']['index_cleaner']['cron']['minute'] - Minute to run
+  the index_cleaner cron job
+* `node['logstash']['index_cleaner']['cron']['hour'] - Hour to run the
+  index_cleaner cron job
+* `node['logstash']['index_cleaner']['cron']['log_file'] - Path to direct
+  the index_cleaner cron job's stdout and stderr
 
 ## AWS Cloud Discovery For Elasticsearch
 

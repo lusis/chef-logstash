@@ -11,6 +11,32 @@ else
   patterns_dir = node['logstash']['basedir'] + '/' + node['logstash']['agent']['patterns_dir']
 end
 
+if node['logstash']['install_zeromq']
+  case
+  when platform_family?("rhel")
+    include_recipe "yumrepo::zeromq"
+  when platform_family?("debian")
+    apt_repository "zeromq-ppa" do
+      uri "http://ppa.launchpad.net/chris-lea/zeromq/ubuntu"
+      distribution node['lsb']['codename']
+      components ["main"]
+      keyserver "keyserver.ubuntu.com"
+      key "C7917B12"
+      action :add
+    end
+    apt_repository "libpgm-ppa" do
+      uri "http://ppa.launchpad.net/chris-lea/libpgm/ubuntu"
+      distribution  node['lsb']['codename']
+      components ["main"]
+      keyserver "keyserver.ubuntu.com"
+      key "C7917B12"
+      action :add
+      notifies :run, "execute[apt-get update]", :immediately
+    end
+  end
+  node['logstash']['zeromq_packages'].each {|p| package p }
+end
+
 # check if running chef-solo.  If not, detect the logstash server/ip by role.  If I can't do that, fall back to using ['logstash']['agent']['server_ipaddress']
 if Chef::Config[:solo]
   logstash_server_ip = node['logstash']['agent']['server_ipaddress']
@@ -151,6 +177,7 @@ logrotate_app "logstash" do
   path "#{node['logstash']['log_dir']}/*.log"
   frequency "daily"
   rotate "30"
+  options [ "missingok", "notifempty" ]
   create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
   notifies :restart, "service[rsyslog]"
 end
