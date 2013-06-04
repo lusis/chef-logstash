@@ -1,4 +1,4 @@
-default['logstash']['agent']['version'] = '1.1.12'                             
+default['logstash']['agent']['version'] = '1.1.12'
 default['logstash']['agent']['source_url'] = 'https://logstash.objects.dreamhost.com/release/logstash-1.1.12-flatjar.jar'
 default['logstash']['agent']['checksum'] = 'e75bce7c88461116fbd2c7c473d8c8999c152ab6c618caa58b3d0d88feeb77fd'
 default['logstash']['agent']['install_method'] = 'jar' # Either `source` or `jar`
@@ -12,6 +12,12 @@ default['logstash']['agent']['gc_opts'] = '-XX:+UseParallelOldGC'
 default['logstash']['agent']['ipv4_only'] = false
 default['logstash']['agent']['debug'] = false
 default['logstash']['agent']['upstart_with_sudo'] = false
+
+# logrotate options for logstash agent
+default['logstash']['agent']['logrotate']['options'] = [ "missingok", "notifempty" ]
+# stop/start on logrotate?
+default['logstash']['agent']['logrotate']['stopstartprepost'] = false
+
 
 # roles/flasgs for various autoconfig/discovery components
 default['logstash']['agent']['server_role'] = 'logstash_server'
