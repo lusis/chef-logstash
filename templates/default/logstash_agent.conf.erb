@@ -8,7 +8,9 @@ respawn
 respawn limit 5 30
 
 chdir <%= node['logstash']['basedir'] %>/agent
+<% if node['logstash']['agent']['upstart_with_sudo'] == false -%>
 setuid <%= node['logstash']['user'] %>
+<% end -%>
 
 script
   export LOGSTASH_HOME="<%= node['logstash']['basedir'] %>/agent"
@@ -21,7 +23,11 @@ script
   <% end -%>
   export OPTS="$JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS"
 
+  <% if node['logstash']['agent']['upstart_with_sudo'] -%>
+  exec sudo -u <%= node['logstash']['user'] %> /usr/bin/java $OPTS
+  <% else -%>
   exec /usr/bin/java $OPTS
+  <% end -%>
 end script
 
 emits logstash-agent-running
