@@ -18,7 +18,7 @@ discovery. The same applies to integration with Graphite.
 This cookbook has been tested together with the following cookbooks,
 see the Berksfile for more details
 
-* [Heavywater Graphite Cookbook](https://github.com/heavywater/chef-graphite)   - This is the one I use
+* [Heavywater Graphite Cookbook](https://github.com/hw-cookbooks/graphite)   - This is the one I use
 * [Karmi's ElasticSearch Cookbook](https://github.com/karmi/cookbook-elasticsearch)
 * [RiotGames RBENV cookbook](https://github.com/RiotGames/rbenv-cookbook)
 
