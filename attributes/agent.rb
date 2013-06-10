@@ -12,6 +12,7 @@ default['logstash']['agent']['gc_opts'] = '-XX:+UseParallelOldGC'
 default['logstash']['agent']['ipv4_only'] = false
 default['logstash']['agent']['debug'] = false
 default['logstash']['agent']['upstart_with_sudo'] = false
+default['logstash']['agent']['init_method'] = 'native' # runit or native
 
 # logrotate options for logstash agent
 default['logstash']['agent']['logrotate']['options'] = [ "missingok", "notifempty" ]

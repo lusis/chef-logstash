@@ -9,6 +9,12 @@ kibana_pid_dir = node['logstash']['kibana']['pid_dir']
 include_recipe "rbenv::default"
 include_recipe "rbenv::ruby_build"
 
+if node['logstash']['kibana']['init_method'] == 'runit'
+  service_resource = 'runit_service[kibana]'
+else
+  service_resource = 'service[kibana]'
+end
+
 rbenv_ruby "1.9.3-p194" do
   global true
 end
@@ -93,16 +99,6 @@ when "ruby"
               )
   end
 
-  template "/etc/init.d/kibana" do
-    source "kibana.init.erb"
-    owner 'root'
-    mode "755"
-    variables(
-              :kibana_home => kibana_home,
-              :user => 'kibana'
-              )
-  end
-
   template "#{kibana_home}/KibanaConfig.rb" do
     source "kibana-config.rb.erb"
     owner 'kibana'
@@ -121,11 +117,40 @@ when "ruby"
     not_if { ::File.exists? "#{kibana_home}/Gemfile.lock" }
   end
 
-  
-  service "kibana" do
-    supports :status => true, :restart => true
-    action [:enable, :start]
-    subscribes :restart, [ "link[#{kibana_home}]", "template[#{kibana_home}/KibanaConfig.rb]", "template[#{kibana_home}/kibana-daemon.rb]" ]
+  if node['logstash']['kibana']['init_method'] == 'runit'
+    runit_service "kibana" do
+      env(
+        {'PID_DIR'     => kibana_pid_dir,
+         'LOG_DIR'     => kibana_log_dir,
+         'ES_PORT'     => es_server_port.to_s,
+         'ES_IP'       => es_server_ip,
+         'KIBANA_HOST' => node['logstash']['kibana']['server_name'],
+         'KIBANA_APP'  => 'kibana',
+         'SMART_INDEX' => node['logstash']['kibana']['smart_index_pattern'],
+         'KIBANA_PORT' => node['logstash']['kibana']['http_port'].to_s
+      })
+      options(
+        :kibana_home => kibana_home,
+        :user        => 'kibana'
+      )
+      action [:enable, :start]
+    end
+  elsif node['logstash']['kibana']['init_method'] == 'native'
+    template "/etc/init.d/kibana" do
+      source "kibana.init.erb"
+      owner 'root'
+      mode "755"
+      variables(
+                :kibana_home => kibana_home,
+                :user => 'kibana'
+                )
+    end
+
+    service "kibana" do
+      supports :status => true, :restart => true
+      action [:enable, :start]
+      subscribes :restart, [ "link[#{kibana_home}]", "template[#{kibana_home}/KibanaConfig.rb]", "template[#{kibana_home}/kibana-daemon.rb]" ]
+    end
   end
     
   logrotate_app "kibana" do
