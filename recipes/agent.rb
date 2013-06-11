@@ -100,6 +100,7 @@ if platform_family? "debian"
     template "/etc/init/logstash_agent.conf" do
       mode "0644"
       source "logstash_agent.conf.erb"
+      notifies :restart, "service[logstash_agent]"
     end
 
     service "logstash_agent" do
