@@ -1,0 +1,6 @@
+#!/bin/sh
+
+cd <%= @options[:kibana_home] %>
+exec 2>&1
+KIBANA_HOME="<%= @options[:kibana_home] %>"
+exec chpst -u<%= @options[:user] %> -e /etc/sv/kibana/env/ /opt/rbenv/shims/bundle exec ruby kibana.rb
