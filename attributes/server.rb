@@ -22,3 +22,5 @@ default['logstash']['server']['filters'] = []
 default['logstash']['server']['outputs'] = []
 
   
+default['logstash']['server']['setuid'] = node['logstash']['user']
+default['logstash']['server']['setgid'] = node['logstash']['group']
