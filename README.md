@@ -466,12 +466,10 @@ the Vagrantfile supports both the newer style configs and the old legacy style f
 
 ## Vagrant >= 1.2.1
 
-* Requirements
-** Vagrant 1.2.1+
-** Vagrant Berkshelf Plugin
-*** `vagrant plugin install vagrant-berkshelf`
-** Vagrant Omnibus Plugin
-*** `vagrant plugin install vagrant-omnibus`
+### Requirements  
+* Vagrant 1.2.1+
+* Vagrant Berkshelf Plugin `vagrant plugin install vagrant-berkshelf`
+* Vagrant Omnibus Plugin   `vagrant plugin install vagrant-omnibus`
 
 Default Box for logstash is precise64.  This can be overridden by setting the BOX_NAME, BOX_URI Environment Variables.
 
@@ -482,7 +480,8 @@ See chef_json and chef_run_list variables to change recipe behavior.
 ### Usage:
 
 Run Logstash on Ubuntu 12.04   : `vagrant up logstash`
-Run Logstash on Centos 6 32bit : `BOX_NAME=centos6_32 BOX_URI=http://vagrant.sensuapp.org/centos-6-i386.box vagrant up logstash`
+
+Run Logstash on Centos 6 32bit : `BOX_NAME=centos6_32BOX_URI=http://vagrant.sensuapp.org/centos-6-i386.box vagrant up logstash`
 
 * Kibana        - http://localhost:5601
 * ElasticSearch - http://localhost:9200/_status?pretty=true
