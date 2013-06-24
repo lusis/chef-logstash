@@ -11,13 +11,15 @@ default['logstash']['agent']['java_opts'] = ''
 default['logstash']['agent']['gc_opts'] = '-XX:+UseParallelOldGC'
 default['logstash']['agent']['ipv4_only'] = false
 default['logstash']['agent']['debug'] = false
+# allow control over the upstart config
 default['logstash']['agent']['upstart_with_sudo'] = false
+default['logstash']['agent']['upstart_respawn_count'] = 5
+default['logstash']['agent']['upstart_respawn_timeout'] = 30
 
 # logrotate options for logstash agent
 default['logstash']['agent']['logrotate']['options'] = [ "missingok", "notifempty" ]
 # stop/start on logrotate?
 default['logstash']['agent']['logrotate']['stopstartprepost'] = false
-
 
 # roles/flasgs for various autoconfig/discovery components
 default['logstash']['agent']['server_role'] = 'logstash_server'
