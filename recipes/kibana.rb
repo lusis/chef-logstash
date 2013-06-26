@@ -107,6 +107,12 @@ when "ruby"
     source "kibana-config.rb.erb"
     owner 'kibana'
     mode 0755
+    variables(
+    :config => node['logstash']['kibana']['config'],
+    :es_ip => es_server_ip,
+    :es_port => es_server_port,
+    :kibana_port => node['logstash']['kibana']['http_port']
+    )
   end
   
   template "#{kibana_home}/kibana-daemon.rb" do
@@ -222,7 +228,7 @@ when "php"
   apache_site "kibana"
 
   template "#{node['logstash']['basedir']}/kibana/current/config.php" do
-    source node['logstash']['kibana']['config']
+    source node['logstash']['kibana']['config_file']
     owner node['logstash']['user']
     group node['logstash']['group']
     mode "0755"
