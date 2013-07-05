@@ -1,4 +1,3 @@
-
 require 'rubygems'
 
 class Erubis::RubyEvaluator::LogstashConf
@@ -46,7 +45,7 @@ class Erubis::RubyEvaluator::LogstashConf
     result = []
     patterns_dir_plugins = [ 'grok' ]
     unless version.nil?
-      patterns_dir_plugins << 'multiline' if Gem::Version.new(version) >= Gem::Version.new('1.1.2')
+      patterns_dir_plugins << 'multiline'
     end
     section.each do |output|
       output.sort.each do |name, hash|
