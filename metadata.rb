@@ -14,6 +14,10 @@ end
   depends ckbk
 end
 
-%w{ yumrepo apt logadm smf }.each do |ckbk|
+%w{ yumrepo apt }.each do |ckbk|
   recommends ckbk
+end
+
+%w{ logadm smf }.each do |ckbk|
+  suggests ckbk
 end
