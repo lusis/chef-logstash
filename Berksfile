@@ -1,4 +1,5 @@
 metadata
+cookbook 'logadm', git: 'git://github.com/modcloth-cookbooks/logadm.git'
 cookbook 'logrotate'
 cookbook 'yum'
 cookbook 'java'
