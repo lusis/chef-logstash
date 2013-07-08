@@ -2,17 +2,24 @@
 # Cookbook Name:: logstash
 # Recipe:: default
 #
-include_recipe "runit" unless node["platform_version"] >= "12.04"
+unless platform_family?('smartos', 'solaris2') || node["platform_version"] >= "12.04"
+  include_recipe "runit"
+end
+include_recipe "java"
 
 if node['logstash']['create_account']
 
+  # There's something up with `groupadd` options that assumes GNU or some such
   group node['logstash']['group'] do
-    system true
+    system !platform_family?('smartos', 'solaris2')
+    gid 16345 # first 5 of 'logstash' md5
   end
+
+  directory File.dirname(node['logstash']['user_home'])
 
   user node['logstash']['user'] do
     group node['logstash']['group']
-    home "/var/lib/logstash"
+    home node['logstash']['user_home']
     system true
     action :create
     manage_home true

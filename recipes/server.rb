@@ -11,7 +11,11 @@
 
 include_recipe "java"
 include_recipe "logstash::default"
-include_recipe "logrotate"
+unless platform_family?('smartos', 'solaris2')
+  include_recipe "logrotate"
+else
+  include_recipe "logadm"
+end
 
 include_recipe "rabbitmq" if node['logstash']['server']['install_rabbitmq']
 
@@ -227,22 +231,22 @@ directory node['logstash']['log_dir'] do
   recursive true
 end
 
-logrotate_app "logstash_server" do
-  path "#{node['logstash']['log_dir']}/*.log"
-  frequency "daily"
-  rotate "30"
-  options node['logstash']['server']['logrotate']['options']
-  create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
-  not_if { platform_family? "smartos", "solaris2" }
-end
-
-if platform_family? "smartos", "solaris2"
+unless platform_family? "smartos", "solaris2"
+  logrotate_app "logstash_server" do
+    path "#{node['logstash']['log_dir']}/*.log"
+    frequency "daily"
+    rotate "30"
+    options node['logstash']['server']['logrotate']['options']
+    create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
+    not_if { platform_family? "smartos", "solaris2" }
+  end
+else
   logadm "logstash_server" do
     path "#{node['logstash']['log_dir']}/*.log"
     period "1d"
     size "1b"
-    count "30"
+    count 30
     copy true
-    gzip true
+    gzip 9
   end
 end

@@ -7,7 +7,11 @@
 # only for those crazy enough to replace apache or Nginx as their
 # main front-end server - Bryan W. Berry 28 June 2012
 
-include_recipe "logrotate"
+unless platform_family?('smartos', 'solaris2')
+  include_recipe "logrotate"
+else
+  include_recipe "logadm"
+end
 
 directory "#{node['logstash']['basedir']}/server/apache_logs" do
   action :create
@@ -16,7 +20,7 @@ directory "#{node['logstash']['basedir']}/server/apache_logs" do
   group node['logstash']['group']
 end
 
-link "/var/lib/logstash/apache_logs" do
+link "#{node['logstash']['user_home']}/apache_logs" do
   to "#{node['logstash']['basedir']}/server/apache_logs"
 end
 
@@ -34,10 +38,12 @@ cookbook_file "/opt/logstash/server/etc/patterns/haproxy" do
   mode "0774"
 end
 
-# set logrotate  for /opt/logstash/server/apache_logs
-logrotate_app "apache_logs" do
-  path node['logstash']['server']['logrotate_target']
-  frequency "daily"
-  create    "664 #{node['logstash']['user']} #{node['logstash']['user']}"
-  rotate "30"
+unless platform_family?('smartos', 'solaris2')
+  # set logrotate  for /opt/logstash/server/apache_logs
+  logrotate_app "apache_logs" do
+    path node['logstash']['server']['logrotate_target']
+    frequency "daily"
+    create    "664 #{node['logstash']['user']} #{node['logstash']['user']}"
+    rotate "30"
+  end
 end
