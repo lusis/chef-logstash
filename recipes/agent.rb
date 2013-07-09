@@ -7,7 +7,7 @@ include_recipe "logstash::default"
 
 if node['logstash']['agent']['init_method'] == 'runit'
   include_recipe "runit"
-  service_resource = 'runit_service[logstash_agent']
+  service_resource = 'runit_service[logstash_agent]'
 else
   service_resource = 'service[logstash_agent]'
 end
