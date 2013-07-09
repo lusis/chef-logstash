@@ -62,6 +62,29 @@ Attributes
 * `node['logstash']['zeromq_packages']` - zeromq_packages to install
   if you use zeromq
 
+## Running with chef solo
+You can use this cookbook with chef-solo, by defining
+* `node['logstash']['agent']['server_ipaddress']`
+* `node['logstash']['beaver']['server_ipaddress']`
+* `node['logstash']['elasticsearch_ip']`
+
+It is also possible to use the chef_solo_search plugin. In order to
+do that, you have to set the following attribute:
+`node['logstash']['chef_solo_with_search'] = true`
+
+## Using a custom ip lookup on nodes
+After a node has been found, we can configure which attribute is
+used to retrieve the IP address we want to use.
+By default, this is `node['ipaddress']`.
+When running on e.g. Rackspace, you generally want to let all
+traffic between your own VM's run over the private rackspace network.
+On rackspace, the private ipv4 address is stored in 
+`node['cloud']['private_ipv4']`.
+
+You can specify to use this address by setting the following attribute:
+`node['logstash']['ipaddress_path'] = ['cloud', 'private_ipv4']`
+
+
 ## Agent
 
 * `node['logstash']['agent']['install_method']` - The method to

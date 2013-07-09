@@ -38,12 +38,12 @@ if node['logstash']['install_zeromq']
 end
 
 # check if running chef-solo.  If not, detect the logstash server/ip by role.  If I can't do that, fall back to using ['logstash']['agent']['server_ipaddress']
-if Chef::Config[:solo]
+if Chef::Config[:solo] && !node['logstash']['chef_solo_with_search']
   logstash_server_ip = node['logstash']['agent']['server_ipaddress']
 else
   logstash_server_results = search(:node, "roles:#{node['logstash']['agent']['server_role']}")
   unless logstash_server_results.empty?
-    logstash_server_ip = logstash_server_results[0]['ipaddress']
+    logstash_server_ip = LogstashIpResolver.ipaddress_of(logstash_server_results[0])
   else
     logstash_server_ip = node['logstash']['agent']['server_ipaddress']
   end

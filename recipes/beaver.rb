@@ -46,14 +46,14 @@ log_file = "#{node['logstash']['log_dir']}/logstash_beaver.log"
 pid_file = "#{node['logstash']['pid_dir']}/logstash_beaver.pid"
 
 logstash_server_ip = nil
-if Chef::Config[:solo]
+if Chef::Config[:solo] && !node['logstash']['chef_solo_with_search']
   logstash_server_ip = node['logstash']['beaver']['server_ipaddress'] if node['logstash']['beaver']['server_ipaddress']
 elsif !node['logstash']['beaver']['server_ipaddress'].nil?
   logstash_server_ip = node['logstash']['beaver']['server_ipaddress']
 elsif node['logstash']['beaver']['server_role']
   logstash_server_results = search(:node, "roles:#{node['logstash']['beaver']['server_role']}")
   unless logstash_server_results.empty?
-    logstash_server_ip = logstash_server_results[0]['ipaddress']
+    logstash_server_ip = LogstashIpResolver.ipaddress_of(logstash_server_results[0])
   end
 end
 
