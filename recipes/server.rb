@@ -21,7 +21,7 @@ end
 
 if node['logstash']['server']['init_method'] == 'runit'
   include_recipe "runit"
-  service_resource = 'runit_server[logstash_server]'
+  service_resource = 'runit_service[logstash_server]'
 else
   service_resource = 'service[logstash_server]'
 end
