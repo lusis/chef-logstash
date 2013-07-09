@@ -14,8 +14,9 @@ export LS_CONFIG="$LS_HOME/etc/<%= @config_file %>"
 LS_USER="<%= node['logstash']['user'] %>"
 LOGDIR="<%= node['logstash']['log_dir'] %>"
 LS_LOG="$LOGDIR/<%= @name %>.log"
+LOGSTASH_OPTS="<%= node['logstash']['server']['logstash_opts'] %>"
 export JAVA_OPTS="-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=$LS_HOME/tmp/"
-BIN_SCRIPT="/usr/bin/env java $JAVA_OPTS -jar $LS_HOME/lib/logstash.jar agent -f $LS_CONFIG > $LS_LOG 2>&1 &  echo \$! > $PIDFILE"
+BIN_SCRIPT="/usr/bin/env java $JAVA_OPTS -jar $LS_HOME/lib/logstash.jar agent -f $LS_CONFIG $LOGSTASH_OPTS > $LS_LOG 2>&1 &  echo \$! > $PIDFILE"
 
 if [ -f /etc/init.d/functions ] ; then
   . /etc/init.d/functions
