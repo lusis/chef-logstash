@@ -16,6 +16,8 @@ default['logstash']['agent']['upstart_with_sudo'] = false
 default['logstash']['agent']['upstart_respawn_count'] = 5
 default['logstash']['agent']['upstart_respawn_timeout'] = 30
 
+default['logstash']['agent']['init_method'] = 'native' # native or runit
+
 # logrotate options for logstash agent
 default['logstash']['agent']['logrotate']['options'] = [ "missingok", "notifempty" ]
 # stop/start on logrotate?
