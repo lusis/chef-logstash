@@ -9,7 +9,8 @@ respawn limit 5 30
 limit nofile 65550 65550
 
 chdir <%= node['logstash']['basedir'] %>/server
-setuid <%= node['logstash']['user'] %>
+setuid <%= node['logstash']['server']['setuid'] %>
+setgid <%= node['logstash']['server']['setgid'] %>
 
 script
   export LOGSTASH_HOME="<%= node['logstash']['basedir'] %>/server"

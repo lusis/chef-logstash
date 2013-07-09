@@ -10,7 +10,8 @@ respawn limit <%=node['logstash']['agent']['upstart_respawn_count']%> <%=node['l
 
 chdir <%= node['logstash']['basedir'] %>/agent
 <% if node['logstash']['agent']['upstart_with_sudo'] == false -%>
-setuid <%= node['logstash']['user'] %>
+setuid <%= node['logstash']['agent']['setuid'] %>
+setgid <%= node['logstash']['agent']['setgid'] %>
 <% end -%>
 
 script

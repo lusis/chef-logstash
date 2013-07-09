@@ -16,6 +16,7 @@ default['logstash']['kibana']['auth']['cas_login_url'] = "https://example.com/ca
 default['logstash']['kibana']['auth']['cas_validate_url'] = "https://example.com/cas/serviceValidate"
 default['logstash']['kibana']['auth']['cas_validate_server'] = "off"
 default['logstash']['kibana']['auth']['cas_root_proxy_url'] = nil
+default['logstash']['kibana']['use_rbenv'] = true
 default['apache']['default_site_enabled'] = false
 default['logstash']['kibana']['smart_index_pattern'] = 'logstash-%Y.%m.%d' 
 default['logstash']['kibana']['language'] = "ruby"

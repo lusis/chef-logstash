@@ -6,19 +6,24 @@ kibana_home = node['logstash']['kibana']['home']
 kibana_log_dir = node['logstash']['kibana']['log_dir']
 kibana_pid_dir = node['logstash']['kibana']['pid_dir']
 
-include_recipe "rbenv::default"
-include_recipe "rbenv::ruby_build"
-
-rbenv_ruby "1.9.3-p194" do
-  global true
-end
-
-rbenv_gem "bundler" do
-  ruby_version "1.9.3-p194"
+if node['logstash']['kibana']['use_rbenv']
+  include_recipe "rbenv::default"
+  include_recipe "rbenv::ruby_build"
+  rbenv_ruby "1.9.3-p194" do
+    global true
+  end
+  rbenv_gem "bundler" do
+    ruby_version "1.9.3-p194"
+  end
+  node.set[:rbenv][:group_users] = [ "kibana" ]
+else 
+  gem_package "bundler" do
+    action :install
+  end
 end
 
 if Chef::Config[:solo]
-  es_server_ip = node['logstash']['elasticsearch_ip']
+  es_server_ip = node['logstash']['server']['elasticsearch_ip']
 else
   es_server_results = search(:node, "roles:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}")
   unless es_server_results.empty?
@@ -40,8 +45,6 @@ when "ruby"
     shell "/bin/bash"
   end
   
-  node.set[:rbenv][:group_users] = [ "kibana" ]
-
   [ kibana_pid_dir, kibana_log_dir ].each do |dir|
     Chef::Log.debug(dir)
     directory dir do
@@ -123,7 +126,11 @@ when "ruby"
 
   bash "bundle install" do
     cwd kibana_home
-    code "source /etc/profile.d/rbenv.sh && bundle install"
+    if node['logstash']['kibana']['use_rbenv']
+      code "source /etc/profile.d/rbenv.sh && bundle install"
+    else
+      code "bundle install"
+    end
     not_if { ::File.exists? "#{kibana_home}/Gemfile.lock" }
   end
 
