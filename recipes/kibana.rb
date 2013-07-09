@@ -155,7 +155,7 @@ when "ruby"
       htpasswd_password = node['logstash']['kibana']['auth']['password']
 
       execute "add htpasswd file" do
-        command "/usr/bin/htpasswd -b #{htpasswd_path} #{htpasswd_user} #{htpasswd_password}"
+        command "/usr/bin/htpasswd -cb #{htpasswd_path} #{htpasswd_user} #{htpasswd_password}"
       end
   
       file htpasswd_path do
@@ -247,7 +247,7 @@ when "php"
     end
 
     execute "add htpasswd file" do
-      command "/usr/bin/htpasswd -b #{htpasswd_path} #{htpasswd_user} #{htpasswd_password}"
+      command "/usr/bin/htpasswd -cb #{htpasswd_path} #{htpasswd_user} #{htpasswd_password}"
     end
   end
   service "apache2"
