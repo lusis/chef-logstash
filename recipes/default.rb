@@ -15,7 +15,10 @@ if node['logstash']['create_account']
     gid 16345 # first 5 of 'logstash' md5
   end
 
-  directory File.dirname(node['logstash']['user_home'])
+  directory File.dirname(node['logstash']['user_home']) do
+    mode 0755
+    recursive true
+  end
 
   user node['logstash']['user'] do
     group node['logstash']['group']
