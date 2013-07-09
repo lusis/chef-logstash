@@ -1,6 +1,7 @@
 include_recipe "git"
 include_recipe "logrotate"
 
+kibana_version = node['logstash']['kibana']['sha']
 kibana_base = node['logstash']['kibana']['basedir']
 kibana_home = node['logstash']['kibana']['home']
 kibana_log_dir = node['logstash']['kibana']['log_dir']
@@ -182,8 +183,6 @@ when "php"
   include_recipe "apache2"
   include_recipe "apache2::mod_php5"
   include_recipe "php::module_curl"
-
-  kibana_version = node['logstash']['kibana']['sha']
 
   apache_module "php5" do
     action :enable
