@@ -231,5 +231,5 @@ logrotate_app "logstash_beaver" do
   postrotate "invoke-rc.d logstash_beaver force-reload >/dev/null 2>&1 || true"
   options [ "missingok", "notifempty" ]
   rotate 30
-  create "0440 #{node['logstash']['user']} #{node['logstash']['group']}"
+  create "0640 #{node['logstash']['user']} #{node['logstash']['group']}"
 end
