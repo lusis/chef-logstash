@@ -29,7 +29,6 @@ Vagrant::Config.run do |config|
         elasticsearch
         php::module_curl
         logstash::server
-        logstash::kibana
       ]
 
       chef.json = {
@@ -48,12 +47,7 @@ Vagrant::Config.run do |config|
             xmx: '128m',
             enable_embedded_es: false,
             elasticserver_ip: '127.0.0.1'
-          },
-          kibana: {
-            server_name: '33.33.33.10',
-            http_port: '8080'
-          }
-        }
+          }        }
       }
     end
   end
@@ -84,7 +78,6 @@ Vagrant::Config.run do |config|
         elasticsearch
         php::module_curl
         logstash::server
-        logstash::kibana
       ]
 
       chef.json = {
@@ -103,10 +96,6 @@ Vagrant::Config.run do |config|
             xmx: '128m',
             enable_embedded_es: false,
             elasticserver_ip: '127.0.0.1'
-          },
-          kibana: {
-            server_name: '33.33.33.10',
-            http_port: '8080'
           }
         }
       }
@@ -138,7 +127,6 @@ Vagrant::Config.run do |config|
         elasticsearch
         php::module_curl
         logstash::server
-        logstash::kibana
       ]
 
       chef.json = {
