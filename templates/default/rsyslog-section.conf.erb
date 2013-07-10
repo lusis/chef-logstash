@@ -1,0 +1,14 @@
+# This file was created for <%= node.name %>
+# by Chef
+# Manual changes will be lost
+<% if @cfg['custom_content'] %>
+<%= @cfg['custom_content'] %>
+<% else %>
+  <% [*@cfg['modules']].each do |mod| %>
+$ModLoad <%= mod %>
+  <% end %>
+
+  <% [*@cfg['directives']].each do |k,v| %>
+<%= k %> <%= v %>
+  <% end %>
+<% end %>
