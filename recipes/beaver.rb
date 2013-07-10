@@ -228,8 +228,8 @@ logrotate_app "logstash_beaver" do
   cookbook "logrotate"
   path log_file
   frequency "daily"
-  postrotate "invoke-rc.d logstash_beaver force-reload >/dev/null 2>&1 || true"
-  options [ "missingok", "notifempty" ]
+  postrotate node['logstash']['beaver']['logrotate']['postrotate']
+  options node['logstash']['beaver']['logrotate']['options']
   rotate 30
   create "0640 #{node['logstash']['user']} #{node['logstash']['group']}"
 end

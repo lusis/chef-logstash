@@ -7,3 +7,5 @@ default['logstash']['beaver']['inputs'] = []
 default['logstash']['beaver']['outputs'] = []
 default['logstash']['beaver']['format'] = "json"
 
+default['logstash']['beaver']['logrotate']['options'] = [ 'missingok', 'notifempty', 'compress', 'copytruncate' ]
+default['logstash']['beaver']['logrotate']['postrotate'] = 'invoke-rc.d logstash_beaver force-reload >/dev/null 2>&1 || true'
