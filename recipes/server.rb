@@ -19,6 +19,13 @@ if node['logstash']['install_zeromq']
   node['logstash']['zeromq_packages'].each {|p| package p }
 end
 
+if node['logstash']['server']['init_method'] == 'runit'
+  include_recipe "runit"
+  service_resource = 'runit_service[logstash_server]'
+else
+  service_resource = 'service[logstash_server]'
+end
+
 if node['logstash']['server']['patterns_dir'][0] == '/'
   patterns_dir = node['logstash']['server']['patterns_dir']
 else
@@ -75,7 +82,7 @@ if node['logstash']['server']['install_method'] == "jar"
 
   link "#{node['logstash']['basedir']}/server/lib/logstash.jar" do
     to "#{node['logstash']['basedir']}/server/lib/logstash-#{node['logstash']['server']['version']}.jar"
-    notifies :restart, "service[logstash_server]"
+    notifies :restart, service_resource
   end
 else
   include_recipe "logstash::source"
@@ -83,7 +90,7 @@ else
   logstash_version = node['logstash']['source']['sha'] || "v#{node['logstash']['server']['version']}"
   link "#{node['logstash']['basedir']}/server/lib/logstash.jar" do
     to "#{node['logstash']['basedir']}/source/build/logstash-#{logstash_version}-monolithic.jar"
-    notifies :restart, "service[logstash_server]"
+    notifies :restart, service_resource
   end
 end
 
@@ -109,8 +116,16 @@ node['logstash']['patterns'].each do |file, hash|
     group node['logstash']['group']
     variables(:patterns => hash)
     mode '0644'
-    notifies :restart, 'service[logstash_server]'
+    notifies :restart, service_resource
   end
+end
+
+directory node['logstash']['log_dir'] do
+  action :create
+  mode "0755"
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  recursive true
 end
 
 template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
@@ -124,49 +139,47 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
             :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
             :es_cluster => node['logstash']['elasticsearch_cluster'],
             :patterns_dir => patterns_dir)
-  notifies :restart, "service[logstash_server]"
+  notifies :restart, service_resource
   action :create
 end
 
-if platform_family? "debian"
-  if node["platform_version"] == "12.04"
-    template "/etc/init/logstash_server.conf" do
-      mode "0644"
-      source "logstash_server.conf.erb"
+if node['logstash']['server']['init_method'] == 'runit'
+  runit_service "logstash_server"
+elsif node['logstash']['server']['init_method'] == 'native'
+  if platform_family? "debian"
+    if ["12.04", "12.10"].include? node["platform_version"]
+      template "/etc/init/logstash_server.conf" do
+        mode "0644"
+        source "logstash_server.conf.erb"
+      end
+
+      service "logstash_server" do
+        provider Chef::Provider::Service::Upstart
+        action [ :enable, :start ]
+      end
+    else
+      Chef::Log.info("Please set node['logstash']['agent']['init_method'] to 'runit' for #{node['platform_version']}")
+    end
+  elsif platform_family? "rhel","fedora"
+    template "/etc/init.d/logstash_server" do
+      source "init.erb"
+      owner "root"
+      group "root"
+      mode "0774"
+      variables(:config_file => "logstash.conf",
+                :name => 'server',
+                :max_heap => node['logstash']['server']['xmx'],
+                :min_heap => node['logstash']['server']['xms']
+                )
     end
 
     service "logstash_server" do
-      provider Chef::Provider::Service::Upstart
-      action [ :enable, :start ]
+      supports :restart => true, :reload => true, :status => true
+      action [:enable, :start]
     end
-  else
-    runit_service "logstash_server"
   end
-elsif platform_family? "rhel","fedora"
-  template "/etc/init.d/logstash_server" do
-    source "init.erb"
-    owner "root"
-    group "root"
-    mode "0774"
-    variables(:config_file => "logstash.conf",
-              :name => 'server',
-              :max_heap => node['logstash']['server']['xmx'],
-              :min_heap => node['logstash']['server']['xms']
-              )
-  end
-
-  service "logstash_server" do
-    supports :restart => true, :reload => true, :status => true
-    action [:enable, :start]
-  end
-end
-
-directory node['logstash']['log_dir'] do
-  action :create
-  mode "0755"
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  recursive true
+else
+  Chef::Log.fatal("Unsupported init method: #{node['logstash']['server']['init_method']}")
 end
 
 logrotate_app "logstash_server" do
