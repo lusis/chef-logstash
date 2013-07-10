@@ -142,31 +142,14 @@ Attributes
 
 ## Kibana
 
-* `node['logstash']['kibana']['repo']` - The git repo to install
-  Kibana from.
-* `node['logstash']['kibana']['sha']` - The sha/branch/tag of the repo
-  you wish to clone.
-* `node['logstash']['kibana']['apache_template']` - The name of the
-  template file to use for the Apache site file
-* `node['logstash']['kibana']['config']` - The name of the template to
-  use for the Kibana `config.php` file
-* `node['logstash']['kibana']['server_name']` - The value to use for
-  the Apache `ServerName` variable to use for the Kibana Apache
-  virtual host.
-* `node['logstash']['kibana']['http_port']` - The port the virtualhost
-  kibana listens on
-* `node['logstash']['kibana']['auth']['server_auth_method']` - Authentication
-   with the server can be done with openid (using `apache2::mod_auth_openid`),
-   cas (using `apache2::mod_auth_cas`), or htauth (basic). The default is
-   no auth.
-* `node['logstash']['kibana']['auth']['cas_login_url']` - Login url for cas 
-   if using cas authentication.
-* `node['logstash']['kibana']['auth']['cas_validate_url']` - Validation url for
-   cas if using cas authentication.
-* `node['logstash']['kibana']['auth']['cas_validate_server']` - Whether to
-   validate the server cert. Defaults to off.
-* `node['logstash']['kibana']['auth']['cas_root_proxy_url']` - If set, sets the
-   url that the cas server redirects to after auth.
+Kibana has been removed from this cookbook. This is for several reasons:
+
+- Kibana is a fast moving target
+- It violates SRP
+- Kibana is being integrated into the logstash jar as the default UI
+- There are two solid cookbooks for using Kibana now
+  - Kibana2 (Ruby version): https://github.com/realityforge/chef-kibana
+  - Kibana3 (HTML/JS version): https://github.com/lusis/chef-kibana
 
 ## Beaver (alternative to Logstash Agent)
 
