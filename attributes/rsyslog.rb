@@ -17,4 +17,5 @@ default['logstash']['rsyslog']['priv_drop_to_group'] = 'syslog'
 default['logstash']['rsyslog']['mark_message_period'] = 600
 default['logstash']['rsyslog']['work_directory'] = '/var/spool/rsyslog'
 
+default['logstash']['rsyslog']['watched_logs'] = []
 default['logstash']['rsyslog']['config_sections'] = []

@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 node['logstash']['rsyslog']['packages'].each do |pkg|
   package pkg
 end
@@ -19,6 +21,28 @@ directory "#{node['logstash']['rsyslog']['config_dir']}" do
 end
 
 config_sections = [*node['logstash']['rsyslog']['config_sections']]
+
+unless (watched_logs = [*node['logstash']['rsyslog']['watched_logs']]).empty?
+  watched_log_section = {
+    'filename' => '50-watched-logs.conf',
+    'watches' => []
+  }
+
+  watched_logs.map{ |l| Dir.glob(l) }.flatten.each do |watched_log|
+    namebase = File.basename(watched_log, File.extname(watched_log))
+    dashname = File.join(
+      File.dirname(watched_log), namebase
+    ).sub(%r{^/}, '').gsub(%r{[^a-z0-9]}i, '-')
+
+    watched_log_section['watches'] << {
+      'name' => watched_log,
+      'tag' => "#{dashname}:",
+      'state_file' => "state-#{dashname}",
+    }
+  end
+
+  config_sections << watched_log_section
+end
 
 if node['logstash']['rsyslog']['ship_everything'] && node['logstash']['rsyslog']['tcp_server']
   config_sections << {
