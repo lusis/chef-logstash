@@ -5,7 +5,10 @@
 unless platform_family?('smartos', 'solaris2') || node["platform_version"] >= "12.04"
   include_recipe "runit"
 end
-include_recipe "java"
+
+if node['logstash']['install_java']
+  include_recipe "java"
+end
 
 if node['logstash']['create_account']
 

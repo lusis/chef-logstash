@@ -19,6 +19,7 @@ default['logstash']['graphite_ip'] = ''
 
 default['logstash']['patterns'] = {}
 default['logstash']['install_zeromq'] = false
+default['logstash']['install_java'] = true
 
 case node['platform_family']
 when "rhel"
