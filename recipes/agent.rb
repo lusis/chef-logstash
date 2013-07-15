@@ -110,6 +110,42 @@ directory node['logstash']['log_dir'] do
   recursive true
 end
 
+if node['logstash']['agent']['install_method'] == "jar"
+  remote_file "#{node['logstash']['basedir']}/agent/lib/logstash-#{node['logstash']['agent']['version']}.jar" do
+    owner "root"
+    group "root"
+    mode "0755"
+    source node['logstash']['agent']['source_url']
+    checksum  node['logstash']['agent']['checksum']
+    action :create_if_missing
+  end
+
+  link "#{node['logstash']['basedir']}/agent/lib/logstash.jar" do
+    to "#{node['logstash']['basedir']}/agent/lib/logstash-#{node['logstash']['agent']['version']}.jar"
+    notifies :restart, service_resource
+  end
+else
+  include_recipe "logstash::source"
+
+  logstash_version = node['logstash']['source']['sha'] || "v#{node['logstash']['server']['version']}"
+  link "#{node['logstash']['basedir']}/agent/lib/logstash.jar" do
+    to "#{node['logstash']['basedir']}/source/build/logstash-#{logstash_version}-monolithic.jar"
+    notifies :restart, service_resource
+  end
+end
+
+template "#{node['logstash']['basedir']}/agent/etc/shipper.conf" do
+  source node['logstash']['agent']['base_config']
+  cookbook node['logstash']['agent']['base_config_cookbook']
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  mode "0644"
+  variables(
+            :logstash_server_ip => logstash_server_ip,
+            :patterns_dir => patterns_dir)
+  notifies :restart, service_resource
+end
+
 if node['logstash']['agent']['init_method'] == 'runit'
   runit_service "logstash_agent"
 elsif node['logstash']['agent']['init_method'] == 'native'
@@ -149,42 +185,6 @@ elsif node['logstash']['agent']['init_method'] == 'native'
   end
 else
   Chef::Log.fatal("Unsupported init method: #{node['logstash']['server']['init_method']}")
-end
-
-if node['logstash']['agent']['install_method'] == "jar"
-  remote_file "#{node['logstash']['basedir']}/agent/lib/logstash-#{node['logstash']['agent']['version']}.jar" do
-    owner "root"
-    group "root"
-    mode "0755"
-    source node['logstash']['agent']['source_url']
-    checksum  node['logstash']['agent']['checksum']
-    action :create_if_missing
-  end
-
-  link "#{node['logstash']['basedir']}/agent/lib/logstash.jar" do
-    to "#{node['logstash']['basedir']}/agent/lib/logstash-#{node['logstash']['agent']['version']}.jar"
-    notifies :restart, service_resource
-  end
-else
-  include_recipe "logstash::source"
-
-  logstash_version = node['logstash']['source']['sha'] || "v#{node['logstash']['server']['version']}"
-  link "#{node['logstash']['basedir']}/agent/lib/logstash.jar" do
-    to "#{node['logstash']['basedir']}/source/build/logstash-#{logstash_version}-monolithic.jar"
-    notifies :restart, service_resource
-  end
-end
-
-template "#{node['logstash']['basedir']}/agent/etc/shipper.conf" do
-  source node['logstash']['agent']['base_config']
-  cookbook node['logstash']['agent']['base_config_cookbook']
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  mode "0644"
-  variables(
-            :logstash_server_ip => logstash_server_ip,
-            :patterns_dir => patterns_dir)
-  notifies :restart, service_resource
 end
 
 logrotate_app "logstash" do
