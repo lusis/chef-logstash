@@ -163,7 +163,7 @@ if node['logstash']['agent']['install_method'] == "jar"
 
   link "#{node['logstash']['basedir']}/agent/lib/logstash.jar" do
     to "#{node['logstash']['basedir']}/agent/lib/logstash-#{node['logstash']['agent']['version']}.jar"
-    notifies :restart, "service[logstash_agent]"
+    notifies :restart, service_resource
   end
 else
   include_recipe "logstash::source"
@@ -171,7 +171,7 @@ else
   logstash_version = node['logstash']['source']['sha'] || "v#{node['logstash']['server']['version']}"
   link "#{node['logstash']['basedir']}/agent/lib/logstash.jar" do
     to "#{node['logstash']['basedir']}/source/build/logstash-#{logstash_version}-monolithic.jar"
-    notifies :restart, "service[logstash_agent]"
+    notifies :restart, service_resource
   end
 end
 
@@ -184,7 +184,7 @@ template "#{node['logstash']['basedir']}/agent/etc/shipper.conf" do
   variables(
             :logstash_server_ip => logstash_server_ip,
             :patterns_dir => patterns_dir)
-  notifies :restart, "service[logstash_agent]"
+  notifies :restart, service_resource
 end
 
 logrotate_app "logstash" do
