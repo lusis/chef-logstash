@@ -114,7 +114,7 @@ if node['logstash']['agent']['init_method'] == 'runit'
   runit_service "logstash_agent"
 elsif node['logstash']['agent']['init_method'] == 'native'
   if platform_family? "debian"
-    if ["12.04", "12.10", "13.04"].include? node["platform_version"]
+    if node["platform_version"] >= "12.04"
       template "/etc/init/logstash_agent.conf" do
         mode "0644"
         source "logstash_agent.conf.erb"
