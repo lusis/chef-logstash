@@ -147,7 +147,7 @@ if node['logstash']['server']['init_method'] == 'runit'
   runit_service "logstash_server"
 elsif node['logstash']['server']['init_method'] == 'native'
   if platform_family? "debian"
-    if ["12.04", "12.10"].include? node["platform_version"]
+    if node["platform_version"] >= "12.04"
       template "/etc/init/logstash_server.conf" do
         mode "0644"
         source "logstash_server.conf.erb"
@@ -158,7 +158,7 @@ elsif node['logstash']['server']['init_method'] == 'native'
         action [ :enable, :start ]
       end
     else
-      Chef::Log.info("Please set node['logstash']['agent']['init_method'] to 'runit' for #{node['platform_version']}")
+      Chef::Log.fatal("Please set node['logstash']['agent']['init_method'] to 'runit' for #{node['platform_version']}")
     end
   elsif platform_family? "rhel","fedora"
     template "/etc/init.d/logstash_server" do
