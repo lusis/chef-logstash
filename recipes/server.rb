@@ -158,7 +158,7 @@ elsif node['logstash']['server']['init_method'] == 'native'
         action [ :enable, :start ]
       end
     else
-      Chef::Log.fatal("Please set node['logstash']['agent']['init_method'] to 'runit' for #{node['platform_version']}")
+      Chef::Log.fatal("Please set node['logstash']['server']['init_method'] to 'runit' for #{node['platform_version']}")
     end
   elsif platform_family? "rhel","fedora"
     template "/etc/init.d/logstash_server" do
