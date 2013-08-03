@@ -442,6 +442,32 @@ This will generate the following files:
 This patterns will be included by default in the grok and multiline
 filters.
 
+# Vagrant
+
+## Requirements  
+* Vagrant 1.2.1+
+* Vagrant Berkshelf Plugin `vagrant plugin install vagrant-berkshelf`
+* Vagrant Omnibus Plugin   `vagrant plugin install vagrant-omnibus`
+
+Default Box for logstash is precise64.  This can be overridden by setting the BOX_NAME, BOX_URI Environment Variables.
+
+Uses the Box Name to determine the run list ( based on whether its Debian or RHEL based ).
+
+See chef_json and chef_run_list variables to change recipe behavior.
+
+## Usage:
+
+Run Logstash on Ubuntu 12.04   : `vagrant up logstash`
+
+Run Logstash on Centos 6 32bit : `BOX_NAME=centos6_32BOX_URI=http://vagrant.sensuapp.org/centos-6-i386.box vagrant up logstash`
+
+* Kibana        - http://localhost:8080
+* ElasticSearch - http://localhost:9200/_status?pretty=true
+* Syslog        - tcp://localhost:5140
+
+Logstash will listen for syslog messages on tcp/5140
+
+
 # BIG WARNING
 
 * Currently only tested on Ubuntu Natty, Precise, and RHEL 6.2.
