@@ -2,16 +2,16 @@
 driver_plugin: vagrant
 driver_config:
   require_chef_omnibus: true
+  customize:
+    memory: 1024
 
 platforms:
 - name: ubuntu-12.04
   driver_config:
     box: opscode-ubuntu-12.04
     box_url: https://opscode-vm.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04_provisionerless.box
-- name: ubuntu-10.04
-  driver_config:
-    box: opscode-ubuntu-10.04
-    box_url: https://opscode-vm.s3.amazonaws.com/vagrant/opscode_ubuntu-10.04_provisionerless.box
+  run_list:
+  - recipe[apt]
 - name: centos-6.4
   driver_config:
     box: opscode-centos-6.4
@@ -22,6 +22,19 @@ platforms:
     box_url: https://opscode-vm.s3.amazonaws.com/vagrant/opscode_centos-5.9_provisionerless.box
 
 suites:
-- name: default
-  run_list: ["recipe[logstash]"]
+- name: logstash-server
+  run_list: ["recipe[logstash::server]"]
+  attributes:
+    logstash:
+      server:
+        xms: 128m
+        xmx: 128m
+        elasticserver_ip: 127.0.0.1
+
+- name: logstash-agent
+  run_list: ["recipe[logstash::agent]"]
+  attributes: {}
+
+- name: logstash-minitest
+  run_list: ["recipe[logstash::server]", "recipe[logstash::agent]", "recipe[minitest-handler]"]
   attributes: {}
