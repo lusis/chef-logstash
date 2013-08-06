@@ -49,7 +49,7 @@ class Erubis::RubyEvaluator::LogstashConf
       patterns_dir_plugins << 'multiline' if Gem::Version.new(version) >= Gem::Version.new('1.1.2')
     end
     section.each do |output|
-      output.sort.each do |name, hash|
+      output.each do |name, hash|
         result << ''
         result << '  ' + name.to_s + ' {'
         if patterns_dir_plugins.include?(name.to_s) and not patterns_dir.nil? and not hash.has_key?('patterns_dir')
