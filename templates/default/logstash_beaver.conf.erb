@@ -7,7 +7,7 @@ stop on runlevel [!2345]
 respawn
 respawn limit 5 30
 
-<% if @supports_setuid %>
+<% if @supports_setuid  && !@ensure_supplemental_groups %>
 setuid <%= @user %>
 setgid <%= @group %>
 <% end %>
@@ -15,6 +15,10 @@ chdir <%= node['logstash']['basedir'] %>/beaver
 
 console output
 
+<% if @supports_setuid && @ensure_supplemental_groups %>
+exec sudo -u <%= @user %> <%= @cmd %> >> <%= @log %> 2>&1
+<% else %>
 exec <%= @cmd %> >> <%= @log %> 2>&1
+<% end %>
 
 emits logstash-beaver-running
