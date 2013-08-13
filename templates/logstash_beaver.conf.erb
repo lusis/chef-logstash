@@ -15,7 +15,7 @@ chdir <%= node['logstash']['basedir'] %>/beaver
 
 console output
 
-<% if !@ensure_supplemental_groups %>
+<% if @supports_setuid && @ensure_supplemental_groups %>
 exec sudo -u <%= @user %> <%= @cmd %> >> <%= @log %> 2>&1
 <% else %>
 exec <%= @cmd %> >> <%= @log %> 2>&1
