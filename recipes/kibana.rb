@@ -183,6 +183,11 @@ when "php"
     action :enable
   end
 
+  apache_module "auth_cas" do
+    only_if node['logstash']['kibana']['auth']['server_auth_method'] == 'cas'
+    action :enable
+  end
+
   apache_site "default" do
     enable false
   end
