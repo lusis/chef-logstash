@@ -3,6 +3,7 @@
 # Recipe:: agent
 #
 #
+include_recipe "java"
 include_recipe "logstash::default"
 
 if node['logstash']['agent']['init_method'] == 'runit'
