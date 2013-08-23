@@ -18,14 +18,14 @@ class Erubis::RubyEvaluator::LogstashConf
   end
 
   def self.value_to_str(v)
-    case v.class.to_s
-    when "String", "Symbol", "Fixnum", "Float"
+    case v
+    when String, Symbol, Fixnum, Float
       "'#{v}'"
-    when "Array"
+    when Array
       "[#{v.map{|e| value_to_str e}.join(", ")}]"
-    when "Hash", "Mash"
+    when Hash, Mash
       value_to_str(v.to_a.flatten)
-    when "TrueClass", "FalseClass"
+    when TrueClass, FalseClass
       v.to_s
     else
       v.inspect
