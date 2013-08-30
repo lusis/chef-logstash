@@ -91,7 +91,8 @@ Vagrant.configure('2') do |config|
                   xms: '128m',
                   xmx: '128m',
                   enable_embedded_es: false,
-                  elasticserver_ip: '127.0.0.1'
+                  elasticserver_ip: '127.0.0.1',
+                  init_method: 'runit'
               }
           }
       }
