@@ -442,6 +442,27 @@ This will generate the following files:
 This patterns will be included by default in the grok and multiline
 filters.
 
+
+# Vagrant
+
+## Requirements
+* Vagrant 1.2.1+
+* Vagrant Berkshelf Plugin `vagrant plugin install vagrant-berkshelf`
+* Vagrant Omnibus Plugin   `vagrant plugin install vagrant-omnibus`
+
+Uses the Box Name to determine the run list ( based on whether its Debian or RHEL based ).
+
+See chef_json and chef_run_list variables to change recipe behavior.
+
+## Usage:
+
+Run Logstash on Ubuntu Lucid   : `vagrant up lucid32` or `vagrant up lucid64`
+
+Run Logstash on Centos 6 32bit : `vagrant up centos6_32`
+
+Logstash will listen for syslog messages on tcp/5140
+
+
 # BIG WARNING
 
 * Currently only tested on Ubuntu Natty, Precise, and RHEL 6.2.

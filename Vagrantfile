@@ -1,17 +1,19 @@
-require 'berkshelf/vagrant'
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
 
-Vagrant::Config.run do |config|
+Vagrant.configure('2') do |config|
+
+  # Common Settings
+  config.omnibus.chef_version = '10.26.0'
+  config.vm.hostname = 'logstash'
+  config.vm.network :public_network
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ['modifyvm', :id, '--memory', '1024']
+  end
 
   config.vm.define :lucid32 do |dist_config|
     dist_config.vm.box       = 'lucid32'
     dist_config.vm.box_url   = 'http://files.vagrantup.com/lucid32.box'
-
-    dist_config.vm.customize do |vm|
-      vm.name        = 'logstash'
-      vm.memory_size = 1024
-    end
-
-    dist_config.vm.network :bridged, '33.33.33.10'
 
     dist_config.vm.provision :chef_solo do |chef|
 
@@ -32,22 +34,23 @@ Vagrant::Config.run do |config|
       ]
 
       chef.json = {
-        elasticsearch: {
-          cluster_name: "logstash_vagrant",
-          min_mem: '64m',
-          max_mem: '64m',
-          limits: {
-            nofile:  1024,
-            memlock: 512
-          }
-        },
-        logstash: {
-          server: {
-            xms: '128m',
-            xmx: '128m',
-            enable_embedded_es: false,
-            elasticserver_ip: '127.0.0.1'
-          }        }
+          elasticsearch: {
+              cluster_name: 'logstash_vagrant',
+              min_mem: '64m',
+              max_mem: '64m',
+              limits: {
+                  nofile:  1024,
+                  memlock: 512
+              }
+          },
+          logstash: {
+              server: {
+                  xms: '128m',
+                  xmx: '128m',
+                  enable_embedded_es: false,
+                  elasticserver_ip: '127.0.0.1',
+                  init_method: 'runit'
+              }        }
       }
     end
   end
@@ -56,13 +59,6 @@ Vagrant::Config.run do |config|
     dist_config.vm.box       = 'lucid64'
     dist_config.vm.box_url   = 'http://files.vagrantup.com/lucid64.box'
 
-    dist_config.vm.customize do |vm|
-      vm.name        = 'logstash'
-      vm.memory_size = 1024
-    end
-
-    dist_config.vm.network :bridged, '33.33.33.10'
-
     dist_config.vm.provision :chef_solo do |chef|
       chef.cookbooks_path    = [ '/tmp/logstash-cookbooks' ]
       chef.provisioning_path = '/etc/vagrant-chef'
@@ -81,23 +77,23 @@ Vagrant::Config.run do |config|
       ]
 
       chef.json = {
-        elasticsearch: {
-          cluster_name: "logstash_vagrant",
-          min_mem: '64m',
-          max_mem: '64m',
-          limits: {
-            nofile:  1024,
-            memlock: 512
+          elasticsearch: {
+              cluster_name: 'logstash_vagrant',
+              min_mem: '64m',
+              max_mem: '64m',
+              limits: {
+                  nofile:  1024,
+                  memlock: 512
+              }
+          },
+          logstash: {
+              server: {
+                  xms: '128m',
+                  xmx: '128m',
+                  enable_embedded_es: false,
+                  elasticserver_ip: '127.0.0.1'
+              }
           }
-        },
-        logstash: {
-          server: {
-            xms: '128m',
-            xmx: '128m',
-            enable_embedded_es: false,
-            elasticserver_ip: '127.0.0.1'
-          }
-        }
       }
     end
   end
@@ -105,13 +101,6 @@ Vagrant::Config.run do |config|
   config.vm.define :centos6_32 do |dist_config|
     dist_config.vm.box       = 'centos6_32'
     dist_config.vm.box_url   = 'http://vagrant.sensuapp.org/centos-6-i386.box'
-
-    dist_config.vm.customize do |vm|
-      vm.name        = 'logstash'
-      vm.memory_size = 1024
-    end
-
-    dist_config.vm.network :bridged, '33.33.33.10'
 
     dist_config.vm.provision :chef_solo do |chef|
       chef.cookbooks_path    = [ '/tmp/logstash-cookbooks' ]
@@ -130,24 +119,25 @@ Vagrant::Config.run do |config|
       ]
 
       chef.json = {
-        elasticsearch: {
-          cluster_name: "logstash_vagrant",
-          min_mem: '64m',
-          max_mem: '64m',
-          limits: {
-            nofile:  1024,
-            memlock: 512
-            }
-        },
-        logstash: {
-          server: {
-            xms: '128m',
-            xmx: '128m',
-            enable_embedded_es: false,
-            elasticserver_ip: '127.0.0.1'
+          elasticsearch: {
+              cluster_name: 'logstash_vagrant',
+              min_mem: '64m',
+              max_mem: '64m',
+              limits: {
+                  nofile:  1024,
+                  memlock: 512
+              }
+          },
+          logstash: {
+              server: {
+                  xms: '128m',
+                  xmx: '128m',
+                  enable_embedded_es: false,
+                  elasticserver_ip: '127.0.0.1'
+              }
           }
-        }
       }
     end
   end
 end
+
