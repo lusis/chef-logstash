@@ -15,8 +15,17 @@ Vagrant.configure('2') do |config|
     dist_config.vm.box       = 'lucid32'
     dist_config.vm.box_url   = 'http://files.vagrantup.com/lucid32.box'
 
-    dist_config.vm.provision :chef_solo do |chef|
+    dist_config.vm.provision :shell, :inline => <<-SCRIPT
+      # Hack rabbit, Hack rabbit,  Hack Hack Hack.
+      # fixes rabbit / minitest interop
+      echo "deb http://www.rabbitmq.com/debian testing main" > /etc/apt/sources.list.d/rabbitmq-source.list
+      cd /tmp
+      wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+      apt-key add rabbitmq-signing-key-public.asc
+      apt-get update
+    SCRIPT
 
+    dist_config.vm.provision :chef_solo do |chef|
       chef.cookbooks_path    = [ '/tmp/logstash-cookbooks' ]
       chef.provisioning_path = '/etc/vagrant-chef'
       chef.log_level         = :debug
@@ -50,7 +59,11 @@ Vagrant.configure('2') do |config|
                   enable_embedded_es: false,
                   elasticserver_ip: '127.0.0.1',
                   init_method: 'runit'
-              }        }
+              }        
+	  },
+          rabbitmq: {
+	      use_distro_version: true
+          }
       }
     end
   end
@@ -58,6 +71,16 @@ Vagrant.configure('2') do |config|
   config.vm.define :lucid64 do |dist_config|
     dist_config.vm.box       = 'lucid64'
     dist_config.vm.box_url   = 'http://files.vagrantup.com/lucid64.box'
+
+    dist_config.vm.provision :shell, :inline => <<-SCRIPT
+      # Hack rabbit, Hack rabbit,  Hack Hack Hack.
+      # fixes rabbit / minitest interop
+      echo "deb http://www.rabbitmq.com/debian testing main" > /etc/apt/sources.list.d/rabbitmq-source.list
+      cd /tmp
+      wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+      apt-key add rabbitmq-signing-key-public.asc
+      apt-get update
+    SCRIPT
 
     dist_config.vm.provision :chef_solo do |chef|
       chef.cookbooks_path    = [ '/tmp/logstash-cookbooks' ]
@@ -91,9 +114,14 @@ Vagrant.configure('2') do |config|
                   xms: '128m',
                   xmx: '128m',
                   enable_embedded_es: false,
-                  elasticserver_ip: '127.0.0.1'
+                  elasticserver_ip: '127.0.0.1',
+		  init_method: 'runit'
               }
+          },
+          rabbitmq: {
+              use_distro_version: true
           }
+
       }
     end
   end
