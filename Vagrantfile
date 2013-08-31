@@ -34,7 +34,7 @@ Vagrant.configure('2') do |config|
   # Common Settings
   config.omnibus.chef_version = '10.26.0'
   config.vm.hostname = 'logstash'
-  config.vm.network :public_network
+  config.vm.network :private_network, ip: '192.168.200.50'
   config.vm.provider :virtualbox do |vb|
     vb.customize ['modifyvm', :id, '--memory', '1024']
   end
