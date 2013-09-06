@@ -9,6 +9,7 @@
 #
 #
 
+include_recipe "java"
 include_recipe "logstash::default"
 include_recipe "logrotate"
 

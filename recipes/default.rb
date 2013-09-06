@@ -3,7 +3,6 @@
 # Recipe:: default
 #
 include_recipe "runit" unless node["platform_version"] >= "12.04"
-include_recipe "java"
 
 if node['logstash']['create_account']
 
