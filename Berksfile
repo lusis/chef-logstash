@@ -1,4 +1,5 @@
 metadata
+cookbook 'logadm'
 cookbook 'logrotate'
 cookbook 'yum'
 cookbook 'java'

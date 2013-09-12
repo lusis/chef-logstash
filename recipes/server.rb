@@ -11,7 +11,11 @@
 
 include_recipe "java"
 include_recipe "logstash::default"
-include_recipe "logrotate"
+unless platform_family?('smartos', 'solaris2')
+  include_recipe "logrotate"
+else
+  include_recipe "logadm"
+end
 
 include_recipe "rabbitmq" if node['logstash']['server']['install_rabbitmq']
 
@@ -171,7 +175,43 @@ elsif node['logstash']['server']['init_method'] == 'native'
                 :name => 'server',
                 :max_heap => node['logstash']['server']['xmx'],
                 :min_heap => node['logstash']['server']['xms']
-                )
+               )
+    end
+
+    service "logstash_server" do
+      supports :restart => true, :reload => true, :status => true
+      action [:enable, :start]
+    end
+
+  elsif platform_family? "smartos", "solaris2"
+    logstash_home = "#{node['logstash']['basedir']}/server"
+    logstash_opts = "agent -f #{logstash_home}/etc/logstash.conf " <<
+      "-l #{node['logstash']['log_dir']}/logstash.log"
+    java_opts = "-server -Xms#{node['logstash']['server']['xms']} " <<
+      "-Xmx#{node['logstash']['server']['xmx']} " <<
+      "-Djava.io.tmpdir=#{logstash_home}/tmp/ " <<
+      "#{node['logstash']['server']['java_opts']} " <<
+      "#{'-Djava.net.preferIPv4Stack=true' if node['logstash']['agent']['ipv4_only']}"
+    gc_opts = node['logstash']['server']['gc_opts']
+
+    smf "logstash_server" do
+      user node['logstash']['user']
+      start_command "java #{java_opts} #{gc_opts} -jar #{logstash_home}/lib/logstash.jar #{logstash_opts}"
+      start_timeout 30
+      stop_command ':kill'
+      stop_timeout 30
+      restart_command ':kill -SIGHUP'
+      restart_timeout 30
+      environment(
+        'LOGSTASH_HOME' => logstash_home,
+        'HOME' => logstash_home,
+        'GC_OPTS' => gc_opts,
+        'JAVA_OPTS' => java_opts,
+        'LOGSTASH_OPTS' => logstash_opts,
+      )
+      locale "C"
+      manifest_type "application"
+      service_path "/var/svc/manifest"
     end
 
     service "logstash_server" do
@@ -183,11 +223,30 @@ else
   Chef::Log.fatal("Unsupported init method: #{node['logstash']['server']['init_method']}")
 end
 
-logrotate_app "logstash_server" do
-  path "#{node['logstash']['log_dir']}/*.log"
-  frequency "daily"
-  rotate "30"
-  options node['logstash']['server']['logrotate']['options']
-  create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
+directory node['logstash']['log_dir'] do
+  action :create
+  mode "0755"
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  recursive true
 end
 
+unless platform_family? "smartos", "solaris2"
+  logrotate_app "logstash_server" do
+    path "#{node['logstash']['log_dir']}/*.log"
+    frequency "daily"
+    rotate "30"
+    options node['logstash']['server']['logrotate']['options']
+    create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
+    not_if { platform_family? "smartos", "solaris2" }
+  end
+else
+  logadm "logstash_server" do
+    path "#{node['logstash']['log_dir']}/*.log"
+    period "1d"
+    size "1b"
+    count 30
+    copy true
+    gzip 9
+  end
+end

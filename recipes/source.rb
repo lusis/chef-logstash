@@ -1,5 +1,7 @@
 include_recipe "build-essential"
-include_recipe "java"
+if node['logstash']['install_java']
+  include_recipe "java"
+end
 include_recipe "ant"
 include_recipe "git"
 include_recipe "logstash::default"
@@ -25,7 +27,7 @@ end
 
 execute "build-logstash" do
   cwd "#{node['logstash']['basedir']}/source"
-  environment ({'JAVA_HOME' => node['logstash']['source']['java_home']})
+  environment('JAVA_HOME' => node['logstash']['source']['java_home'])
   user "root"
   # This variant is useful for troubleshooting stupid environment problems
   # command "make clean && make VERSION=#{logstash_version} --debug > /tmp/make.log 2>&1"

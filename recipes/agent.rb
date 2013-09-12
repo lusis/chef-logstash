@@ -72,7 +72,7 @@ end
     group node['logstash']['group']
   end
 
-  link "/var/lib/logstash/#{ldir}" do
+  link "#{node['logstash']['user_home']}/#{ldir}" do
     to "#{node['logstash']['basedir']}/agent/#{ldir}"
   end
 end
@@ -188,22 +188,23 @@ else
   Chef::Log.fatal("Unsupported init method: #{node['logstash']['server']['init_method']}")
 end
 
-logrotate_app "logstash" do
-  path "#{node['logstash']['log_dir']}/*.log"
-  frequency "daily"
-  rotate "30"
-  options node['logstash']['agent']['logrotate']['options']
-  create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
-  notifies :restart, "service[rsyslog]"
-  if node['logstash']['agent']['logrotate']['stopstartprepost']
-    prerotate <<-EOF
+unless platform_family?('smartos', 'solaris2')
+  logrotate_app "logstash" do
+    path "#{node['logstash']['log_dir']}/*.log"
+    frequency "daily"
+    rotate "30"
+    options node['logstash']['agent']['logrotate']['options']
+    create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
+    notifies :restart, "service[rsyslog]"
+    if node['logstash']['agent']['logrotate']['stopstartprepost']
+      prerotate <<-EOF
       service logstash_agent stop
       logger stopped logstash_agent service for log rotation
-    EOF
-    postrotate <<-EOF
+      EOF
+      postrotate <<-EOF
       service logstash_agent start
       logger started logstash_agent service after log rotation
-    EOF
+      EOF
+    end
   end
 end
-

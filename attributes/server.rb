@@ -9,6 +9,7 @@ default['logstash']['server']['xms'] = '1024M'
 default['logstash']['server']['xmx'] = '1024M'
 default['logstash']['server']['java_opts'] = ''
 default['logstash']['server']['gc_opts'] = '-XX:+UseParallelOldGC'
+default['logstash']['server']['logstash_opts'] = ''
 default['logstash']['server']['ipv4_only'] = false
 default['logstash']['server']['debug'] = false
 default['logstash']['server']['home'] = '/opt/logstash/server'

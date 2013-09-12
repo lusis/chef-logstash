@@ -5,7 +5,12 @@
 #
 include_recipe "logstash::default"
 include_recipe "python::default"
-include_recipe "logrotate"
+
+unless platform_family?('smartos', 'solaris2')
+  include_recipe "logrotate"
+else
+  include_recipe "logadm"
+end
 
 if node['logstash']['agent']['install_zeromq']
   case
@@ -224,12 +229,14 @@ else
   end
 end
 
-logrotate_app "logstash_beaver" do
-  cookbook "logrotate"
-  path log_file
-  frequency "daily"
-  postrotate node['logstash']['beaver']['logrotate']['postrotate']
-  options node['logstash']['beaver']['logrotate']['options']
-  rotate 30
-  create "0640 #{node['logstash']['user']} #{node['logstash']['group']}"
+unless platform_family?('smartos', 'solaris2')
+  logrotate_app "logstash_beaver" do
+    cookbook "logrotate"
+    path log_file
+    frequency "daily"
+    postrotate node['logstash']['beaver']['logrotate']['postrotate']
+    options node['logstash']['beaver']['logrotate']['options']
+    rotate 30
+    create "0640 #{node['logstash']['user']} #{node['logstash']['group']}"
+  end
 end
