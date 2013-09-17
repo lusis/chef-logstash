@@ -152,6 +152,7 @@ elsif node['logstash']['server']['init_method'] == 'native'
       template "/etc/init/logstash_server.conf" do
         mode "0644"
         source "logstash_server.conf.erb"
+        notifies :restart, service_resource
       end
 
       service "logstash_server" do
