@@ -1,0 +1,23 @@
+cluster:
+  name: <%= node['logstash']['elasticsearch_cluster'] %>
+
+cloud:
+  aws:
+    <% if !node['logstash']['elasticsearch']['cloud']['aws']['access_key'].nil? %>
+    access_key: <%= node['logstash']['elasticsearch']['cloud']['aws']['access_key'] %>
+    <% end %>
+    <% if !node['logstash']['elasticsearch']['cloud']['aws']['secret_key'].nil? %>
+    secret_key: <%= node['logstash']['elasticsearch']['cloud']['aws']['secret_key'] %>
+    <% end %>
+    region: <%= node['logstash']['elasticsearch']['cloud']['aws']['region'] %>
+  node:
+    auto_attributes: true
+
+discovery:
+  type: ec2
+  ec2:
+    groups: <%= node['logstash']['elasticsearch']['discovery']['ec2']['groups'] %>
+    <% node['logstash']['elasticsearch']['discovery']['ec2']['tag'].sort.each do |key, value| %>
+    discovery.ec2.tag.<%= key %>: <%= value %>
+    <% end unless node['logstash']['elasticsearch']['discovery']['ec2']['tag'].keys.empty? rescue false %>
+    ping_timeout: <%= node['logstash']['elasticsearch']['discovery']['ec2']['ping_timeout'] %>
