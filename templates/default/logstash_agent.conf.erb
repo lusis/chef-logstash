@@ -11,6 +11,7 @@ respawn limit <%=node['logstash']['agent']['upstart_respawn_count']%> <%=node['l
 chdir <%= node['logstash']['basedir'] %>/agent
 <% if node['logstash']['agent']['upstart_with_sudo'] == false -%>
 setuid <%= node['logstash']['user'] %>
+setgid <%= node['logstash']['upstart_gid'] %>
 <% end -%>
 
 script
@@ -18,7 +19,7 @@ script
   export HOME=$LOGSTASH_HOME
   export GC_OPTS="<%= node['logstash']['agent']['gc_opts'] %>"
   export JAVA_OPTS="-server -Xms<%= node['logstash']['agent']['xms'] %> -Xmx<%= node['logstash']['agent']['xmx'] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= node['logstash']['agent']['java_opts'] %> <%= '-Djava.net.preferIPv4Stack=true' if node['logstash']['agent']['ipv4_only'] %>"
-  export LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/shipper.conf -l <%= node['logstash']['log_dir'] %>/logstash.log"
+  export LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/shipper.conf -l <%= node['logstash']['agent']['log_file'] %>"
   <% if node['logstash']['agent']['debug'] -%>
   export LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
   <% end -%>
