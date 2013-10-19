@@ -103,14 +103,6 @@ node['logstash']['patterns'].each do |file, hash|
   end
 end
 
-directory node['logstash']['log_dir'] do
-  action :create
-  mode "0755"
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  recursive true
-end
-
 if node['logstash']['agent']['install_method'] == "jar"
   remote_file "#{node['logstash']['basedir']}/agent/lib/logstash-#{node['logstash']['agent']['version']}.jar" do
     owner "root"
@@ -143,8 +135,18 @@ template "#{node['logstash']['basedir']}/agent/etc/shipper.conf" do
   mode "0644"
   variables(
             :logstash_server_ip => logstash_server_ip,
+            :inputs => node['logstash']['agent']['inputs'],
             :patterns_dir => patterns_dir)
   notifies :restart, service_resource
+end
+
+log_dir = ::File.dirname node['logstash']['agent']['log_file']
+directory log_dir do
+  action :create
+  mode "0755"
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  recursive true
 end
 
 if node['logstash']['agent']['init_method'] == 'runit'
@@ -173,6 +175,7 @@ elsif node['logstash']['agent']['init_method'] == 'native'
       mode "0774"
       variables(
         :config_file => "shipper.conf",
+        :log_file => node['logstash']['agent']['log_file'],
         :name => 'agent',
         :max_heap => node['logstash']['agent']['xmx'],
         :min_heap => node['logstash']['agent']['xms']
@@ -189,7 +192,7 @@ else
 end
 
 logrotate_app "logstash" do
-  path "#{node['logstash']['log_dir']}/*.log"
+  path "#{log_dir}/*.log"
   frequency "daily"
   rotate "30"
   options node['logstash']['agent']['logrotate']['options']

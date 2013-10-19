@@ -1,4 +1,5 @@
 default['logstash']['server']['version'] = '1.1.13'
+default['logstash']['server']['log_file'] = '/var/log/logstash/server.log'
 default['logstash']['server']['source_url'] = 'https://logstash.objects.dreamhost.com/release/logstash-1.1.13-flatjar.jar'
 default['logstash']['server']['checksum'] = '5ba0639ff4da064c2a4f6a04bd7006b1997a6573859d3691e210b6855e1e47f1'
 default['logstash']['server']['install_method'] = 'jar' # Either `source` or `jar`
