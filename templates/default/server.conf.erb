@@ -17,18 +17,27 @@ filter {
 <% end -%>
 
 output {
-  <% if node['logstash']['server']['debug'] -%>
-  stdout { debug => true debug_format => "json" }
-  <% end -%>
-  <% if @enable_embedded_es -%>
-  elasticsearch { embedded => true }
-  <% elsif not @es_server_ip.empty? -%>
-  elasticsearch { host => "<%= @es_server_ip %>" cluster => "<%= @es_cluster %>" }
-  <% end -%>
-  <% unless @graphite_server_ip.empty? -%>
-  graphite { host => "<%= @graphite_server_ip %>" metrics => ["logstash.events", "1"] }
-  <% end -%>
-  <% # unless node['logstash']['server']['outputs'].empty? -%>
+
+  <% if node['logstash']['server']['outputs'].empty? -%>
+
+    <% if node['logstash']['server']['debug'] -%>
+      stdout { debug => true debug_format => "json" }
+    <% end -%>
+
+    <% if @enable_embedded_es -%>
+      elasticsearch { embedded => true }
+    <% elsif not @es_server_ip.empty? -%>
+      elasticsearch {
+        host => "<%= @es_server_ip %>"
+        cluster => "<%= @es_cluster %>"
+      }
+    <% end -%>
+
+    <% unless @graphite_server_ip.empty? -%>
+    graphite { host => "<%= @graphite_server_ip %>" metrics => ["logstash.events", "1"] }
+    <% end -%>
+
+  <% else -%>
     <%= LogstashConf.section_to_str(node['logstash']['server']['outputs']) %>
-  <% # end -%>
+  <% end -%>
 }
