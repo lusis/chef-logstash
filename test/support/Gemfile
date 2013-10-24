@@ -2,3 +2,9 @@ source "https://rubygems.org"
 
 gem 'rake'
 gem 'foodcritic', :platforms => :ruby_19
+gem 'chef', :platforms => :ruby_19
+gem 'berkshelf', :platforms => :ruby_19
+gem 'tailor', :platforms => :ruby_19
+gem 'chefspec', :platforms => :ruby_19
+gem 'foodcritic', :platforms => :ruby_19
+gem 'strainer', :platforms => :ruby_19

@@ -185,6 +185,19 @@ Kibana has been removed from this cookbook. This is for several reasons:
 * `node['logstash']['index_cleaner']['cron']['log_file']` - Path to direct
   the index_cleaner cron job's stdout and stderr
 
+Testing
+=======
+
+## Vagrant
+
+## Strainer
+
+```
+export COOKBOOK_PATH=`pwd`
+export BUNDLE_GEMFILE=$COOKBOOK_PATH/test/support/Gemfile
+bundle install
+bundle exec berks install
+
 Usage
 =====
 

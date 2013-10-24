@@ -1,0 +1,5 @@
+# Strainerfile
+tailor:     bundle exec tailor
+knife test: bundle exec knife cookbook test $COOKBOOK
+foodcritic: bundle exec foodcritic ${COOKBOOK_PATH}
+chefspec:   bundle exec rspec ${COOKBOOK_PATH} --color

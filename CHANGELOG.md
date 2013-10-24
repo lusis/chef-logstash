@@ -1,5 +1,17 @@
-0.2.1 (June 26, 2012)
----------------------
+# CHANGELOG for chef-logstash
+
+This file is used to list changes made in each version of chef-logstash.
+
+## 0.7.0:
+
+### New features ###
+* 
+
+### Bug fixes ###
+* Vagrantfile cleanup, support more OS
+* Cookbook Dependency cleanup
+
+## 0.2.1 (June 26, 2012)
 
 New features
 	* Use ruby hashes supplied by roles to populate inputs, filters,
