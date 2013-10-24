@@ -9,8 +9,8 @@
 
 PIDDIR="<%= node['logstash']['pid_dir'] %>"
 export PIDFILE="$PIDDIR/<%= @name %>.pid"
-export LS_HOME="<%= "#{node['logstash']['basedir']}/#{@name}" %>"
-export LS_CONFIG="$LS_HOME/etc/<%= @config_file %>"
+export LS_HOME="<%= @home %>"
+export LS_CONFIG="<%= @config_file %>"
 LS_USER="<%= node['logstash']['user'] %>"
 LS_LOG="<%= @log_file %>"
 LOGDIR="<%= ::File.dirname @log_file %>"

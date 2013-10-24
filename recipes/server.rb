@@ -30,7 +30,7 @@ end
 if node['logstash']['server']['patterns_dir'][0] == '/'
   patterns_dir = node['logstash']['server']['patterns_dir']
 else
-  patterns_dir = node['logstash']['basedir'] + '/' + node['logstash']['server']['patterns_dir']
+  patterns_dir = node['logstash']['server']['home'] + '/' + node['logstash']['server']['patterns_dir']
 end
 
 if Chef::Config[:solo]
@@ -54,7 +54,7 @@ else
 end
 
 # Create directory for logstash
-directory "#{node['logstash']['basedir']}/server" do
+directory "#{node['logstash']['server']['home']}" do
   action :create
   mode "0755"
   owner node['logstash']['user']
@@ -62,7 +62,7 @@ directory "#{node['logstash']['basedir']}/server" do
 end
 
 %w{bin etc lib log tmp }.each do |ldir|
-  directory "#{node['logstash']['basedir']}/server/#{ldir}" do
+  directory "#{node['logstash']['server']['home']}/#{ldir}" do
     action :create
     mode "0755"
     owner node['logstash']['user']
@@ -72,7 +72,7 @@ end
 
 # installation
 if node['logstash']['server']['install_method'] == "jar"
-  remote_file "#{node['logstash']['basedir']}/server/lib/logstash-#{node['logstash']['server']['version']}.jar" do
+  remote_file "#{node['logstash']['server']['home']}/lib/logstash-#{node['logstash']['server']['version']}.jar" do
     owner "root"
     group "root"
     mode "0755"
@@ -81,21 +81,21 @@ if node['logstash']['server']['install_method'] == "jar"
     action :create_if_missing
   end
 
-  link "#{node['logstash']['basedir']}/server/lib/logstash.jar" do
-    to "#{node['logstash']['basedir']}/server/lib/logstash-#{node['logstash']['server']['version']}.jar"
+  link "#{node['logstash']['server']['home']}/lib/logstash.jar" do
+    to "#{node['logstash']['server']['home']}/lib/logstash-#{node['logstash']['server']['version']}.jar"
     notifies :restart, service_resource
   end
 else
   include_recipe "logstash::source"
 
   logstash_version = node['logstash']['source']['sha'] || "v#{node['logstash']['server']['version']}"
-  link "#{node['logstash']['basedir']}/server/lib/logstash.jar" do
-    to "#{node['logstash']['basedir']}/source/build/logstash-#{logstash_version}-monolithic.jar"
+  link "#{node['logstash']['server']['home']}/lib/logstash.jar" do
+    to "#{node['logstash']['server']}/source/build/logstash-#{logstash_version}-monolithic.jar"
     notifies :restart, service_resource
   end
 end
 
-directory "#{node['logstash']['basedir']}/server/etc/conf.d" do
+directory "#{node['logstash']['server']['home']}/etc/conf.d" do
   action :create
   mode "0755"
   owner node['logstash']['user']
@@ -130,18 +130,20 @@ directory log_dir do
   recursive true
 end
 
-template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
+template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{node['logstash']['server']['config_file']}" do
   source node['logstash']['server']['base_config']
   cookbook node['logstash']['server']['base_config_cookbook']
   owner node['logstash']['user']
   group node['logstash']['group']
   mode "0644"
-  variables(:graphite_server_ip => graphite_server_ip,
-            :es_server_ip => es_server_ip,
-            :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
-	    :inputs => node['logstash']['server']['inputs'],
-            :es_cluster => node['logstash']['elasticsearch_cluster'],
-            :patterns_dir => patterns_dir)
+  variables(
+              :graphite_server_ip => graphite_server_ip,
+              :es_server_ip => es_server_ip,
+              :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
+	            :inputs => node['logstash']['server']['inputs'],
+              :es_cluster => node['logstash']['elasticsearch_cluster'],
+              :patterns_dir => patterns_dir
+            )
   notifies :restart, service_resource
   action :create
 end
@@ -169,7 +171,8 @@ elsif node['logstash']['server']['init_method'] == 'native'
       owner "root"
       group "root"
       mode "0774"
-      variables(:config_file => "logstash.conf",
+      variables(:config_file => node['logstash']['server']['config_dir'],
+                :home => node['logstash']['server']['home'],
                 :name => 'server',
                 :log_file => node['logstash']['server']['log_file'],
                 :max_heap => node['logstash']['server']['xmx'],

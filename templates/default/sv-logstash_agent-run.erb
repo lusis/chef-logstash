@@ -1,12 +1,12 @@
 #!/bin/sh
 
-cd /<%= node['logstash']['basedir'] %>/agent/
+cd /<%= node['logstash']['agent']['home'] %>
 exec 2>&1
 # Need to set LOGSTASH_HOME and HOME so sincedb will work
-LOGSTASH_HOME="<%= node['logstash']['basedir'] %>/agent"
+LOGSTASH_HOME="<%= node['logstash']['agent']['home'] %>"
 GC_OPTS="-XX:+UseParallelOldGC"
 JAVA_OPTS="-server -Xms<%= node['logstash']['agent']['xms'] %> -Xmx<%= node['logstash']['agent']['xmx'] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/"
-LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/shipper.conf -l <%= node['logstash']['agent']['log_file'] %>"
+LOGSTASH_OPTS="agent -f <%= node['logstash']['agent']['config_dir'] %> -l <%= node['logstash']['agent']['log_file'] %>"
 <% if node['logstash']['agent']['debug'] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS -v"
 <% end -%>

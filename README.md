@@ -5,6 +5,8 @@ Description
 
 This is the semi-official 'all-in-one' Logstash cookbook.
 
+This branch is to start building towards solid support for logstash 1.2.x and the new conditionals system
+
 Requirements
 ============
 
@@ -100,6 +102,11 @@ Attributes
 * `node['logstash']['agent']['patterns_dir']` - The patterns directory
   where pattern files will be generated. Relative to the basedir or
   absolute.
+* `node['logstash']['agent']['home']` - home dir of logstash agent
+* `node['logstash']['agent']['config_dir']` - location of conf.d style config dir
+* `node['logstash']['agent']['config_file']` - name for base config file ( in conf.d dir )
+
+
 
 ## Server
 
@@ -140,6 +147,9 @@ Attributes
 * `node['logstash']['server']['patterns_dir']` - The patterns
   directory where pattern files will be generated. Relative to the
   basedir or absolute.
+* `node['logstash']['server']['home']` - home dir of logstash agent
+* `node['logstash']['server']['config_dir']` - location of conf.d style config dir
+* `node['logstash']['server']['config_file']` - name for base config file ( in conf.d dir )
 
 ## Kibana
 
@@ -198,6 +208,8 @@ export COOKBOOK_PATH=`pwd`
 export BUNDLE_GEMFILE=$COOKBOOK_PATH/test/support/Gemfile
 bundle install
 bundle exec berks install
+bundle exec strainer test
+```
 
 Usage
 =====

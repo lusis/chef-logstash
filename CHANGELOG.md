@@ -6,6 +6,9 @@ This file is used to list changes made in each version of chef-logstash.
 
 ### New features ###
 * settable gid when using runit or upstart as supervisor
+* default logstash version 1.2.2
+* attributes to specify: config_dir, home, config_file for both agent and server.
+* don't install rabbit by default
 
 ### Bug fixes ###
 * Vagrantfile cleanup, support more OS

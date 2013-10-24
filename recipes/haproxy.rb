@@ -9,7 +9,7 @@
 
 include_recipe "logrotate"
 
-directory "#{node['logstash']['basedir']}/server/apache_logs" do
+directory "#{node['logstash']['server']['home']}/apache_logs" do
   action :create
   mode "0755"
   owner node['logstash']['user']
@@ -17,17 +17,17 @@ directory "#{node['logstash']['basedir']}/server/apache_logs" do
 end
 
 link "/var/lib/logstash/apache_logs" do
-  to "#{node['logstash']['basedir']}/server/apache_logs"
+  to "#{node['logstash']['server']['home']}/apache_logs"
 end
 
-directory "/opt/logstash/server/etc/patterns" do
+directory "#{node['logstash']['server']['home']}/etc/patterns" do
   owner node['logstash']['user']
   group node['logstash']['group']
   mode "0774"
 end
 
 # create pattern_file  for haproxy
-cookbook_file "/opt/logstash/server/etc/patterns/haproxy" do
+cookbook_file "#{node['logstash']['server']['home']}/etc/patterns/haproxy" do
   source "haproxy"
   owner node['logstash']['user']
   group node['logstash']['group']
