@@ -4,27 +4,25 @@
 log_level = :info
 
 chef_run_list = %w[
-        minitest-handler
-        elasticsearch
+        curl::default
+        minitest-handler::default
         logstash::server
       ]
 
 chef_json = {
-    elasticsearch: {
-        cluster_name: 'logstash_vagrant',
-        min_mem: '64m',
-        max_mem: '64m',
-        limits: {
-            nofile: 1024,
-            memlock: 512
-        }
-    },
     logstash: {
+        supervisor_gid: 'adm',
         server: {
             xms: '128m',
             xmx: '128m',
-            enable_embedded_es: false,
-            elasticserver_ip: '127.0.0.1'
+            enable_embedded_es: true,
+            inputs: [
+              file: {
+                type: 'syslog',
+                path: ['/var/log/syslog','/var/log/messages'],
+                start_position: 'beginning'
+              }
+            ]
         }
     }
 }
@@ -50,7 +48,7 @@ Vagrant.configure('2') do |config|
       chef.run_list = chef_run_list
       chef.json = chef_json
       chef.run_list.unshift('apt')
-      chef.json[:logstash][:server][:init_method] = 'runit'
+      #chef.json[:logstash][:server][:init_method] = 'runit'
     end
   end
 
@@ -85,7 +83,7 @@ Vagrant.configure('2') do |config|
 
 
   config.vm.define :centos6_64 do |dist_config|
-    dist_config.vm.box       = 'centos6_64'
+    dist_config.vm.box       = 'opscode-centos-6.3' #centos6_64'
     dist_config.vm.box_url   = 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_centos-6.4_provisionerless.box'
     dist_config.vm.provision :chef_solo do |chef|
       chef.cookbooks_path = ['/tmp/logstash-cookbooks']

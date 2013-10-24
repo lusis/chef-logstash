@@ -1,4 +1,5 @@
 default['logstash']['agent']['version'] = '1.1.13'
+default['logstash']['agent']['log_file'] = '/var/log/logstash/agent.log'
 default['logstash']['agent']['source_url'] = 'https://logstash.objects.dreamhost.com/release/logstash-1.1.13-flatjar.jar'
 default['logstash']['agent']['checksum'] = '5ba0639ff4da064c2a4f6a04bd7006b1997a6573859d3691e210b6855e1e47f1'
 default['logstash']['agent']['install_method'] = 'jar' # Either `source` or `jar`
@@ -15,7 +16,6 @@ default['logstash']['agent']['debug'] = false
 default['logstash']['agent']['upstart_with_sudo'] = false
 default['logstash']['agent']['upstart_respawn_count'] = 5
 default['logstash']['agent']['upstart_respawn_timeout'] = 30
-
 default['logstash']['agent']['init_method'] = 'native' # native or runit
 
 # logrotate options for logstash agent

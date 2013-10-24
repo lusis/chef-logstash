@@ -5,7 +5,7 @@ This file is used to list changes made in each version of chef-logstash.
 ## 0.7.0:
 
 ### New features ###
-* 
+* settable gid when using runit or upstart as supervisor
 
 ### Bug fixes ###
 * Vagrantfile cleanup, support more OS

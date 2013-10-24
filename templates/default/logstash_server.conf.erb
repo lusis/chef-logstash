@@ -11,12 +11,18 @@ limit nofile 65550 65550
 chdir <%= node['logstash']['basedir'] %>/server
 setuid <%= node['logstash']['user'] %>
 
+<% if node['logstash']['supervisor_gid'] -%>
+setgid <%= node['logstash']['supervisor_gid'] %>
+<% end -%>
+
+
+
 script
   export LOGSTASH_HOME="<%= node['logstash']['basedir'] %>/server"
   export HOME=$LOGSTASH_HOME
   export GC_OPTS="<%= node['logstash']['server']['gc_opts'] %>"
   export JAVA_OPTS="-server -Xms<%= node['logstash']['server']['xms'] %> -Xmx<%= node['logstash']['server']['xmx'] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= node['logstash']['server']['java_opts'] %> <%= '-Djava.net.preferIPv4Stack=true' if node['logstash']['agent']['ipv4_only'] %>"
-  export LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/logstash.conf -l <%= node['logstash']['log_dir'] %>/logstash.log"
+  export LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/logstash.conf -l <%= node['logstash']['server']['log_file'] %>"
   <% if node['logstash']['server']['pluginpath'] -%>
   export LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath <%= node['logstash']['server']['pluginpath'] %>"
   <% end -%>

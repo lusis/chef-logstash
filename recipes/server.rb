@@ -121,7 +121,8 @@ node['logstash']['patterns'].each do |file, hash|
   end
 end
 
-directory node['logstash']['log_dir'] do
+log_dir = ::File.dirname node['logstash']['server']['log_file']
+directory log_dir do
   action :create
   mode "0755"
   owner node['logstash']['user']
@@ -138,6 +139,7 @@ template "#{node['logstash']['basedir']}/server/etc/logstash.conf" do
   variables(:graphite_server_ip => graphite_server_ip,
             :es_server_ip => es_server_ip,
             :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
+	    :inputs => node['logstash']['server']['inputs'],
             :es_cluster => node['logstash']['elasticsearch_cluster'],
             :patterns_dir => patterns_dir)
   notifies :restart, service_resource
@@ -169,6 +171,7 @@ elsif node['logstash']['server']['init_method'] == 'native'
       mode "0774"
       variables(:config_file => "logstash.conf",
                 :name => 'server',
+                :log_file => node['logstash']['server']['log_file'],
                 :max_heap => node['logstash']['server']['xmx'],
                 :min_heap => node['logstash']['server']['xms']
                 )
@@ -184,10 +187,9 @@ else
 end
 
 logrotate_app "logstash_server" do
-  path "#{node['logstash']['log_dir']}/*.log"
+  path "#{log_dir}/*.log"
   frequency "daily"
   rotate "30"
   options node['logstash']['server']['logrotate']['options']
   create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
 end
-
