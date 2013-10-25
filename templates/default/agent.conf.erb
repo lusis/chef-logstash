@@ -2,7 +2,7 @@
 # by Chef
 # Manual changes will be lost
 input {
-  <% if @inputs.empty? -%>
+  <% if node['logstash']['agent']['inputs'].empty? -%>
   file {
     type => "sample-logs"
     path => ["/var/log/*.log"]
@@ -10,7 +10,7 @@ input {
     debug => true
   }
   <% else %>
-    <%= LogstashConf.section_to_str(@inputs) %>
+    <%= LogstashConf.section_to_str(node['logstash']['agent']['inputs']) %>
   <% end -%>
 }
 

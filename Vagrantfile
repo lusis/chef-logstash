@@ -7,22 +7,54 @@ chef_run_list = %w[
         curl::default
         minitest-handler::default
         logstash::server
+        logstash::agent
+        ark::default
+        kibana::default
       ]
 
 chef_json = {
+    kibana: {
+        webserver_listen: "0.0.0.0",
+        webserver: "nginx",
+        install_type: "file"
+    },
     logstash: {
         supervisor_gid: 'adm',
-        server: {
+        agent: {
+            server_ipaddress: '127.0.0.1',
             xms: '128m',
             xmx: '128m',
-            enable_embedded_es: true,
+            enable_embedded_es: false,
             inputs: [
               file: {
                 type: 'syslog',
                 path: ['/var/log/syslog','/var/log/messages'],
                 start_position: 'beginning'
               }
+            ],
+            filters: [
+              grok: {
+                type: 'syslog',
+                match: [
+                  "message",
+                  "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
+                ]
+              },
+              date: {
+                type: 'syslog',
+                match: [ 
+                  "timestamp",
+                  "MMM  d HH:mm:ss",
+                  "MMM dd HH:mm:ss",
+                  "ISO8601"
+                ]
+              }
             ]
+        },
+        server: {
+            xms: '128m',
+            xmx: '128m',
+            enable_embedded_es: true
         }
     }
 }

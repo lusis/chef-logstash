@@ -140,7 +140,6 @@ template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['co
               :graphite_server_ip => graphite_server_ip,
               :es_server_ip => es_server_ip,
               :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
-	            :inputs => node['logstash']['server']['inputs'],
               :es_cluster => node['logstash']['elasticsearch_cluster'],
               :patterns_dir => patterns_dir
             )

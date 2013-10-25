@@ -1,0 +1,14 @@
+filter {
+  if [type] == "<%= @type %>"
+    grok {
+      patterns_dir => ["/logstash/patterns"]
+      match => ["message", "%{COMBINEDAPACHELOG}" ]
+    }
+    date {
+      match => [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z", "dd/MMM/yyyy:HH:mm:ss" ]
+    }
+    geoip {
+      source => "clientip"
+    }
+  }
+}

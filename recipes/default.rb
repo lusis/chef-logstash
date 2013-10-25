@@ -35,4 +35,3 @@ node['logstash']['join_groups'].each do |grp|
     only_if "grep -q '^#{grp}:' /etc/group"
   end
 end
-

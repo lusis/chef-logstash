@@ -9,5 +9,7 @@ cookbook 'yumrepo', git: 'git://github.com/bryanwb/cookbook-yumrepo.git'
 group :test do
     cookbook 'minitest-handler', git: 'git://github.com/btm/minitest-handler-cookbook.git'
     cookbook 'elasticsearch', git: 'git://github.com/elasticsearch/cookbook-elasticsearch.git'
+    cookbook 'kibana', git: 'git://github.com/lusis/chef-kibana.git', branch: '1.2.0'
     cookbook 'curl'
+    cookbook 'ark'
 end

@@ -9,6 +9,7 @@ This file is used to list changes made in each version of chef-logstash.
 * default logstash version 1.2.2
 * attributes to specify: config_dir, home, config_file for both agent and server.
 * don't install rabbit by default
+* use `if` conditional if logstash version >= 1.2.x
 
 ### Bug fixes ###
 * Vagrantfile cleanup, support more OS

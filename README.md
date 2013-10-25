@@ -7,6 +7,12 @@ This is the semi-official 'all-in-one' Logstash cookbook.
 
 This branch is to start building towards solid support for logstash 1.2.x and the new conditionals system
 
+## Logstash 1.2.x stuff
+
+* Replaced `type => "foo"` in filter/output with `if [type] == "foo"`
+* Need to work out better way to invoke conditionals ( there's more than just if )
+
+
 Requirements
 ============
 

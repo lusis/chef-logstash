@@ -127,7 +127,7 @@ else
   end
 end
 
-template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['config_file']}" do
+template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['config_dir']}/#{node['logstash']['agent']['config_file']}" do
   source node['logstash']['agent']['base_config']
   cookbook node['logstash']['agent']['base_config_cookbook']
   owner node['logstash']['user']
@@ -135,7 +135,6 @@ template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['home
   mode "0644"
   variables(
             :logstash_server_ip => logstash_server_ip,
-            :inputs => node['logstash']['agent']['inputs'],
             :patterns_dir => patterns_dir)
   notifies :restart, service_resource
 end
@@ -174,7 +173,7 @@ elsif node['logstash']['agent']['init_method'] == 'native'
       group "root"
       mode "0774"
       variables(
-        :config_file => node['logstash']['agent']['config_dir']
+        :config_file => node['logstash']['agent']['config_dir'],
         :home => node['logstash']['agent']['home'],
         :log_file => node['logstash']['agent']['log_file'],
         :name => 'agent',
