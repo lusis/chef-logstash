@@ -54,7 +54,7 @@ else
 end
 
 # Create directory for logstash
-directory "#{node['logstash']['server']['home']}" do
+directory node['logstash']['server']['home'] do
   action :create
   mode "0755"
   owner node['logstash']['user']

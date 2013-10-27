@@ -1,5 +1,5 @@
 filter {
-  if [type] == "<%= @type %>"
+  if [type] == "<%= @type %>" {
     grok {
       patterns_dir => ["/logstash/patterns"]
       match => ["message", "%{COMBINEDAPACHELOG}" ]

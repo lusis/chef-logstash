@@ -1,5 +1,5 @@
 filter {
-  if [type] == " <%= @type %>" {
+  if [type] == "<%= @type %>" {
     grok {
       overwrite => "message"
       match => [ 
