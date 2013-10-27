@@ -4,13 +4,16 @@
 log_level = :info
 
 chef_run_list = %w[
-        curl::default
-        minitest-handler::default
         logstash::server
         logstash::agent
-        ark::default
-        kibana::default
-      ]
+]
+#        curl::default
+#        minitest-handler::default
+#        logstash::server
+#        logstash::agent
+#        ark::default
+#        kibana::default
+#      ]
 
 chef_json = {
     kibana: {
@@ -33,23 +36,26 @@ chef_json = {
               }
             ],
             filters: [
-              grok: {
-                type: 'syslog',
-                match: [
-                  "message",
-                  "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
-                ]
-              },
-              date: {
-                type: 'syslog',
-                match: [ 
-                  "timestamp",
-                  "MMM  d HH:mm:ss",
-                  "MMM dd HH:mm:ss",
-                  "ISO8601"
-                ]
-              }
-            ]
+              { 
+                condition: 'if [type] == "syslog"',
+                block: {    
+                  grok: {
+                    match: [
+                      "message",
+                      "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
+                    ]
+                  },
+                  date: {
+                    match: [ 
+                      "timestamp",
+                      "MMM  d HH:mm:ss",
+                      "MMM dd HH:mm:ss",
+                      "ISO8601"
+                    ]
+                  }
+                }
+            }
+          ]
         },
         server: {
             xms: '128m',
@@ -68,6 +74,9 @@ Vagrant.configure('2') do |config|
   config.vm.provider :virtualbox do |vb|
     vb.customize ['modifyvm', :id, '--memory', '1024']
   end
+  config.vm.provider :lxc do |lxc|
+    lxc.customize 'cgroup.memory.limit_in_bytes', '1024M'
+  end  
 
   config.vm.define :precise64 do |dist_config|
     dist_config.vm.box       = 'opscode-ubuntu-12.04'

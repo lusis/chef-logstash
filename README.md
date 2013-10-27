@@ -313,6 +313,67 @@ The current templates for the agent and server are written so that you
 can provide ruby hashes in your roles that map to inputs, filters, and
 outputs. Here is a role for logstash_server
 
+There are two formats for the hashes for filters and outputs that you should be aware of ...   
+
+### Legacy
+
+This is for logstash < 1.2.0 and uses the old pattern of setting 'type' and 'tags' in the plugin to determine if it should be run.
+
+```
+filters: [
+  grok: {
+  type: "syslog"
+    match: [
+      "message",
+      "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
+    ]
+  },
+  date: {
+  type: "syslog"
+    match: [ 
+      "timestamp",
+      "MMM  d HH:mm:ss",
+      "MMM dd HH:mm:ss",
+      "ISO8601"
+    ]
+  }
+]
+```
+
+### Conditional
+
+This is for logstash >= 1.2.0 and uses the new pattern of conditioansl `if 'type' == "foo" {}`
+
+Note:  the condition applies to all plugins in the block hash in the same object.
+
+```
+filters: [
+  { 
+    condition: 'if [type] == "syslog"',
+    block: {    
+      grok: {
+        match: [
+          "message",
+          "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
+        ]
+      },
+      date: {
+        match: [ 
+          "timestamp",
+          "MMM  d HH:mm:ss",
+          "MMM dd HH:mm:ss",
+          "ISO8601"
+        ]
+      }
+    }
+  }
+]
+```
+
+### Examples
+
+These examples show the legacy format and need to be updated for logstash >= 1.2.0
+
     name "logstash_server"
     description "Attributes and run_lists specific to FAO's logstash instance"
     default_attributes(
