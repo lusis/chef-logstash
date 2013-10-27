@@ -307,11 +307,30 @@ showing up in kibana. You might have to issue a fresh empty search.
 The `pyshipper` recipe will work as well but it is NOT wired up to
 anything yet.
 
+## config templates
+
+If you want to use chef templates to drive your configs you'll want to set the following:
+
+* example using `agent`, `server` works the same way.
+* The actual template file for the following would resolve to `templates/default/apache.conf.erb` and be installed to `/opt/logstash/agent/etc/conf.d/apache.conf`
+* Each template has a hash named for it to inject variables in `node['logstash']['agent']['config_templates_variables']`
+
+
+```
+node['logstash']['agent']['config_file'] = "" # disable data drive templates ( can be left enabled if want both )
+node['logstash']['agent']['config_templates'] = ["apache"]
+node['logstash']['agent']['config_templates_cookbook'] = 'logstash'
+node['logstash']['agent']['config_templates_variables'] = { apache: { type: 'apache' } }
+```
+
+
+
+
 ## Letting data drive your templates
 
 The current templates for the agent and server are written so that you
 can provide ruby hashes in your roles that map to inputs, filters, and
-outputs. Here is a role for logstash_server
+outputs. Here is a role for logstash_server.
 
 There are two formats for the hashes for filters and outputs that you should be aware of ...   
 

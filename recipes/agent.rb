@@ -127,16 +127,33 @@ else
   end
 end
 
-template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['config_dir']}/#{node['logstash']['agent']['config_file']}" do
-  source node['logstash']['agent']['base_config']
-  cookbook node['logstash']['agent']['base_config_cookbook']
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  mode "0644"
-  variables(
+if node['logstash']['agent']['config_file']
+  template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['config_dir']}/#{node['logstash']['agent']['config_file']}" do
+    source node['logstash']['agent']['base_config']
+    cookbook node['logstash']['agent']['base_config_cookbook']
+    owner node['logstash']['user']
+    group node['logstash']['group']
+    mode "0644"
+    variables(
             :logstash_server_ip => logstash_server_ip,
             :patterns_dir => patterns_dir)
-  notifies :restart, service_resource
+    notifies :restart, service_resource
+  end
+end
+
+unless node['logstash']['agent']['config_templates'].empty? or node['logstash']['agent']['config_templates'].nil?
+  node['logstash']['server']['config_templates'].each do |config_template| 
+    template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['config_dir']}/#{config_template}.conf" do
+      source "#{config_template}.conf.erb"
+      cookbook node['logstash']['agent']['config_templates_cookbook']
+      owner node['logstash']['user']
+      group node['logstash']['group']
+      mode "0644"
+      variables node['logstash']['agent']['config_templates_variables'][config_template]
+      notifies :restart, service_resource
+      action :create
+    end
+  end
 end
 
 log_dir = ::File.dirname node['logstash']['agent']['log_file']

@@ -10,6 +10,8 @@ This file is used to list changes made in each version of chef-logstash.
 * attributes to specify: config_dir, home, config_file for both agent and server.
 * don't install rabbit by default
 * allow for conditionals to be set in the filters and outputs hashes.
+* allow for disabling data driven templates.
+* attributes to enable regular(ish) style chef templates.
 
 ### Bug fixes ###
 * Vagrantfile cleanup, support more OS

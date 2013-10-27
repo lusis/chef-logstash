@@ -60,7 +60,9 @@ chef_json = {
         server: {
             xms: '128m',
             xmx: '128m',
-            enable_embedded_es: true
+            enable_embedded_es: true,
+            config_templates: ['apache'],
+            config_templates_variables: { apache: { type: 'apache' } }
         }
     }
 }

@@ -130,22 +130,41 @@ directory log_dir do
   recursive true
 end
 
-template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{node['logstash']['server']['config_file']}" do
-  source node['logstash']['server']['base_config']
-  cookbook node['logstash']['server']['base_config_cookbook']
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  mode "0644"
-  variables(
+if node['logstash']['server']['config_file']
+  template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{node['logstash']['server']['config_file']}" do
+    source node['logstash']['server']['base_config']
+    cookbook node['logstash']['server']['base_config_cookbook']
+    owner node['logstash']['user']
+    group node['logstash']['group']
+    mode "0644"
+    variables(
               :graphite_server_ip => graphite_server_ip,
               :es_server_ip => es_server_ip,
               :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
               :es_cluster => node['logstash']['elasticsearch_cluster'],
               :patterns_dir => patterns_dir
-            )
-  notifies :restart, service_resource
-  action :create
+              )
+    notifies :restart, service_resource
+    action :create
+  end
 end
+
+unless node['logstash']['server']['config_templates'].empty? or node['logstash']['server']['config_templates'].nil?
+  node['logstash']['server']['config_templates'].each do |config_template| 
+    template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{config_template}.conf" do
+      source "#{config_template}.conf.erb"
+      cookbook node['logstash']['server']['config_templates_cookbook']
+      owner node['logstash']['user']
+      group node['logstash']['group']
+      mode "0644"
+      variables node['logstash']['server']['config_templates_variables'][config_template]
+      notifies :restart, service_resource
+      action :create
+    end
+  end
+end
+
+
 
 if node['logstash']['server']['init_method'] == 'runit'
   runit_service "logstash_server"
