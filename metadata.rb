@@ -10,10 +10,10 @@ version          "0.6.1"
   supports os
 end
 
-%w{ apache2 php build-essential git rbenv runit python java ant logrotate rabbitmq yumrepo }.each do |ckbk|
+%w{ build-essential git python java ant logrotate rabbitmq }.each do |ckbk|
   depends ckbk
 end
 
-%w{ yumrepo apt }.each do |ckbk|
+%w{ apt }.each do |ckbk|
   recommends ckbk
 end
