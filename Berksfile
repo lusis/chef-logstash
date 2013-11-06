@@ -1,7 +1,8 @@
 metadata
 cookbook 'logrotate'
-cookbook 'java'
 cookbook 'build-essential'
-cookbook 'rabbitmq', git: 'git://github.com/opscode-cookbooks/rabbitmq.git'
 cookbook 'minitest-handler', git: 'git://github.com/btm/minitest-handler-cookbook.git'
-cookbook 'elasticsearch', git: 'git://github.com/elasticsearch/cookbook-elasticsearch.git'
+cookbook 'elasticsearch', git: 'git@github.com:Tapjoy/elasticsearch-cookbook.git'
+cookbook 'java', git: 'git@github.com:Tapjoy/chef.git', rel: "cookbooks/java"
+cookbook 'rabbitmq', git: 'git@github.com:Tapjoy/chef.git', rel: "cookbooks/rabbitmq"
+cookbook 'apt', git: 'git@github.com:Tapjoy/chef.git', rel: "cookbooks/apt"
