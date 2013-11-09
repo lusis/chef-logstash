@@ -43,24 +43,39 @@ class Erubis::RubyEvaluator::LogstashConf
   public
   
   def self.section_to_str(section, version=nil, patterns_dir=nil)
-    result = []
+    result = ""
     patterns_dir_plugins = [ 'grok' ]
     unless version.nil?
       patterns_dir_plugins << 'multiline' if Gem::Version.new(version) >= Gem::Version.new('1.1.2')
     end
     section.each do |output|
       output.each do |name, hash|
-        result << ''
-        result << '  ' + name.to_s + ' {'
-        if patterns_dir_plugins.include?(name.to_s) and not patterns_dir.nil? and not hash.has_key?('patterns_dir')
-          result << '    ' + key_value_to_str('patterns_dir', patterns_dir)
+        if name.is_a? Integer
+          hash.each do |l_name, l_hash|
+            result << process_section(l_name, l_hash, patterns_dir_plugins, patterns_dir)
+          end
+        else
+          result << process_section(name, hash, patterns_dir_plugins, patterns_dir)
         end
-        hash.sort.each do |k,v|
-          result << '    ' + key_value_to_str(k, v)
-        end
-        result << '  }'
       end
     end
+
+    return result
+  end
+
+  def self.process_section(name, hash, patterns_dir_plugins, patterns_dir)
+    result = []
+
+    result << ''
+    result << '  ' + name.to_s + ' {'
+    if patterns_dir_plugins.include?(name.to_s) and not patterns_dir.nil? and not hash.has_key?('patterns_dir')
+      result << '    ' + key_value_to_str('patterns_dir', patterns_dir)
+    end
+    hash.sort.each do |k,v|
+      result << '    ' + key_value_to_str(k, v)
+    end
+    result << '  }'
+
     return result.join("\n")
   end
 
