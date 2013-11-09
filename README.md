@@ -5,6 +5,8 @@ Description
 
 This is the semi-official 'all-in-one' Logstash cookbook.
 
+If you want Logstash 1.2.x support please see the [0.7.0 branch](https://github.com/lusis/chef-logstash/tree/0.7.0)
+
 Requirements
 ============
 
