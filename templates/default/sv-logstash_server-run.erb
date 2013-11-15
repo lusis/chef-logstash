@@ -9,11 +9,14 @@ exec 2>&1
 LOGSTASH_HOME="<%= node['logstash']['server']['home'] %>"
 GC_OPTS="<%= node['logstash']['server']['gc_opts'] %>"
 JAVA_OPTS="-server -Xms<%= node['logstash']['server']['xms'] %> -Xmx<%= node['logstash']['server']['xmx'] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= node['logstash']['server']['java_opts'] %> <%= '-Djava.net.preferIPv4Stack=true' if node['logstash']['agent']['ipv4_only'] %>"
-LOGSTASH_OPTS="agent -f <%= node['logstash']['server']['config_dir'] %> -l <%= node['logstash']['server']['log_file'] %>"
+LOGSTASH_OPTS="agent -f <%= node['logstash']['server']['config_dir'] %>"
 <% if node['logstash']['server']['pluginpath'] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath <%= node['logstash']['server']['pluginpath'] %>"
 <% end -%>
-<% if node['logstash']['agent']['debug'] -%>
+<% unless node['logstash']['server']['log_file'] == '' -%>
+LOGSTASH_OPTS="$LOGSTASH_OPTS -l <%= node['logstash']['server']['log_file'] %>"
+<% end -%>
+<% if node['logstash']['server']['debug'] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS -v"
 <% end -%>
 
