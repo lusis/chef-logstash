@@ -11,7 +11,7 @@ limit nofile 65550 65550
 chdir <%= node['logstash']['server']['home'] %>
 setuid <%= node['logstash']['user'] %>
 
-<% if node['logstash']['supervisor_gid'] -%>
+<% if node['logstash']['supervisor_gid'] && !node['logstash']['supervisor_gid'].empty? -%>
 setgid <%= node['logstash']['supervisor_gid'] %>
 <% end -%>
 
