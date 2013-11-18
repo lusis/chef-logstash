@@ -16,7 +16,7 @@ end
 if node['logstash']['agent']['patterns_dir'][0] == '/'
   patterns_dir = node['logstash']['agent']['patterns_dir']
 else
-  patterns_dir = node['logstash']['basedir'] + '/' + node['logstash']['agent']['patterns_dir']
+  patterns_dir = node['logstash']['agent']['home'] + '/' + node['logstash']['agent']['patterns_dir']
 end
 
 if node['logstash']['install_zeromq']
@@ -57,7 +57,7 @@ else
   end
 end
 
-directory "#{node['logstash']['basedir']}/agent" do
+directory node['logstash']['agent']['home'] do
   action :create
   mode "0755"
   owner node['logstash']['user']
@@ -65,7 +65,7 @@ directory "#{node['logstash']['basedir']}/agent" do
 end
 
 %w{bin etc lib tmp log}.each do |ldir|
-  directory "#{node['logstash']['basedir']}/agent/#{ldir}" do
+  directory "#{node['logstash']['agent']['home']}/#{ldir}" do
     action :create
     mode "0755"
     owner node['logstash']['user']
@@ -73,11 +73,11 @@ end
   end
 
   link "/var/lib/logstash/#{ldir}" do
-    to "#{node['logstash']['basedir']}/agent/#{ldir}"
+    to "#{node['logstash']['agent']['home']}/#{ldir}"
   end
 end
 
-directory "#{node['logstash']['basedir']}/agent/etc/conf.d" do
+directory "#{node['logstash']['agent']['home']}/etc/conf.d" do
   action :create
   mode "0755"
   owner node['logstash']['user']
@@ -103,16 +103,8 @@ node['logstash']['patterns'].each do |file, hash|
   end
 end
 
-directory node['logstash']['log_dir'] do
-  action :create
-  mode "0755"
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  recursive true
-end
-
 if node['logstash']['agent']['install_method'] == "jar"
-  remote_file "#{node['logstash']['basedir']}/agent/lib/logstash-#{node['logstash']['agent']['version']}.jar" do
+  remote_file "#{node['logstash']['agent']['home']}/lib/logstash-#{node['logstash']['agent']['version']}.jar" do
     owner "root"
     group "root"
     mode "0755"
@@ -121,30 +113,56 @@ if node['logstash']['agent']['install_method'] == "jar"
     action :create_if_missing
   end
 
-  link "#{node['logstash']['basedir']}/agent/lib/logstash.jar" do
-    to "#{node['logstash']['basedir']}/agent/lib/logstash-#{node['logstash']['agent']['version']}.jar"
+  link "#{node['logstash']['agent']['home']}/lib/logstash.jar" do
+    to "#{node['logstash']['agent']['home']}/lib/logstash-#{node['logstash']['agent']['version']}.jar"
     notifies :restart, service_resource
   end
 else
   include_recipe "logstash::source"
 
   logstash_version = node['logstash']['source']['sha'] || "v#{node['logstash']['server']['version']}"
-  link "#{node['logstash']['basedir']}/agent/lib/logstash.jar" do
+  link "#{node['logstash']['agent']['home']}/lib/logstash.jar" do
     to "#{node['logstash']['basedir']}/source/build/logstash-#{logstash_version}-monolithic.jar"
     notifies :restart, service_resource
   end
 end
 
-template "#{node['logstash']['basedir']}/agent/etc/shipper.conf" do
-  source node['logstash']['agent']['base_config']
-  cookbook node['logstash']['agent']['base_config_cookbook']
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  mode "0644"
-  variables(
+if node['logstash']['agent']['config_file']
+  template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['config_dir']}/#{node['logstash']['agent']['config_file']}" do
+    source node['logstash']['agent']['base_config']
+    cookbook node['logstash']['agent']['base_config_cookbook']
+    owner node['logstash']['user']
+    group node['logstash']['group']
+    mode "0644"
+    variables(
             :logstash_server_ip => logstash_server_ip,
             :patterns_dir => patterns_dir)
-  notifies :restart, service_resource
+    notifies :restart, service_resource
+  end
+end
+
+unless node['logstash']['agent']['config_templates'].empty? or node['logstash']['agent']['config_templates'].nil?
+  node['logstash']['server']['config_templates'].each do |config_template| 
+    template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['config_dir']}/#{config_template}.conf" do
+      source "#{config_template}.conf.erb"
+      cookbook node['logstash']['agent']['config_templates_cookbook']
+      owner node['logstash']['user']
+      group node['logstash']['group']
+      mode "0644"
+      variables node['logstash']['agent']['config_templates_variables'][config_template]
+      notifies :restart, service_resource
+      action :create
+    end
+  end
+end
+
+log_dir = ::File.dirname node['logstash']['agent']['log_file']
+directory log_dir do
+  action :create
+  mode "0755"
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  recursive true
 end
 
 if node['logstash']['agent']['init_method'] == 'runit'
@@ -172,7 +190,9 @@ elsif node['logstash']['agent']['init_method'] == 'native'
       group "root"
       mode "0774"
       variables(
-        :config_file => "shipper.conf",
+        :config_file => node['logstash']['agent']['config_dir'],
+        :home => node['logstash']['agent']['home'],
+        :log_file => node['logstash']['agent']['log_file'],
         :name => 'agent',
         :max_heap => node['logstash']['agent']['xmx'],
         :min_heap => node['logstash']['agent']['xms']
@@ -189,7 +209,7 @@ else
 end
 
 logrotate_app "logstash" do
-  path "#{node['logstash']['log_dir']}/*.log"
+  path "#{log_dir}/*.log"
   frequency "daily"
   rotate "30"
   options node['logstash']['agent']['logrotate']['options']

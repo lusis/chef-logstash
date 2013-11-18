@@ -1,0 +1,21 @@
+filter {
+  if [type] == "<%= @type %>" {
+    grok {
+      overwrite => "message"
+      match => [ 
+        "message", 
+        "?%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}" 
+      ]
+    }
+    syslog_pri { }
+    date {
+      # season to taste for your own syslog format(s)
+      match => [ 
+        "timestamp",  
+        "MMM  d HH:mm:ss", 
+        "MMM dd HH:mm:ss", 
+        "ISO8601" 
+      ]
+    }
+  }
+}

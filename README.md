@@ -5,6 +5,14 @@ Description
 
 This is the semi-official 'all-in-one' Logstash cookbook.
 
+This branch is to start building towards solid support for logstash 1.2.x and the new conditionals system
+
+## Logstash 1.2.x stuff
+
+* Replaced `type => "foo"` in filter/output with `if [type] == "foo"`
+* Need to work out better way to invoke conditionals ( there's more than just if )
+
+
 Requirements
 ============
 
@@ -61,6 +69,7 @@ Attributes
   recipe install zeromq packages?
 * `node['logstash']['zeromq_packages']` - zeromq_packages to install
   if you use zeromq
+* `node['logstash']['supervisor_gid']` - set gid to run logstash as in supervisor ( runit, upstart )
 
 ## Agent
 
@@ -99,6 +108,11 @@ Attributes
 * `node['logstash']['agent']['patterns_dir']` - The patterns directory
   where pattern files will be generated. Relative to the basedir or
   absolute.
+* `node['logstash']['agent']['home']` - home dir of logstash agent
+* `node['logstash']['agent']['config_dir']` - location of conf.d style config dir
+* `node['logstash']['agent']['config_file']` - name for base config file ( in conf.d dir )
+
+
 
 ## Server
 
@@ -139,6 +153,9 @@ Attributes
 * `node['logstash']['server']['patterns_dir']` - The patterns
   directory where pattern files will be generated. Relative to the
   basedir or absolute.
+* `node['logstash']['server']['home']` - home dir of logstash agent
+* `node['logstash']['server']['config_dir']` - location of conf.d style config dir
+* `node['logstash']['server']['config_file']` - name for base config file ( in conf.d dir )
 
 ## Kibana
 
@@ -184,6 +201,21 @@ Kibana has been removed from this cookbook. This is for several reasons:
   index_cleaner cron job
 * `node['logstash']['index_cleaner']['cron']['log_file']` - Path to direct
   the index_cleaner cron job's stdout and stderr
+
+Testing
+=======
+
+## Vagrant
+
+## Strainer
+
+```
+export COOKBOOK_PATH=`pwd`
+export BUNDLE_GEMFILE=$COOKBOOK_PATH/test/support/Gemfile
+bundle install
+bundle exec berks install
+bundle exec strainer test
+```
 
 Usage
 =====
@@ -275,11 +307,91 @@ showing up in kibana. You might have to issue a fresh empty search.
 The `pyshipper` recipe will work as well but it is NOT wired up to
 anything yet.
 
+## config templates
+
+If you want to use chef templates to drive your configs you'll want to set the following:
+
+* example using `agent`, `server` works the same way.
+* The actual template file for the following would resolve to `templates/default/apache.conf.erb` and be installed to `/opt/logstash/agent/etc/conf.d/apache.conf`
+* Each template has a hash named for it to inject variables in `node['logstash']['agent']['config_templates_variables']`
+
+
+```
+node['logstash']['agent']['config_file'] = "" # disable data drive templates ( can be left enabled if want both )
+node['logstash']['agent']['config_templates'] = ["apache"]
+node['logstash']['agent']['config_templates_cookbook'] = 'logstash'
+node['logstash']['agent']['config_templates_variables'] = { apache: { type: 'apache' } }
+```
+
+
+
+
 ## Letting data drive your templates
 
 The current templates for the agent and server are written so that you
 can provide ruby hashes in your roles that map to inputs, filters, and
-outputs. Here is a role for logstash_server
+outputs. Here is a role for logstash_server.
+
+There are two formats for the hashes for filters and outputs that you should be aware of ...   
+
+### Legacy
+
+This is for logstash < 1.2.0 and uses the old pattern of setting 'type' and 'tags' in the plugin to determine if it should be run.
+
+```
+filters: [
+  grok: {
+  type: "syslog"
+    match: [
+      "message",
+      "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
+    ]
+  },
+  date: {
+  type: "syslog"
+    match: [ 
+      "timestamp",
+      "MMM  d HH:mm:ss",
+      "MMM dd HH:mm:ss",
+      "ISO8601"
+    ]
+  }
+]
+```
+
+### Conditional
+
+This is for logstash >= 1.2.0 and uses the new pattern of conditioansl `if 'type' == "foo" {}`
+
+Note:  the condition applies to all plugins in the block hash in the same object.
+
+```
+filters: [
+  { 
+    condition: 'if [type] == "syslog"',
+    block: {    
+      grok: {
+        match: [
+          "message",
+          "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
+        ]
+      },
+      date: {
+        match: [ 
+          "timestamp",
+          "MMM  d HH:mm:ss",
+          "MMM dd HH:mm:ss",
+          "ISO8601"
+        ]
+      }
+    }
+  }
+]
+```
+
+### Examples
+
+These examples show the legacy format and need to be updated for logstash >= 1.2.0
 
     name "logstash_server"
     description "Attributes and run_lists specific to FAO's logstash instance"
