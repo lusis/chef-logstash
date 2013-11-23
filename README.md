@@ -163,8 +163,37 @@ Kibana has been removed from this cookbook. This is for several reasons:
   to use (needed when not using server_role).
 * `node['logstash']['beaver']['inputs']` - Array of input plugins
   configuration (Supported: file).
+  For example:
+  
+        override['logstash']['beaver']['inputs'] =  [
+          { :file =>  
+            {
+              :path => ["/var/log/nginx/*log"], 
+              :type => "nginx", 
+              :tags => ["logstash","nginx"]
+            }
+          },
+          { :file =>  
+            {
+              :path => ["/var/log/syslog"], 
+              :type => "syslog", 
+              :tags => ["logstash","syslog"] 
+            }
+          }
+        ]    
+    
 * `node['logstash']['beaver']['outputs']` - Array of output plugins
   configuration (Supported: amq, redis, stdout, zeromq).
+  For example:
+
+        override['logstash']['beaver']['outputs'] = [ 
+          { 
+            :redis => { 
+              :namespace => "logstash" 
+            } 
+          } 
+        ]
+  This example changes the redis 'namespace' value, and uses the recipe defaults for the rest of the config
 
 ## Source
 
@@ -192,11 +221,11 @@ Usage
 
 A proper readme is forthcoming but in the interim....
 
-There are 3 recipes you need to concern yourself with:
+There are 2 recipes you need to concern yourself with:
 
 * server - This would be your indexer node
 * agent - This would be a local host's agent for collection
-* kibana - This is the web interface
+
 
 Every attempt (and I mean this) was made to ensure that the following
 objectives were met:
@@ -254,7 +283,7 @@ attributes if you choose to go the `source` route.
 Here are some basic steps
 
 * Create a role called `logstash_server` and assign it the following
-  recipes: `logstash::server` and `logstash::kibana`
+  recipes: `logstash::server`
 * Assign the role to a new server
 * Assign the `logstash::agent` recipe to another server
 
