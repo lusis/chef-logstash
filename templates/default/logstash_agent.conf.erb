@@ -13,7 +13,7 @@ chdir <%= node['logstash']['agent']['home'] %>
 <% if node['logstash']['agent']['upstart_with_sudo'] == false -%>
 setuid <%= node['logstash']['user'] %>
 
-<% if node['logstash']['supervisor_gid'] -%>
+<% unless node['logstash']['supervisor_gid'].to_s.empty? -%>
 setgid <%= node['logstash']['supervisor_gid'] %>
 <% end -%>
 
