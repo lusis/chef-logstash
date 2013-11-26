@@ -25,6 +25,9 @@ script
   export GC_OPTS="<%= node['logstash']['agent']['gc_opts'] %>"
   export JAVA_OPTS="-server -Xms<%= node['logstash']['agent']['xms'] %> -Xmx<%= node['logstash']['agent']['xmx'] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= node['logstash']['agent']['java_opts'] %> <%= '-Djava.net.preferIPv4Stack=true' if node['logstash']['agent']['ipv4_only'] %>"
   export LOGSTASH_OPTS="agent -f <%= node['logstash']['agent']['config_dir'] %> -l <%= node['logstash']['agent']['log_file'] %>"
+  <% if 0 < (workers_count = node['logstash']['agent']['workers'].to_i) %>
+    export LOGSTASH_OPTS="$LOGSTASH_OPTS -w #{workers_count}"
+  <% end %>
   <% if node['logstash']['agent']['debug'] -%>
   export LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
   <% end -%>

@@ -23,6 +23,10 @@ default['logstash']['agent']['upstart_with_sudo'] = false
 default['logstash']['agent']['upstart_respawn_count'] = 5
 default['logstash']['agent']['upstart_respawn_timeout'] = 30
 default['logstash']['agent']['init_method'] = 'native' # native or runit
+default['logstash']['agent']['init_method'] = 'native'
+
+# number of logstash filter workers, set to number of CPU cores to speed up processing
+default['logstash']['agent']['workers'] = 0
 
 # logrotate options for logstash agent
 default['logstash']['agent']['logrotate']['options'] = [ "missingok", "notifempty" ]
