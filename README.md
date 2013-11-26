@@ -85,6 +85,7 @@ Attributes
   template to use for `logstash.conf` as a base config.
 * `node['logstash']['agent']['base_config_cookbook']` - Where to find
   the base\_config template.
+* `node['logstash']['agent']['workers']` - Number of workers for filter processing.
 * `node['logstash']['agent']['xms']` - The minimum memory to assign
   the JVM.
 * `node['logstash']['agent']['xmx']` - The maximum memory to assign
