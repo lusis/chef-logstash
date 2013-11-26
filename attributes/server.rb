@@ -1,6 +1,6 @@
 default['logstash']['server']['version'] = '1.2.2'
 default['logstash']['server']['home'] = "#{node['logstash']['basedir']}/server"
-default['logstash']['server']['log_file'] = '/var/log/logstash/server.log'
+default['logstash']['server']['log_file'] = '/var/log/logstash/server.log' # set blank to log to stdout
 default['logstash']['server']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.2.2-flatjar.jar'
 default['logstash']['server']['checksum'] = '6b0974eed6814f479b68259b690e8c27ecbca2817b708c8ef2a11ce082b1183c'
 default['logstash']['server']['install_method'] = 'jar' # Either `source` or `jar`

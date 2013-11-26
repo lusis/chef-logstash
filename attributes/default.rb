@@ -1,6 +1,8 @@
 default['logstash']['basedir'] = '/opt/logstash'
 default['logstash']['user'] = 'logstash'
+default['logstash']['uid'] = nil  # set to nil to let system pick
 default['logstash']['group'] = 'logstash'
+default['logstash']['gid'] = nil  # set to nil to let system pick
 default['logstash']['supervisor_gid'] = '' # set this if you want all logstash processes to run as different gid,  can be overridden
 default['logstash']['pid_dir'] = '/var/run/logstash'
 default['logstash']['create_account'] = true
