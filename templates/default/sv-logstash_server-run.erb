@@ -17,7 +17,7 @@ LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath <%= node['logstash']['server']['plugi
 LOGSTASH_OPTS="$LOGSTASH_OPTS -v"
 <% end -%>
 
-<% if node['logstash']['supervisor_gid'] -%>
+<% unless node['logstash']['supervisor_gid'].to_s.empty? -%>
 HOME=$LOGSTASH_HOME exec chpst -u <%= node["logstash"]["user"] %>:<%= node["logstash"]["supervisor_gid"] %> java $JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
 <% else -%>
 HOME=$LOGSTASH_HOME exec chpst -u <%= node["logstash"]["user"] %> java $JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
