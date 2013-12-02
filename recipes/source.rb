@@ -29,7 +29,7 @@ execute "build-logstash" do
   user "root"
   # This variant is useful for troubleshooting stupid environment problems
   # command "make clean && make VERSION=#{logstash_version} --debug > /tmp/make.log 2>&1"
-  command "make clean && make VERSION=#{logstash_version}"
+  command "make clean && make VERSION=#{logstash_version} jar"
   action :run
   creates "#{node['logstash']['basedir']}/source/build/logstash-#{logstash_version}-monolithic.jar"
   not_if "test -f #{node['logstash']['basedir']}/source/build/logstash-#{logstash_version}-monolithic.jar"
