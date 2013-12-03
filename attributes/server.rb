@@ -13,6 +13,8 @@ default['logstash']['server']['ipv4_only'] = false
 default['logstash']['server']['debug'] = false
 default['logstash']['server']['home'] = '/opt/logstash/server'
 default['logstash']['server']['install_rabbitmq'] = true
+# allow control over the upstart config
+default['logstash']['server']['upstart_with_sudo'] = false
 
 default['logstash']['server']['init_method'] = 'native' # native or runit
 # roles/flags for various autoconfig/discovery components
