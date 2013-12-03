@@ -40,6 +40,8 @@ Attributes
   Logstash components
 * `node['logstash']['user']` - the owner for all Logstash components
 * `node['logstash']['group']` - the group for all Logstash components
+* `node['logstash']['supervisor_gid']` - set gid to run logstash as in supervisor ( runit, upstart ).
+  Useful for Ubuntu where logstash or beaver needs to run as group `adm` to read syslog
 * `node['logstash']['graphite_role']` - the Chef role to search for
   discovering your preexisting Graphite server
 * `node['logstash']['graphite_query']` - the search query used for
