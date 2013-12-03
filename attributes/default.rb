@@ -24,3 +24,12 @@ when "rhel"
 when "debian"
   default['logstash']['zeromq_packages'] = [ "zeromq",  "libzmq-dev"]
 end
+
+
+# Logging features
+default['logstash']['logging']['rotateFrequency'] = "daily"
+default['logstash']['logging']['maxBackup'] = 10
+default['logstash']['logging']['maxSize'] = "10M"
+default['logstash']['logging']['useFileSize'] = false
+  
+  

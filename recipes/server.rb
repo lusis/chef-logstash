@@ -209,8 +209,11 @@ end
 
 logrotate_app "logstash_server" do
   path "#{log_dir}/*.log"
-  frequency "daily"
-  rotate "30"
+  if node['logstash']['logging']['useFileSize']
+    size node['logstash']['logging']['maxSize']
+  end
+  frequency node['logstash']['logging']['rotateFrequency']
+  rotate node['logstash']['logging']['maxBackup']
   options node['logstash']['server']['logrotate']['options']
   create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
 end
