@@ -68,6 +68,8 @@ Attributes
   existing account!
 * `node['logstash']['install_zeromq']` - Should this
   recipe install zeromq packages?
+* `node['logstash']['install_rabbitmq']` - Should this
+  recipe install rabbitmq packages? 
 * `node['logstash']['zeromq_packages']` - zeromq_packages to install
   if you use zeromq
 * `node['logstash']['supervisor_gid']` - set gid to run logstash as in supervisor ( runit, upstart )
@@ -434,7 +436,7 @@ These examples show the legacy format and need to be updated for logstash >= 1.2
           :inputs => [
             :amqp => {
               :type => "all",
-              :host => "127.0.0.1",
+              :host => "<IP OF RABBIT SERVER>",
               :exchange => "rawlogs",
               :name => "rawlogs_consumer"
             }
@@ -470,7 +472,7 @@ It will produce the following logstash.conf file
 
       amqp {
         exchange => 'rawlogs'
-        host => '127.0.0.1'
+        host => '<IP OF RABBIT SERVER>'
         name => 'rawlogs_consumer'
         type => 'all'
       }
