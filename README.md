@@ -188,12 +188,14 @@ Kibana has been removed from this cookbook. This is for several reasons:
 
         override['logstash']['beaver']['outputs'] = [ 
           { 
-            :redis => { 
-              :namespace => "logstash" 
+            :amqp => { 
+              :port => "5672",
+              :exchange => "rawlogs",
+              :name => "rawlogs_consumer"
             } 
           } 
         ]
-  This example changes the redis 'namespace' value, and uses the recipe defaults for the rest of the config
+  This example sets up the amqp output and uses the recipe defaults for the host value
 
 ## Source
 
