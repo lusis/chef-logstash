@@ -190,8 +190,12 @@ end
 
 logrotate_app "logstash" do
   path "#{node['logstash']['log_dir']}/*.log"
-  frequency "daily"
-  rotate "30"
+  if node['logstash']['logging']['useFileSize']
+    size node['logstash']['logging']['maxSize']
+  else
+    frequency node['logstash']['logging']['rotateFrequency']
+  end
+  rotate node['logstash']['logging']['maxBackup']
   options node['logstash']['agent']['logrotate']['options']
   create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
   notifies :restart, "service[rsyslog]"
