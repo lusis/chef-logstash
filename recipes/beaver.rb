@@ -191,8 +191,8 @@ if use_upstart
     source "logstash_beaver.conf.erb"
     variables(
               :cmd => cmd,
-              :group => node['logstash']['group'],
-              :user => node['logstash']['user'],
+              :group => node['logstash']['supervisor_gid'],
+              :user =>  node['logstash']['user'],
               :log => log_file,
               :supports_setuid => supports_setuid
               )
