@@ -116,8 +116,7 @@ node['logstash']['beaver']['outputs'].each do |outs|
     case name
       when "rabbitmq", "amqp" then
         outputs << "rabbitmq"
-        host = hash['host'] || logstash_server_ip || 'localhost'
-        conf['rabbitmq_host'] = hash['host'] if hash.has_key?('host')
+        conf['rabbitmq_host'] = hash['host'] || logstash_server_ip || 'localhost'
         conf['rabbitmq_port'] = hash['port'] if hash.has_key?('port')
         conf['rabbitmq_vhost'] = hash['vhost'] if hash.has_key?('vhost')
         conf['rabbitmq_username'] = hash['user'] if hash.has_key?('user')
