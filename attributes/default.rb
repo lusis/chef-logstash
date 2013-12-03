@@ -1,7 +1,7 @@
 default['logstash']['basedir'] = '/opt/logstash'
 default['logstash']['user'] = 'logstash'
 default['logstash']['group'] = 'logstash'
-default['logstash']['supervisor_gid'] = '' # set this if you want all logstash processes to run as different gid,  can be overridden
+default['logstash']['supervisor_gid'] = default['logstash']['group'] # set this if you want all logstash processes to run as different gid,  can be overridden
 default['logstash']['pid_dir'] = '/var/run/logstash'
 default['logstash']['create_account'] = true
 default['logstash']['join_groups'] = []
