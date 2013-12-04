@@ -30,6 +30,8 @@ default['logstash']['server']['inputs'] = []
 default['logstash']['server']['filters'] = []
 default['logstash']['server']['outputs'] = []
 
-
+default['logstash']['server']['web']['enable']  = false
+default['logstash']['server']['web']['address'] = '0.0.0.0'
+default['logstash']['server']['web']['port']    = '9292'
 
 default['logstash']['server']['logrotate']['options'] = [ 'missingok', 'notifempty', 'compress', 'copytruncate' ]
