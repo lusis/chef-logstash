@@ -1,0 +1,19 @@
+#!/bin/sh
+
+ulimit -Hn 65550
+ulimit -Sn 65550
+
+cd /<%= node['logstash']['server']['home'] %>
+exec 2>&1
+
+LOGSTASH_HOME="<%= node['logstash']['server']['home'] %>"
+GC_OPTS="<%= node['logstash']['server']['gc_opts'] %>"
+
+LOGSTASH_OPTS="web -a <%= node['logstash']['server']['web']['address'] %> -p <%= node['logstash']['server']['web']['port'] %>"
+
+
+<% if ! node['logstash']['supervisor_gid'].empty? -%>
+HOME=$LOGSTASH_HOME exec chpst -u <%= node['logstash']['user'] %>:<%= node['logstash']['supervisor_gid'] %> java $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
+<% else -%>
+HOME=$LOGSTASH_HOME exec chpst -u <%= node['logstash']['user'] %> java $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
+<% end -%>
