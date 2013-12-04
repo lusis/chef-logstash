@@ -16,6 +16,9 @@ chef_run_list = %w[
 #      ]
 
 chef_json = {
+    java: {
+      jdk_version: '7'
+    },
     kibana: {
         webserver_listen: "0.0.0.0",
         webserver: "nginx",
@@ -139,6 +142,18 @@ Vagrant.configure('2') do |config|
   config.vm.define :centos6_32 do |dist_config|
     dist_config.vm.box       = 'centos6_32'
     dist_config.vm.box_url   = 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_centos-6.4-i386_provisionerless.box'
+    dist_config.vm.provision :chef_solo do |chef|
+      chef.cookbooks_path = ['/tmp/logstash-cookbooks']
+      chef.provisioning_path = '/etc/vagrant-chef'
+      chef.log_level = log_level
+      chef.run_list = chef_run_list
+      chef.json = chef_json
+    end
+  end
+
+  config.vm.define :fedora19 do |dist_config|
+    dist_config.vm.box       = 'fedora19'
+    dist_config.vm.box_url   = 'http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_fedora-19_chef-provisionerless.box'
     dist_config.vm.provision :chef_solo do |chef|
       chef.cookbooks_path = ['/tmp/logstash-cookbooks']
       chef.provisioning_path = '/etc/vagrant-chef'

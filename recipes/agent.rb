@@ -183,6 +183,24 @@ elsif node['logstash']['agent']['init_method'] == 'native'
     else
       Chef::Log.fatal("Please set node['logstash']['agent']['init_method'] to 'runit' for #{node['platform_version']}")
     end
+  elsif platform_family? "fedora" and node["platform_version"] >= "15"
+    execute "reload-systemd" do
+      command "systemctl --system daemon-reload"
+      action :nothing
+    end
+
+    template "/etc/systemd/system/logstash_agent.service" do
+      source "logstash_agent.service.erb"
+      owner "root" and group 'root' and mode 0755
+      notifies :run, "execute[reload-systemd]", :immediately
+      notifies :restart, "service[logstash_agent]", :delayed
+    end
+
+    service "logstash_agent" do
+      service_name "logstash_agent.service"
+      provider Chef::Provider::Service::Systemd
+      action [ :enable, :start ]
+    end    
   elsif platform_family? "rhel", "fedora"
     template "/etc/init.d/logstash_agent" do
       source "init.erb"
