@@ -161,14 +161,19 @@ Attributes
 * `node['logstash']['server']['config_dir']` - location of conf.d style config dir
 * `node['logstash']['server']['config_file']` - name for base config file ( in conf.d dir )
 * `node['logstash']['server']['workers']` - Number of workers for filter processing.
+* `node['logstash']['server']['web']['enable']` - true to enable embedded kibana ( may be behind in features )
+* `node['logstash']['server']['web']['address']` - IP Address to listen on
+* `node['logstash']['server']['web']['port']` - port to listen on.
+
 
 ## Kibana
 
-Kibana has been removed from this cookbook. This is for several reasons:
+Kibana can be run from the embedded version in elasticsearch.  
+It is not recommended that you use this outside of basic testing. This is for several reasons:
 
 - Kibana is a fast moving target
 - It violates SRP
-- Kibana is being integrated into the logstash jar as the default UI
+- It's not very secure when run this way
 - There are two solid cookbooks for using Kibana now
   - Kibana2 (Ruby version): https://github.com/realityforge/chef-kibana
   - Kibana3 (HTML/JS version): https://github.com/lusis/chef-kibana

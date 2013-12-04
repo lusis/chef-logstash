@@ -62,7 +62,8 @@ chef_json = {
             xmx: '128m',
             enable_embedded_es: true,
             config_templates: ['apache'],
-            config_templates_variables: { apache: { type: 'apache' } }
+            config_templates_variables: { apache: { type: 'apache' } },
+            web: { enable: true }
         }
     }
 }
@@ -73,6 +74,8 @@ Vagrant.configure('2') do |config|
   config.omnibus.chef_version = 'latest'
   config.vm.hostname = 'logstash'
   config.vm.network :private_network, ip: '192.168.200.50'
+  config.vm.network "forwarded_port", guest: 9292, host: 9292
+  config.vm.network "forwarded_port", guest: 9200, host: 9200
   config.vm.provider :virtualbox do |vb|
     vb.customize ['modifyvm', :id, '--memory', '1024']
   end
@@ -94,7 +97,6 @@ Vagrant.configure('2') do |config|
       chef.json[:logstash][:server][:init_method] = 'runit'
     end
   end
-
 
   config.vm.define :lucid64 do |dist_config|
     dist_config.vm.box       = 'lucid64'
