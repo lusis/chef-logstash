@@ -88,6 +88,7 @@ Attributes
   template to use for `logstash.conf` as a base config.
 * `node['logstash']['agent']['base_config_cookbook']` - Where to find
   the base\_config template.
+* `node['logstash']['agent']['workers']` - Number of workers for filter processing.
 * `node['logstash']['agent']['xms']` - The minimum memory to assign
   the JVM.
 * `node['logstash']['agent']['xmx']` - The maximum memory to assign
@@ -130,7 +131,7 @@ Attributes
 * `node['logstash']['server']['base_config']` - The name of the
   template to use for `logstash.conf` as a base config.
 * `node['logstash']['server']['base_config_cookbook']` - Where to find
-  the base\_config template.
+  the base config template.
 * `node['logstash']['server']['xms']` - The minimum memory to assign
   the JVM.
 * `node['logstash']['server']['xmx']` - The maximum memory to assign
@@ -159,6 +160,7 @@ Attributes
 * `node['logstash']['server']['home']` - home dir of logstash agent
 * `node['logstash']['server']['config_dir']` - location of conf.d style config dir
 * `node['logstash']['server']['config_file']` - name for base config file ( in conf.d dir )
+* `node['logstash']['server']['workers']` - Number of workers for filter processing.
 
 ## Kibana
 

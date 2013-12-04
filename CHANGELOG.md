@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of chef-logstash.
 
+## 0.7.1:
+* various bugfixes
+* support for multiple logstash workers via attribute.
+
 ## 0.7.0:
 
 ### New features ###

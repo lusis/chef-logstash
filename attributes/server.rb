@@ -18,6 +18,7 @@ default['logstash']['server']['java_opts'] = ''
 default['logstash']['server']['gc_opts'] = '-XX:+UseParallelOldGC'
 default['logstash']['server']['ipv4_only'] = false
 default['logstash']['server']['debug'] = false
+default['logstash']['server']['workers'] = 1
 
 default['logstash']['server']['install_rabbitmq'] = false
 
