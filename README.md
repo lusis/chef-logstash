@@ -52,7 +52,7 @@ Attributes
   used for your elasticsearch server in case you are using Chef-solo
 * `node['logstash']['graphite_ip']` - the IP address that will be used
   for your graphite server in case you are using Chef-solo
-* `node['logstash']['join_groups']` - An array of Operative System
+* `node['logstash']['join_groups']` - An array of Operating System
   groups to join. Usefull to gain read privileges on some logfiles.
 * `node['logstash']['patterns']` - A hash with grok patterns to be
   used on grok and multiline filters.
