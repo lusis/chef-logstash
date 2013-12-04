@@ -3,7 +3,7 @@ input {
   tcp {
     type => "tcp-input"
     port => "5959"
-    format => "json_event"
+    codec => "json"
   }
   <% else -%> 
     <%= LogstashConf.section_to_str(node['logstash']['server']['inputs']) %>

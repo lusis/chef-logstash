@@ -42,7 +42,7 @@ basedir = node['logstash']['basedir'] + '/beaver'
 
 conf_file = "#{basedir}/etc/beaver.conf"
 format = node['logstash']['beaver']['format']
-log_file = "#{node['logstash']['log_dir']}/logstash_beaver.log"
+log_file = node['logstash']['beaver']['log_file']
 pid_file = "#{node['logstash']['pid_dir']}/logstash_beaver.pid"
 
 logstash_server_ip = nil
@@ -190,8 +190,8 @@ if use_upstart
     source "logstash_beaver.conf.erb"
     variables(
               :cmd => cmd,
-              :group => node['logstash']['group'],
-              :user => node['logstash']['user'],
+              :group => node['logstash']['supervisor_gid'],
+              :user =>  node['logstash']['user'],
               :log => log_file,
               :supports_setuid => supports_setuid
               )

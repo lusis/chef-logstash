@@ -9,13 +9,10 @@
 
 PIDDIR="<%= node['logstash']['pid_dir'] %>"
 export PIDFILE="$PIDDIR/<%= @name %>.pid"
-export LS_HOME="<%= "#{node['logstash']['basedir']}/#{@name}" %>"
-export LS_CONFIG="$LS_HOME/etc/<%= @config_file %>"
+export LS_HOME="<%= @home %>"
 LS_USER="<%= node['logstash']['user'] %>"
-LOGDIR="<%= node['logstash']['log_dir'] %>"
-LS_LOG="$LOGDIR/<%= @name %>.log"
 export JAVA_OPTS="-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=$LS_HOME/tmp/"
-BIN_SCRIPT="/usr/bin/env java $JAVA_OPTS -jar $LS_HOME/lib/logstash.jar agent -f $LS_CONFIG > $LS_LOG 2>&1 &  echo \$! > $PIDFILE"
+BIN_SCRIPT="/usr/bin/env java $JAVA_OPTS -jar $LS_HOME/lib/logstash.jar web -a <% node['logstash']['server']['web']['address'] -p node['logstash']['server']['web']['port'] %> 2>&1 &  echo \$! > $PIDFILE"
 
 if [ -f /etc/init.d/functions ] ; then
   . /etc/init.d/functions
@@ -28,10 +25,6 @@ start() {
     chown -R $LS_USER:$LS_USER $PIDDIR
   fi
 
-  if [ ! -d "$LOGDIR" ] ; then
-    mkdir "$LOGDIR"
-  fi
-
   chown -R $LS_USER:$LS_USER $LOGDIR $PIDDIR
 
 
@@ -41,12 +34,12 @@ start() {
     pid_running="$( ps ax | grep 'java' | grep $ls_pid )"
 
     if [ ! -z "$pid_running" ] ; then
-      echo -e "\033[31;1mPID $ls_pid still alive, logstash is already running. Doing nothing\033[0m"
+      echo -e "\033[31;1mPID $ls_pid still alive, logstash web is already running. Doing nothing\033[0m"
       return 1
     fi
   fi
 
-  echo -e "\033[1mStarting logstash...\033[0m"
+  echo -e "\033[1mStarting logstash web...\033[0m"
   pushd $LS_HOME  > /dev/null 2>&1
   su $LS_USER -c "$BIN_SCRIPT" > /dev/null 2>&1
   ls_pid=$!
@@ -55,11 +48,11 @@ start() {
 
   if [ $result -ne 0 ] ; then
     failure
-    echo -e "Logstash did not start successfully"
+    echo -e "Logstash web did not start successfully"
     exit 1
   else
     success
-    echo -e "Logstash started successfully"
+    echo -e "Logstash web started successfully"
   fi
 
 }
@@ -67,7 +60,7 @@ start() {
 
 
 function stop() {
-  echo -n -e "\033[1mStopping logstash...\033[0m"
+  echo -n -e "\033[1mStopping logstash web...\033[0m"
 
   if [ -z "$SHUTDOWN_WAIT" ]; then
     SHUTDOWN_WAIT=5
@@ -81,7 +74,7 @@ function stop() {
         return 0
       fi
     else
-      echo "\$PIDFILE was set ($PIDFILE) but the specified file does not exist. Is Logstash running? Assuming it has stopped and pro\
+      echo "\$PIDFILE was set ($PIDFILE) but the specified file does not exist. Is Logstash web running? Assuming it has stopped and pro\
         ceeding."
       return 0
     fi
@@ -134,12 +127,12 @@ status() {
   # RUNNING
   if [[ $pid && -d "/proc/$pid" ]]; then
     success
-    echo -e "Logstash is running with pid $pid"
+    echo -e "Logstash web is running with pid $pid"
   fi
 
   # NOT RUNNING
   if [[ ! $pid || ! -d "/proc/$pid" ]]; then
-    echo "Logstash not running"
+    echo "Logstash web not running"
   fi
 
   # STALE PID FOUND

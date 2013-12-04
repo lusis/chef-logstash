@@ -5,7 +5,7 @@ Description
 
 This is the semi-official 'all-in-one' Logstash cookbook.
 
-If you want Logstash 1.2.x support please see the [0.7.0 branch](https://github.com/lusis/chef-logstash/tree/0.7.0)
+If you are using logstash < 1.2 you might want to use the 0.6.1 branch.
 
 Requirements
 ============
@@ -35,6 +35,8 @@ Attributes
   Logstash components
 * `node['logstash']['user']` - the owner for all Logstash components
 * `node['logstash']['group']` - the group for all Logstash components
+* `node['logstash']['supervisor_gid']` - set gid to run logstash as in supervisor ( runit, upstart ).
+  Useful for Ubuntu where logstash or beaver needs to run as group `adm` to read syslog
 * `node['logstash']['graphite_role']` - the Chef role to search for
   discovering your preexisting Graphite server
 * `node['logstash']['graphite_query']` - the search query used for
@@ -61,8 +63,11 @@ Attributes
   existing account!
 * `node['logstash']['install_zeromq']` - Should this
   recipe install zeromq packages?
+* `node['logstash']['install_rabbitmq']` - Should this
+  recipe install rabbitmq packages? 
 * `node['logstash']['zeromq_packages']` - zeromq_packages to install
   if you use zeromq
+* `node['logstash']['supervisor_gid']` - set gid to run logstash as in supervisor ( runit, upstart )
 
 ## Agent
 
@@ -78,6 +83,7 @@ Attributes
   template to use for `logstash.conf` as a base config.
 * `node['logstash']['agent']['base_config_cookbook']` - Where to find
   the base\_config template.
+* `node['logstash']['agent']['workers']` - Number of workers for filter processing.
 * `node['logstash']['agent']['xms']` - The minimum memory to assign
   the JVM.
 * `node['logstash']['agent']['xmx']` - The maximum memory to assign
@@ -101,6 +107,11 @@ Attributes
 * `node['logstash']['agent']['patterns_dir']` - The patterns directory
   where pattern files will be generated. Relative to the basedir or
   absolute.
+* `node['logstash']['agent']['home']` - home dir of logstash agent
+* `node['logstash']['agent']['config_dir']` - location of conf.d style config dir
+* `node['logstash']['agent']['config_file']` - name for base config file ( in conf.d dir )
+
+
 
 ## Server
 
@@ -115,7 +126,7 @@ Attributes
 * `node['logstash']['server']['base_config']` - The name of the
   template to use for `logstash.conf` as a base config.
 * `node['logstash']['server']['base_config_cookbook']` - Where to find
-  the base\_config template.
+  the base config template.
 * `node['logstash']['server']['xms']` - The minimum memory to assign
   the JVM.
 * `node['logstash']['server']['xmx']` - The maximum memory to assign
@@ -141,14 +152,23 @@ Attributes
 * `node['logstash']['server']['patterns_dir']` - The patterns
   directory where pattern files will be generated. Relative to the
   basedir or absolute.
+* `node['logstash']['server']['home']` - home dir of logstash agent
+* `node['logstash']['server']['config_dir']` - location of conf.d style config dir
+* `node['logstash']['server']['config_file']` - name for base config file ( in conf.d dir )
+* `node['logstash']['server']['workers']` - Number of workers for filter processing.
+* `node['logstash']['server']['web']['enable']` - true to enable embedded kibana ( may be behind in features )
+* `node['logstash']['server']['web']['address']` - IP Address to listen on
+* `node['logstash']['server']['web']['port']` - port to listen on.
+
 
 ## Kibana
 
-Kibana has been removed from this cookbook. This is for several reasons:
+Kibana can be run from the embedded version in elasticsearch.  
+It is not recommended that you use this outside of basic testing. This is for several reasons:
 
 - Kibana is a fast moving target
 - It violates SRP
-- Kibana is being integrated into the logstash jar as the default UI
+- It's not very secure when run this way
 - There are two solid cookbooks for using Kibana now
   - Kibana2 (Ruby version): https://github.com/realityforge/chef-kibana
   - Kibana3 (HTML/JS version): https://github.com/lusis/chef-kibana
@@ -217,6 +237,21 @@ Kibana has been removed from this cookbook. This is for several reasons:
   index_cleaner cron job
 * `node['logstash']['index_cleaner']['cron']['log_file']` - Path to direct
   the index_cleaner cron job's stdout and stderr
+
+Testing
+=======
+
+## Vagrant
+
+## Strainer
+
+```
+export COOKBOOK_PATH=`pwd`
+export BUNDLE_GEMFILE=$COOKBOOK_PATH/test/support/Gemfile
+bundle install
+bundle exec berks install
+bundle exec strainer test
+```
 
 Usage
 =====
@@ -308,11 +343,91 @@ showing up in kibana. You might have to issue a fresh empty search.
 The `pyshipper` recipe will work as well but it is NOT wired up to
 anything yet.
 
+## config templates
+
+If you want to use chef templates to drive your configs you'll want to set the following:
+
+* example using `agent`, `server` works the same way.
+* The actual template file for the following would resolve to `templates/default/apache.conf.erb` and be installed to `/opt/logstash/agent/etc/conf.d/apache.conf`
+* Each template has a hash named for it to inject variables in `node['logstash']['agent']['config_templates_variables']`
+
+
+```
+node['logstash']['agent']['config_file'] = "" # disable data drive templates ( can be left enabled if want both )
+node['logstash']['agent']['config_templates'] = ["apache"]
+node['logstash']['agent']['config_templates_cookbook'] = 'logstash'
+node['logstash']['agent']['config_templates_variables'] = { apache: { type: 'apache' } }
+```
+
+
+
+
 ## Letting data drive your templates
 
 The current templates for the agent and server are written so that you
 can provide ruby hashes in your roles that map to inputs, filters, and
-outputs. Here is a role for logstash_server
+outputs. Here is a role for logstash_server.
+
+There are two formats for the hashes for filters and outputs that you should be aware of ...   
+
+### Legacy
+
+This is for logstash < 1.2.0 and uses the old pattern of setting 'type' and 'tags' in the plugin to determine if it should be run.
+
+```
+filters: [
+  grok: {
+  type: "syslog"
+    match: [
+      "message",
+      "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
+    ]
+  },
+  date: {
+  type: "syslog"
+    match: [ 
+      "timestamp",
+      "MMM  d HH:mm:ss",
+      "MMM dd HH:mm:ss",
+      "ISO8601"
+    ]
+  }
+]
+```
+
+### Conditional
+
+This is for logstash >= 1.2.0 and uses the new pattern of conditioansl `if 'type' == "foo" {}`
+
+Note:  the condition applies to all plugins in the block hash in the same object.
+
+```
+filters: [
+  { 
+    condition: 'if [type] == "syslog"',
+    block: {    
+      grok: {
+        match: [
+          "message",
+          "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
+        ]
+      },
+      date: {
+        match: [ 
+          "timestamp",
+          "MMM  d HH:mm:ss",
+          "MMM dd HH:mm:ss",
+          "ISO8601"
+        ]
+      }
+    }
+  }
+]
+```
+
+### Examples
+
+These examples show the legacy format and need to be updated for logstash >= 1.2.0
 
     name "logstash_server"
     description "Attributes and run_lists specific to FAO's logstash instance"
@@ -323,7 +438,7 @@ outputs. Here is a role for logstash_server
           :inputs => [
             :amqp => {
               :type => "all",
-              :host => "127.0.0.1",
+              :host => "<IP OF RABBIT SERVER>",
               :exchange => "rawlogs",
               :name => "rawlogs_consumer"
             }
@@ -359,7 +474,7 @@ It will produce the following logstash.conf file
 
       amqp {
         exchange => 'rawlogs'
-        host => '127.0.0.1'
+        host => '<IP OF RABBIT SERVER>'
         name => 'rawlogs_consumer'
         type => 'all'
       }
