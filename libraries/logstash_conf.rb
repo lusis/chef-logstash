@@ -1,4 +1,3 @@
-
 require 'rubygems'
 
 class Erubis::RubyEvaluator::LogstashConf
@@ -8,7 +7,7 @@ class Erubis::RubyEvaluator::LogstashConf
   def self.key_to_str(k)
     case k.class.to_s
     when "String"
-      return "'#{k}'"
+      return "#{k}"
     when "Fixnum", "Float"
       return k.to_s
     when "Regex"
