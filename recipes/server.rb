@@ -191,7 +191,7 @@ services.each do |type|
         owner 'root'
         group 'root'
         mode '0774'
-        variables(:config_file => node['logstash']['server']['config_dir'],
+        variables(:config_file => "#{node['logstash']['server']['config_dir']}/#{node['logstash']['server']['config_file']}",
                   :home => node['logstash']['server']['home'],
                   :name => type,
                   :log_file => node['logstash']['server']['log_file'],
