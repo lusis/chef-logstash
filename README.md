@@ -67,7 +67,6 @@ Attributes
   recipe install rabbitmq packages? 
 * `node['logstash']['zeromq_packages']` - zeromq_packages to install
   if you use zeromq
-* `node['logstash']['supervisor_gid']` - set gid to run logstash as in supervisor ( runit, upstart )
 
 ## Agent
 
