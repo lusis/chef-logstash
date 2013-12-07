@@ -435,11 +435,10 @@ These examples show the legacy format and need to be updated for logstash >= 1.2
         :server => {
           :enable_embedded_es => false,
           :inputs => [
-            :amqp => {
+            :rabbitmq => {
               :type => "all",
               :host => "<IP OF RABBIT SERVER>",
-              :exchange => "rawlogs",
-              :name => "rawlogs_consumer"
+              :exchange => "rawlogs"
             }
           ],
           :filters => [
@@ -461,9 +460,7 @@ These examples show the legacy format and need to be updated for logstash >= 1.2
     )
     run_list(
       "role[elasticsearch_server]",
-      "recipe[logstash::server]",
-      "recipe[php::module_curl]",
-      "recipe[logstash::kibana]"
+      "recipe[logstash::server]"
     )
 
 
