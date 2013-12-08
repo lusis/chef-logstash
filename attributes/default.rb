@@ -26,7 +26,6 @@ when "debian"
   default['logstash']['zeromq_packages'] = [ "zeromq",  "libzmq-dev"]
 end
 
-
 # Logging features
 default['logstash']['logging']['rotateFrequency'] = "daily"
 default['logstash']['logging']['maxBackup'] = 10

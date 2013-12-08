@@ -4,15 +4,48 @@ default['logstash']['server']['log_file'] = '/var/log/logstash/server.log'
 default['logstash']['server']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.2.2-flatjar.jar'
 default['logstash']['server']['checksum'] = '6b0974eed6814f479b68259b690e8c27ecbca2817b708c8ef2a11ce082b1183c'
 default['logstash']['server']['install_method'] = 'jar' # Either `source` or `jar`
-default['logstash']['server']['patterns_dir'] = 'etc/patterns'
-default['logstash']['server']['config_dir'] = 'etc/conf.d'
-default['logstash']['server']['config_file'] = 'logstash.conf'
-default['logstash']['server']['config_templates'] = []
-default['logstash']['server']['config_templates_cookbook'] = 'logstash'
-default['logstash']['server']['config_templates_variables'] = { }
-default['logstash']['server']['base_config'] = 'server.conf.erb' # set blank if don't want data driven config
-default['logstash']['server']['base_config_cookbook'] = 'logstash'
-default['logstash']['server']['cli']['config_path'] = node['logstash']['server']['config_dir']
+default['logstash']['server']['init_method'] = 'native' # native or runit
+default['logstash']['server']['init_notify'] =
+  if node['logstash']['server']['init_method'] == 'runit'
+    'runit_service[logstash_server]'
+  else
+    'service[logstash_server]'
+  end
+
+# Directories
+default['logstash']['server']['dir_defaults'] = {
+  action:    :create,
+  mode:      '0755',
+  owner:     node['logstash']['user'],
+  group:     node['logstash']['group'],
+  recursive: true
+}
+
+default['logstash']['server']['dirs'] = {
+  config: {
+    path: File.join(node['logstash']['server']['home'], 'etc')
+  },
+  patterns: {
+    path: File.join(node['logstash']['server']['home'], 'etc', 'patterns')
+  },
+  logs: {
+    path: File.dirname(node['logstash']['server']['log_file'])
+  }
+}
+
+# Templates
+default['logstash']['server']['template_defaults'] = {
+  notifies: ['restart', node['logstash']['server']['init_notify']],
+  action:   'create',
+  cookbook: 'logstash',
+  owner:    node['logstash']['user'],
+  group:    node['logstash']['group'],
+  mode:     '0755'
+}
+
+default['logstash']['server']['templates'] = {}
+
+default['logstash']['server']['cli']['config_path'] = node['logstash']['server']['dirs']['config']['path']
 default['logstash']['server']['xms'] = '1024M'
 default['logstash']['server']['xmx'] = '1024M'
 default['logstash']['server']['java_opts'] = ''
@@ -23,7 +56,6 @@ default['logstash']['server']['workers'] = 1
 
 default['logstash']['server']['install_rabbitmq'] = false
 
-default['logstash']['server']['init_method'] = 'native' # native or runit
 # roles/flags for various autoconfig/discovery components
 default['logstash']['server']['enable_embedded_es'] = true
 

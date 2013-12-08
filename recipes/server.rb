@@ -20,38 +20,8 @@ if node['logstash']['install_zeromq']
   node['logstash']['zeromq_packages'].each {|p| package p }
 end
 
-if node['logstash']['server']['init_method'] == 'runit'
-  include_recipe "runit"
-  service_resource = 'runit_service[logstash_server]'
-else
-  service_resource = 'service[logstash_server]'
-end
-
-if node['logstash']['server']['patterns_dir'][0] == '/'
-  patterns_dir = node['logstash']['server']['patterns_dir']
-else
-  patterns_dir = node['logstash']['server']['home'] + '/' + node['logstash']['server']['patterns_dir']
-end
-
-if Chef::Config[:solo]
-  es_server_ip = node['logstash']['elasticsearch_ip']
-  graphite_server_ip = node['logstash']['graphite_ip']
-else
-  es_results = search(:node, node['logstash']['elasticsearch_query'])
-  graphite_results = search(:node, node['logstash']['graphite_query'])
-
-  unless es_results.empty?
-    es_server_ip = es_results[0]['ipaddress']
-  else
-    es_server_ip = node['logstash']['elasticsearch_ip']
-  end
-
-  unless graphite_results.empty?
-    graphite_server_ip = graphite_results[0]['ipaddress']
-  else
-    graphite_server_ip = node['logstash']['graphite_ip']
-  end
-end
+include_recipe 'runit' if node['logstash']['server']['init_method'] == 'runit'
+service_resource = node['logstash']['server']['init_notify']
 
 # Create directory for logstash
 directory node['logstash']['server']['home'] do
@@ -95,22 +65,20 @@ else
   end
 end
 
-directory "#{node['logstash']['server']['home']}/etc/conf.d" do
-  action :create
-  mode "0755"
-  owner node['logstash']['user']
-  group node['logstash']['group']
-end
 
-directory patterns_dir do
-  action :create
-  mode "0755"
-  owner node['logstash']['user']
-  group node['logstash']['group']
+node['logstash']['server']['dirs'].each do |name, config|
+  attributes = node['logstash']['server']['dir_defaults'].merge(config)
+
+  directory name do
+    attributes.each do |key, values|
+      send(key, *values)
+    end
+  end
 end
 
 node['logstash']['patterns'].each do |file, hash|
-  template_name = patterns_dir + '/' + file
+  template_name =
+    File.join(node['logstash']['server']['dirs']['patterns']['path'], file)
   template template_name do
     source 'patterns.erb'
     owner node['logstash']['user']
@@ -121,46 +89,43 @@ node['logstash']['patterns'].each do |file, hash|
   end
 end
 
-log_dir = ::File.dirname node['logstash']['server']['log_file']
-directory log_dir do
-  action :create
-  mode "0755"
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  recursive true
-end
+if node['logstash']['server']['templates'].empty?
+  unless Chef::Config[:solo]
+    es_results       = search(:node, node['logstash']['elasticsearch_query'])
+    graphite_results = search(:node, node['logstash']['graphite_query'])
 
-if node['logstash']['server']['config_file']
-  template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{node['logstash']['server']['config_file']}" do
-    source node['logstash']['server']['base_config']
-    cookbook node['logstash']['server']['base_config_cookbook']
-    owner node['logstash']['user']
-    group node['logstash']['group']
-    mode "0644"
-    variables(
-              :graphite_server_ip => graphite_server_ip,
-              :es_server_ip => es_server_ip,
-              :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
-              :es_cluster => node['logstash']['elasticsearch_cluster'],
-              :patterns_dir => patterns_dir
-              )
-    notifies :restart, service_resource
-    action :create
+    @elasticsearch_ip = es_results[0]['ipaddress'] if es_results.any?
+    @graphite_ip      = graphite_results[0]['ipaddress'] if graphite_results.any?
   end
+
+  default['logstash']['server']['templates']['server'] = {
+    source: 'server.conf.erb',
+    path: File.join(node['logstash']['server']['dirs']['config']['path'], 'server.conf'),
+    variables: [{
+      graphite_server_ip: @graphite_ip || node['logstash']['graphite_ip'],
+      es_server_ip: @elasticsearch_ip || node['logstash']['elasticsearch_ip'],
+      enable_embedded_es: node['logstash']['server']['enable_embedded_es'],
+      es_cluster: node['logstash']['elasticsearch_cluster'],
+      patterns_dir: node['logstash']['server']['dirs']['patterns']['path']
+    }]
+  }
 end
 
-unless node['logstash']['server']['config_templates'].empty? or node['logstash']['server']['config_templates'].nil?
-  node['logstash']['server']['config_templates'].each do |config_template|
-    template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{config_template}.conf" do
-      source "#{config_template}.conf.erb"
-      cookbook node['logstash']['server']['config_templates_cookbook']
-      owner node['logstash']['user']
-      group node['logstash']['group']
-      mode "0644"
-      variables node['logstash']['server']['config_templates_variables'][config_template]
-      notifies :restart, service_resource
-      action :create
+node['logstash']['server']['templates'].each do |name, config|
+  directory File.dirname(config['path']) do
+    node['logstash']['server']['dir_defaults'].each do |key, values|
+      send(key, *values)
     end
+  end
+
+  attributes = node['logstash']['server']['template_defaults'].merge(config)
+
+  template name do
+    attributes.each do |key, values|
+      send(key, *values)
+    end
+
+    source "#{name}.conf.erb" unless attributes.key?('source')
   end
 end
 
@@ -191,7 +156,7 @@ services.each do |type|
         owner 'root'
         group 'root'
         mode '0774'
-        variables(:config_file => node['logstash']['server']['config_dir'],
+        variables(:config_file => node['logstash']['server']['dirs']['config']['path'],
                   :home => node['logstash']['server']['home'],
                   :name => type,
                   :log_file => node['logstash']['server']['log_file'],
@@ -211,7 +176,7 @@ services.each do |type|
 end
 
 logrotate_app "logstash_server" do
-  path "#{log_dir}/*.log"
+  path File.join(File.dirname(node['logstash']['server']['log_file']), '*.log')
   if node['logstash']['logging']['useFileSize']
     size node['logstash']['logging']['maxSize']
   end
