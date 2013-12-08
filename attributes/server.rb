@@ -12,6 +12,7 @@ default['logstash']['server']['config_templates_cookbook'] = 'logstash'
 default['logstash']['server']['config_templates_variables'] = { }
 default['logstash']['server']['base_config'] = 'server.conf.erb' # set blank if don't want data driven config
 default['logstash']['server']['base_config_cookbook'] = 'logstash'
+default['logstash']['server']['cli']['config_path'] = node['logstash']['server']['config_dir']
 default['logstash']['server']['xms'] = '1024M'
 default['logstash']['server']['xmx'] = '1024M'
 default['logstash']['server']['java_opts'] = ''

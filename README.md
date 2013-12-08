@@ -24,8 +24,6 @@ see the Berksfile for more details
 * [Karmi's ElasticSearch Cookbook](https://github.com/elasticsearch/cookbook-elasticsearch)
 * [RiotGames RBENV cookbook](https://github.com/RiotGames/rbenv-cookbook)
 
-
-
 Attributes
 ==========
 
@@ -40,12 +38,12 @@ Attributes
 * `node['logstash']['graphite_role']` - the Chef role to search for
   discovering your preexisting Graphite server
 * `node['logstash']['graphite_query']` - the search query used for
-  discovering your preexisting Graphite server. Defaults to 
+  discovering your preexisting Graphite server. Defaults to
   node['logstash']['graphite_role'] in the current node environment
 * `node['logstash']['elasticsearch_role']` - the Chef role to search
   for discovering your preexisting ElasticSearch cluster.
 * `node['logstash']['elasticsearch_query']` - the search query used for
-  discovering your preexisting ElasticSearch cluster. Defaults to 
+  discovering your preexisting ElasticSearch cluster. Defaults to
   node['logstash']['elasticsearch_role'] in the current node environment
 * `node['logstash']['elasticsearch_cluster']` - the cluster name
   assigned to your preexisting ElasticSearch cluster. Only applies to
@@ -64,7 +62,7 @@ Attributes
 * `node['logstash']['install_zeromq']` - Should this
   recipe install zeromq packages?
 * `node['logstash']['install_rabbitmq']` - Should this
-  recipe install rabbitmq packages? 
+  recipe install rabbitmq packages?
 * `node['logstash']['zeromq_packages']` - zeromq_packages to install
   if you use zeromq
 * `node['logstash']['supervisor_gid']` - set gid to run logstash as in supervisor ( runit, upstart )
@@ -127,6 +125,11 @@ Attributes
   template to use for `logstash.conf` as a base config.
 * `node['logstash']['server']['base_config_cookbook']` - Where to find
   the base config template.
+* `node['logstash']['server']['cli']['config_path']` - path where the config
+  files are stored. Can be a single file, a path containing multiple files or
+  a glob. Will be used as argument for the `--config` option of the server
+  startup command. Default:
+  `node['logstash']['server']['config_dir']`.
 * `node['logstash']['server']['xms']` - The minimum memory to assign
   the JVM.
 * `node['logstash']['server']['xmx']` - The maximum memory to assign
