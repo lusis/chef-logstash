@@ -140,8 +140,6 @@ Attributes
   option?
 * `node['logstash']['server']['enable_embedded_es']` - Should Logstash
   run with the embedded ElasticSearch server or not?
-* `node['logstash']['server']['install_rabbitmq']` - Should this
-  recipe install rabbitmq?
 * `node['logstash']['server']['inputs']` - Array of input plugins
   configuration.
 * `node['logstash']['server']['filters']` - Array of filter plugins
