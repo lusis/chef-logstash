@@ -142,7 +142,7 @@ if node['logstash']['agent']['config_file']
 end
 
 unless node['logstash']['agent']['config_templates'].empty? or node['logstash']['agent']['config_templates'].nil?
-  node['logstash']['server']['config_templates'].each do |config_template| 
+  node['logstash']['agent']['config_templates'].each do |config_template| 
     template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['config_dir']}/#{config_template}.conf" do
       source "#{config_template}.conf.erb"
       cookbook node['logstash']['agent']['config_templates_cookbook']
