@@ -90,7 +90,7 @@ else
 
   logstash_version = node['logstash']['source']['sha'] || "v#{node['logstash']['server']['version']}"
   link "#{node['logstash']['server']['home']}/lib/logstash.jar" do
-    to "#{node['logstash']['server']}/source/build/logstash-#{logstash_version}-monolithic.jar"
+    to "#{node['logstash']['basedir']}/source/build/logstash-#{logstash_version}-monolithic.jar"
     notifies :restart, service_resource
   end
 end
