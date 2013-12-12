@@ -127,18 +127,17 @@ else
   end
 end
 
-if node['logstash']['agent']['config_file']
-  template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['config_dir']}/#{node['logstash']['agent']['config_file']}" do
-    source node['logstash']['agent']['base_config']
-    cookbook node['logstash']['agent']['base_config_cookbook']
-    owner node['logstash']['user']
-    group node['logstash']['group']
-    mode "0644"
-    variables(
-            :logstash_server_ip => logstash_server_ip,
-            :patterns_dir => patterns_dir)
-    notifies :restart, service_resource
-  end
+template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['config_dir']}/#{node['logstash']['agent']['config_file']}" do
+  source node['logstash']['agent']['base_config']
+  cookbook node['logstash']['agent']['base_config_cookbook']
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  mode "0644"
+  variables(
+          :logstash_server_ip => logstash_server_ip,
+          :patterns_dir => patterns_dir)
+  notifies :restart, service_resource
+  only_if node['logstash']['agent']['config_file']
 end
 
 unless node['logstash']['agent']['config_templates'].empty? or node['logstash']['agent']['config_templates'].nil?
@@ -185,7 +184,7 @@ elsif node['logstash']['agent']['init_method'] == 'native'
     end
   elsif platform_family? "rhel", "fedora"
     template "/etc/init.d/logstash_agent" do
-      source "init.erb"
+      source "init.logstash_server.erb"
       owner "root"
       group "root"
       mode "0774"

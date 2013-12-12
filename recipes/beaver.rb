@@ -87,6 +87,10 @@ end
   end
 end
 
+python_pip node['logstash']['beaver']['pika']['pip_package'] do
+  action :install
+end
+
 python_pip node['logstash']['beaver']['pip_package'] do
   action :install
 end
