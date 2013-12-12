@@ -24,7 +24,7 @@ script
   export LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath <%= node['logstash']['server']['pluginpath'] %>"
   <% end -%>
     <% if node['logstash']['server']['workers'] %>
-    export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= node['logstash']['server']['server'] %>"
+    export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= node['logstash']['server']['workers'] %>"
   <% end %>
   <% if node['logstash']['server']['debug'] -%>
   export LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
