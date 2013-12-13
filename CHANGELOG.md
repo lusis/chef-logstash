@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of chef-logstash.
 
+## 0.7.3:
+* support for sudo with upstart for agent and server
+
 ## 0.7.2:
 * embedded kibana support
 

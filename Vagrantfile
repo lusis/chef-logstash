@@ -22,7 +22,6 @@ chef_json = {
         install_type: "file"
     },
     logstash: {
-        supervisor_gid: 'adm',
         agent: {
             server_ipaddress: '127.0.0.1',
             xms: '128m',
@@ -94,7 +93,9 @@ Vagrant.configure('2') do |config|
       chef.run_list = chef_run_list
       chef.json = chef_json
       chef.run_list.unshift('apt')
-      chef.json[:logstash][:server][:init_method] = 'runit'
+      #chef.json[:logstash][:server][:init_method] = 'upstart'
+      chef.json[:logstash][:server][:upstart_with_sudo] = true
+      chef.json[:logstash][:agent][:upstart_with_sudo] = true
     end
   end
 

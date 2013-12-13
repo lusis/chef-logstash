@@ -9,9 +9,12 @@ respawn limit 5 30
 limit nofile 65550 65550
 
 chdir <%= node['logstash']['server']['home'] %>
+
+<% unless node['logstash']['server']['upstart_with_sudo'] -%>
 setuid <%= node['logstash']['user'] %>
-<% unless node['logstash']['supervisor_gid'].to_s.empty? -%>
+  <% unless node['logstash']['supervisor_gid'].to_s.empty? -%>
 setgid <%= node['logstash']['supervisor_gid'] %>
+  <% end -%>
 <% end -%>
 
 script
@@ -31,7 +34,11 @@ script
   <% end -%>
   export OPTS="$JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS"
 
+  <% if node['logstash']['server']['upstart_with_sudo'] -%>
+  exec sudo -u <%= node['logstash']['user'] %> /usr/bin/java $OPTS
+  <% else -%>
   exec /usr/bin/java $OPTS
+  <% end -%>
 end script
 
 emits logstash-server-running

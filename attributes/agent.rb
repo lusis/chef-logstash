@@ -26,6 +26,9 @@ default['logstash']['agent']['init_method'] = 'native' # native or runit
 default['logstash']['agent']['init_method'] = 'native'
 default['logstash']['agent']['workers'] = 1
 
+# allow control over the upstart config
+default['logstash']['server']['upstart_with_sudo'] = false
+
 # logrotate options for logstash agent
 default['logstash']['agent']['logrotate']['options'] = [ "missingok", "notifempty" ]
 # stop/start on logrotate?

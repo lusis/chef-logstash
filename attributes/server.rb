@@ -20,6 +20,9 @@ default['logstash']['server']['ipv4_only'] = false
 default['logstash']['server']['debug'] = false
 default['logstash']['server']['workers'] = 1
 
+# allow control over the upstart config
+default['logstash']['server']['upstart_with_sudo'] = false
+
 default['logstash']['server']['init_method'] = 'native' # native or runit
 # roles/flags for various autoconfig/discovery components
 default['logstash']['server']['enable_embedded_es'] = true
