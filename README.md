@@ -24,8 +24,6 @@ see the Berksfile for more details
 * [Karmi's ElasticSearch Cookbook](https://github.com/elasticsearch/cookbook-elasticsearch)
 * [RiotGames RBENV cookbook](https://github.com/RiotGames/rbenv-cookbook)
 
-
-
 Attributes
 ==========
 
@@ -40,12 +38,12 @@ Attributes
 * `node['logstash']['graphite_role']` - the Chef role to search for
   discovering your preexisting Graphite server
 * `node['logstash']['graphite_query']` - the search query used for
-  discovering your preexisting Graphite server. Defaults to 
+  discovering your preexisting Graphite server. Defaults to
   node['logstash']['graphite_role'] in the current node environment
 * `node['logstash']['elasticsearch_role']` - the Chef role to search
   for discovering your preexisting ElasticSearch cluster.
 * `node['logstash']['elasticsearch_query']` - the search query used for
-  discovering your preexisting ElasticSearch cluster. Defaults to 
+  discovering your preexisting ElasticSearch cluster. Defaults to
   node['logstash']['elasticsearch_role'] in the current node environment
 * `node['logstash']['elasticsearch_cluster']` - the cluster name
   assigned to your preexisting ElasticSearch cluster. Only applies to
@@ -64,7 +62,7 @@ Attributes
 * `node['logstash']['install_zeromq']` - Should this
   recipe install zeromq packages?
 * `node['logstash']['install_rabbitmq']` - Should this
-  recipe install rabbitmq packages? 
+  recipe install rabbitmq packages?
 * `node['logstash']['zeromq_packages']` - zeromq_packages to install
   if you use zeromq
 
@@ -122,10 +120,81 @@ Attributes
   jar to download. Only applies to `jar` install method.
 * `node['logstash']['server']['checksum']` - The checksum of the jar
   file. Only applies to `jar` install method.
-* `node['logstash']['server']['base_config']` - The name of the
-  template to use for `logstash.conf` as a base config.
-* `node['logstash']['server']['base_config_cookbook']` - Where to find
-  the base config template.
+* `node['logstash']['server']['cli']['config_path']` - path where the config
+  files are stored. Can be a single file, a path containing multiple files or
+  a glob. Will be used as argument for the `--config` option of the server
+  startup command. Default:
+  `node['logstash']['server']['dirs']['config']['path']`.
+* `node['logstash']['server']['init_method']` - initialization type (native or
+  runit). Default: `native`
+* `node['logstash']['server']['dirs']` - directories that should be created on
+  the server. Default:
+
+  ```ruby
+  {
+    config: {
+      path: File.join(node['logstash']['server']['home'], 'etc')
+    },
+    logs: {
+      path: File.dirname(node['logstash']['server']['log_file'])
+    }
+  }
+  ```
+
+* `node['logstash']['server']['dir_defaults']` - default attributes to set on
+  created directories. Can be overwritten for each specific directory. Default:
+
+  ```ruby
+  {
+    action:    :create,
+    mode:      0644,
+    owner:     node['logstash']['user'],
+    group:     node['logstash']['group'],
+    recursive: true
+  }
+  ```
+
+* `override['logstash']['server']['templates']` - templates to be saved on the
+  node. Can be used to manage logstash config files. Default: `{}`
+
+  Example usage:
+
+  ```ruby
+  override['logstash']['server']['templates'] = {
+    input_sqs: {
+      source: 'config/inputs/sqs.erb',
+      path: '/opt/logstash/server/etc/inputs/sqs.conf'
+    },
+    output_elasticsearch: {
+      source: 'config/outputs/elasticsearch.erb',
+      path: '/opt/logstash/server/etc/outputs/elasticsearch.conf'
+    },
+    filter_syslog: {
+      source: 'config/filters/syslog.erb',
+      path: '/opt/logstash/server/etc/filters/syslog.conf'
+    }
+  }
+  ```
+
+  To use the above configs, you would set
+  `node['logstash']['server']['cli']['config_path']` to
+  `/opt/logstash/server/etc/**/*`.
+
+* `default['logstash']['server']['template_defaults']` - default options when
+  creating a template. Each option can be overwritten for each specific
+  template. Multiple option arguments should be wrapped in an array. Default:
+
+  ```ruby
+  {
+    notifies: ['restart', node['logstash']['server']['init_notify']],
+    action:   :create,
+    cookbook: 'logstash',
+    owner:    node['logstash']['user'],
+    group:    node['logstash']['group'],
+    mode:     0755
+  }
+  ```
+
 * `node['logstash']['server']['xms']` - The minimum memory to assign
   the JVM.
 * `node['logstash']['server']['xmx']` - The maximum memory to assign
@@ -146,12 +215,7 @@ Attributes
   configuration.
 * `node['logstash']['server']['outputs']` - Array of output plugins
   configuration.
-* `node['logstash']['server']['patterns_dir']` - The patterns
-  directory where pattern files will be generated. Relative to the
-  basedir or absolute.
 * `node['logstash']['server']['home']` - home dir of logstash agent
-* `node['logstash']['server']['config_dir']` - location of conf.d style config dir
-* `node['logstash']['server']['config_file']` - name for base config file ( in conf.d dir )
 * `node['logstash']['server']['workers']` - Number of workers for filter processing.
 * `node['logstash']['server']['web']['enable']` - true to enable embedded kibana ( may be behind in features )
 * `node['logstash']['server']['web']['address']` - IP Address to listen on
@@ -160,7 +224,7 @@ Attributes
 
 ## Kibana
 
-Kibana can be run from the embedded version in elasticsearch.  
+Kibana can be run from the embedded version in elasticsearch.
 It is not recommended that you use this outside of basic testing. This is for several reasons:
 
 - Kibana is a fast moving target
@@ -181,36 +245,36 @@ It is not recommended that you use this outside of basic testing. This is for se
 * `node['logstash']['beaver']['inputs']` - Array of input plugins
   configuration (Supported: file).
   For example:
-  
+
         override['logstash']['beaver']['inputs'] =  [
-          { :file =>  
+          { :file =>
             {
-              :path => ["/var/log/nginx/*log"], 
-              :type => "nginx", 
+              :path => ["/var/log/nginx/*log"],
+              :type => "nginx",
               :tags => ["logstash","nginx"]
             }
           },
-          { :file =>  
+          { :file =>
             {
-              :path => ["/var/log/syslog"], 
-              :type => "syslog", 
-              :tags => ["logstash","syslog"] 
+              :path => ["/var/log/syslog"],
+              :type => "syslog",
+              :tags => ["logstash","syslog"]
             }
           }
-        ]    
-    
+        ]
+
 * `node['logstash']['beaver']['outputs']` - Array of output plugins
   configuration (Supported: amq, redis, stdout, zeromq).
   For example:
 
-        override['logstash']['beaver']['outputs'] = [ 
-          { 
-            :amqp => { 
+        override['logstash']['beaver']['outputs'] = [
+          {
+            :amqp => {
               :port => "5672",
               :exchange => "rawlogs",
               :name => "rawlogs_consumer"
-            } 
-          } 
+            }
+          }
         ]
   This example sets up the amqp output and uses the recipe defaults for the host value
 
@@ -365,7 +429,7 @@ The current templates for the agent and server are written so that you
 can provide ruby hashes in your roles that map to inputs, filters, and
 outputs. Here is a role for logstash_server.
 
-There are two formats for the hashes for filters and outputs that you should be aware of ...   
+There are two formats for the hashes for filters and outputs that you should be aware of ...
 
 ### Legacy
 
@@ -382,7 +446,7 @@ filters: [
   },
   date: {
   type: "syslog"
-    match: [ 
+    match: [
       "timestamp",
       "MMM  d HH:mm:ss",
       "MMM dd HH:mm:ss",
@@ -400,9 +464,9 @@ Note:  the condition applies to all plugins in the block hash in the same object
 
 ```
 filters: [
-  { 
+  {
     condition: 'if [type] == "syslog"',
-    block: {    
+    block: {
       grok: {
         match: [
           "message",
@@ -410,7 +474,7 @@ filters: [
         ]
       },
       date: {
-        match: [ 
+        match: [
           "timestamp",
           "MMM  d HH:mm:ss",
           "MMM dd HH:mm:ss",
