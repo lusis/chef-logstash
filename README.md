@@ -109,7 +109,7 @@ Attributes
 * `node['logstash']['agent']['home']` - home dir of logstash agent
 * `node['logstash']['agent']['config_dir']` - location of conf.d style config dir
 * `node['logstash']['agent']['config_file']` - name for base config file ( in conf.d dir )
-
+* `node['logstash']['agent']['upstart_with_sudo']` - use sudo with upstart
 
 
 ## Server
@@ -156,7 +156,7 @@ Attributes
 * `node['logstash']['server']['web']['enable']` - true to enable embedded kibana ( may be behind in features )
 * `node['logstash']['server']['web']['address']` - IP Address to listen on
 * `node['logstash']['server']['web']['port']` - port to listen on.
-
+* `node['logstash']['server']['upstart_with_sudo']` - use sudo with upstart
 
 ## Kibana
 
