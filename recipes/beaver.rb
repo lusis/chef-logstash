@@ -235,5 +235,5 @@ logrotate_app "logstash_beaver" do
   options node['logstash']['beaver']['logrotate']['options']
   rotate 30
   create "0640 #{node['logstash']['user']} #{node['logstash']['group']}"
-  not_if node['recipes'].include? "logstash::server"
+  not_if node['recipes'].include? node['logstash']['beaver']['server_recipe']
 end
