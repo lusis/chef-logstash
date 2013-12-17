@@ -227,13 +227,14 @@ else
   end
 end
 
-logrotate_app "logstash_beaver" do
-  cookbook "logrotate"
-  path log_file
-  frequency "daily"
-  postrotate node['logstash']['beaver']['logrotate']['postrotate']
-  options node['logstash']['beaver']['logrotate']['options']
-  rotate 30
-  create "0640 #{node['logstash']['user']} #{node['logstash']['group']}"
-  not_if node['recipes'].include? node['logstash']['beaver']['server_recipe']
+unless node.recipes.include?(node['logstash']['beaver']['server_recipe'])
+  logrotate_app "logstash_beaver" do
+    cookbook "logrotate"
+    path log_file
+    frequency "daily"
+    postrotate node['logstash']['beaver']['logrotate']['postrotate']
+    options node['logstash']['beaver']['logrotate']['options']
+    rotate 30
+    create "0640 #{node['logstash']['user']} #{node['logstash']['group']}"
+  end
 end
