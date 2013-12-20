@@ -81,6 +81,23 @@ if node['logstash']['server']['install_method'] == "jar"
     action :create_if_missing
   end
 
+  directory "#{node['logstash']['basedir']}/server/lib/logstash" do
+    action :create
+    mode "0755"
+    owner node['logstash']['user']
+    group node['logstash']['group']
+  end
+
+  cookbook_file "event.rb" do
+    path "#{node['logstash']['basedir']}/server/lib/logstash/event.rb"
+    action :create_if_missing
+  end
+
+  bash "patch logstash" do
+    cwd "#{node['logstash']['basedir']}/server/lib/logstash"
+    command "jar -uf logstash-#{node['logstash']['server']['version']}.jar logstash/event.rb"
+  end
+
   link "#{node['logstash']['basedir']}/server/lib/logstash.jar" do
     to "#{node['logstash']['basedir']}/server/lib/logstash-#{node['logstash']['server']['version']}.jar"
     notifies :restart, service_resource
