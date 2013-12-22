@@ -36,6 +36,16 @@ if node['logstash']['agent']['install_zeromq']
   end
 end
 
+if node['platform_family'] == "debian" and node['platform_version'].to_f <= 10.04
+  apt_repository "git-ppa" do
+    uri "http://ppa.launchpad.net/git-core/ppa/ubuntu"
+    distribution node['lsb']['codename']
+    components ["main"]
+    keyserver "keyserver.ubuntu.com"
+    key "E1DF1F24"
+    action :add
+  end
+end
 package 'git'
 
 basedir = node['logstash']['basedir'] + '/beaver'
