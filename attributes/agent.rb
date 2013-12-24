@@ -1,7 +1,7 @@
-default['logstash']['agent']['version'] = '1.3.1'
+default['logstash']['agent']['version'] = '1.3.2'
 default['logstash']['agent']['log_file'] = '/var/log/logstash/agent.log'
-default['logstash']['agent']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.3.1-flatjar.jar'
-default['logstash']['agent']['checksum'] = '65e19a6ca69b797d8ef84e99393a128dc6e4813c16cb8496253c1717d2334fd7'
+default['logstash']['agent']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.3.2-flatjar.jar'
+default['logstash']['agent']['checksum'] = '6a6a6e55efd14a182560af8143883eace1936afb11d59d0c35ce4ed5a5576a18'
 default['logstash']['agent']['install_method'] = 'jar' # Either `source` or `jar`
 default['logstash']['agent']['home'] = "#{node['logstash']['basedir']}/agent"
 default['logstash']['agent']['patterns_dir'] = 'etc/patterns'
