@@ -185,7 +185,7 @@ elsif node['logstash']['agent']['init_method'] == 'native'
     end
   elsif platform_family? "rhel", "fedora"
     template "/etc/init.d/logstash_agent" do
-      source "init.erb"
+      source "init.logstash_server.erb"
       owner "root"
       group "root"
       mode "0774"
