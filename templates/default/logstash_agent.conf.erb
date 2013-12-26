@@ -3,20 +3,18 @@ author "Chef"
 
 start on (filesystem and net-device-up)
 stop on runlevel [!2345]
+limit nofile 65550 65550
 
 respawn
 respawn limit <%=node['logstash']['agent']['upstart_respawn_count']%> <%=node['logstash']['agent']['upstart_respawn_timeout']%>
 
-
 chdir <%= node['logstash']['agent']['home'] %>
 
-<% if node['logstash']['agent']['upstart_with_sudo'] == false -%>
+<% unless node['logstash']['agent']['upstart_with_sudo'] -%>
 setuid <%= node['logstash']['user'] %>
-
-<% if node['logstash']['supervisor_gid'] -%>
+  <% unless node['logstash']['supervisor_gid'].to_s.empty? -%>
 setgid <%= node['logstash']['supervisor_gid'] %>
-<% end -%>
-
+  <% end -%>
 <% end -%>
 
 script
@@ -25,6 +23,9 @@ script
   export GC_OPTS="<%= node['logstash']['agent']['gc_opts'] %>"
   export JAVA_OPTS="-server -Xms<%= node['logstash']['agent']['xms'] %> -Xmx<%= node['logstash']['agent']['xmx'] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= node['logstash']['agent']['java_opts'] %> <%= '-Djava.net.preferIPv4Stack=true' if node['logstash']['agent']['ipv4_only'] %>"
   export LOGSTASH_OPTS="agent -f <%= node['logstash']['agent']['config_dir'] %> -l <%= node['logstash']['agent']['log_file'] %>"
+  <% if node['logstash']['agent']['workers'] %>
+    export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= node['logstash']['agent']['workers'] %>"
+  <% end %>
   <% if node['logstash']['agent']['debug'] -%>
   export LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
   <% end -%>

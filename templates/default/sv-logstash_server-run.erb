@@ -13,10 +13,12 @@ LOGSTASH_OPTS="agent -f <%= node['logstash']['server']['config_dir'] %> -l <%= n
 <% if node['logstash']['server']['pluginpath'] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath <%= node['logstash']['server']['pluginpath'] %>"
 <% end -%>
-<% if node['logstash']['agent']['debug'] -%>
-LOGSTASH_OPTS="$LOGSTASH_OPTS -v"
+<% if node['logstash']['server']['debug'] -%>
+LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
 <% end -%>
-
+<% if node['logstash']['server']['workers'] %>
+export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= node['logstash']['server']['workers'] %>"
+<% end %>
 <% if node['logstash']['supervisor_gid'] -%>
 HOME=$LOGSTASH_HOME exec chpst -u <%= node["logstash"]["user"] %>:<%= node["logstash"]["supervisor_gid"] %> java $JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
 <% else -%>

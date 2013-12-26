@@ -5,13 +5,7 @@ Description
 
 This is the semi-official 'all-in-one' Logstash cookbook.
 
-This branch is to start building towards solid support for logstash 1.2.x and the new conditionals system
-
-## Logstash 1.2.x stuff
-
-* Replaced `type => "foo"` in filter/output with `if [type] == "foo"`
-* Need to work out better way to invoke conditionals ( there's more than just if )
-
+If you are using logstash < 1.2 you might want to use the 0.6.1 branch.
 
 Requirements
 ============
@@ -41,6 +35,8 @@ Attributes
   Logstash components
 * `node['logstash']['user']` - the owner for all Logstash components
 * `node['logstash']['group']` - the group for all Logstash components
+* `node['logstash']['supervisor_gid']` - set gid to run logstash as in supervisor ( runit, upstart ).
+  Useful for Ubuntu where logstash or beaver needs to run as group `adm` to read syslog
 * `node['logstash']['graphite_role']` - the Chef role to search for
   discovering your preexisting Graphite server
 * `node['logstash']['graphite_query']` - the search query used for
@@ -58,7 +54,7 @@ Attributes
   used for your elasticsearch server in case you are using Chef-solo
 * `node['logstash']['graphite_ip']` - the IP address that will be used
   for your graphite server in case you are using Chef-solo
-* `node['logstash']['join_groups']` - An array of Operative System
+* `node['logstash']['join_groups']` - An array of Operating System
   groups to join. Usefull to gain read privileges on some logfiles.
 * `node['logstash']['patterns']` - A hash with grok patterns to be
   used on grok and multiline filters.
@@ -67,9 +63,10 @@ Attributes
   existing account!
 * `node['logstash']['install_zeromq']` - Should this
   recipe install zeromq packages?
+* `node['logstash']['install_rabbitmq']` - Should this
+  recipe install rabbitmq packages? 
 * `node['logstash']['zeromq_packages']` - zeromq_packages to install
   if you use zeromq
-* `node['logstash']['supervisor_gid']` - set gid to run logstash as in supervisor ( runit, upstart )
 
 ## Agent
 
@@ -85,6 +82,7 @@ Attributes
   template to use for `logstash.conf` as a base config.
 * `node['logstash']['agent']['base_config_cookbook']` - Where to find
   the base\_config template.
+* `node['logstash']['agent']['workers']` - Number of workers for filter processing.
 * `node['logstash']['agent']['xms']` - The minimum memory to assign
   the JVM.
 * `node['logstash']['agent']['xmx']` - The maximum memory to assign
@@ -111,7 +109,7 @@ Attributes
 * `node['logstash']['agent']['home']` - home dir of logstash agent
 * `node['logstash']['agent']['config_dir']` - location of conf.d style config dir
 * `node['logstash']['agent']['config_file']` - name for base config file ( in conf.d dir )
-
+* `node['logstash']['agent']['upstart_with_sudo']` - use sudo with upstart
 
 
 ## Server
@@ -127,7 +125,7 @@ Attributes
 * `node['logstash']['server']['base_config']` - The name of the
   template to use for `logstash.conf` as a base config.
 * `node['logstash']['server']['base_config_cookbook']` - Where to find
-  the base\_config template.
+  the base config template.
 * `node['logstash']['server']['xms']` - The minimum memory to assign
   the JVM.
 * `node['logstash']['server']['xmx']` - The maximum memory to assign
@@ -142,8 +140,6 @@ Attributes
   option?
 * `node['logstash']['server']['enable_embedded_es']` - Should Logstash
   run with the embedded ElasticSearch server or not?
-* `node['logstash']['server']['install_rabbitmq']` - Should this
-  recipe install rabbitmq?
 * `node['logstash']['server']['inputs']` - Array of input plugins
   configuration.
 * `node['logstash']['server']['filters']` - Array of filter plugins
@@ -156,14 +152,20 @@ Attributes
 * `node['logstash']['server']['home']` - home dir of logstash agent
 * `node['logstash']['server']['config_dir']` - location of conf.d style config dir
 * `node['logstash']['server']['config_file']` - name for base config file ( in conf.d dir )
+* `node['logstash']['server']['workers']` - Number of workers for filter processing.
+* `node['logstash']['server']['web']['enable']` - true to enable embedded kibana ( may be behind in features )
+* `node['logstash']['server']['web']['address']` - IP Address to listen on
+* `node['logstash']['server']['web']['port']` - port to listen on.
+* `node['logstash']['server']['upstart_with_sudo']` - use sudo with upstart
 
 ## Kibana
 
-Kibana has been removed from this cookbook. This is for several reasons:
+Kibana can be run from the embedded version in elasticsearch.  
+It is not recommended that you use this outside of basic testing. This is for several reasons:
 
 - Kibana is a fast moving target
 - It violates SRP
-- Kibana is being integrated into the logstash jar as the default UI
+- It's not very secure when run this way
 - There are two solid cookbooks for using Kibana now
   - Kibana2 (Ruby version): https://github.com/realityforge/chef-kibana
   - Kibana3 (HTML/JS version): https://github.com/lusis/chef-kibana
@@ -178,8 +180,39 @@ Kibana has been removed from this cookbook. This is for several reasons:
   to use (needed when not using server_role).
 * `node['logstash']['beaver']['inputs']` - Array of input plugins
   configuration (Supported: file).
+  For example:
+  
+        override['logstash']['beaver']['inputs'] =  [
+          { :file =>  
+            {
+              :path => ["/var/log/nginx/*log"], 
+              :type => "nginx", 
+              :tags => ["logstash","nginx"]
+            }
+          },
+          { :file =>  
+            {
+              :path => ["/var/log/syslog"], 
+              :type => "syslog", 
+              :tags => ["logstash","syslog"] 
+            }
+          }
+        ]    
+    
 * `node['logstash']['beaver']['outputs']` - Array of output plugins
   configuration (Supported: amq, redis, stdout, zeromq).
+  For example:
+
+        override['logstash']['beaver']['outputs'] = [ 
+          { 
+            :amqp => { 
+              :port => "5672",
+              :exchange => "rawlogs",
+              :name => "rawlogs_consumer"
+            } 
+          } 
+        ]
+  This example sets up the amqp output and uses the recipe defaults for the host value
 
 ## Source
 
@@ -222,11 +255,11 @@ Usage
 
 A proper readme is forthcoming but in the interim....
 
-There are 3 recipes you need to concern yourself with:
+There are 2 recipes you need to concern yourself with:
 
 * server - This would be your indexer node
 * agent - This would be a local host's agent for collection
-* kibana - This is the web interface
+
 
 Every attempt (and I mean this) was made to ensure that the following
 objectives were met:
@@ -284,7 +317,7 @@ attributes if you choose to go the `source` route.
 Here are some basic steps
 
 * Create a role called `logstash_server` and assign it the following
-  recipes: `logstash::server` and `logstash::kibana`
+  recipes: `logstash::server`
 * Assign the role to a new server
 * Assign the `logstash::agent` recipe to another server
 
@@ -400,11 +433,10 @@ These examples show the legacy format and need to be updated for logstash >= 1.2
         :server => {
           :enable_embedded_es => false,
           :inputs => [
-            :amqp => {
+            :rabbitmq => {
               :type => "all",
-              :host => "127.0.0.1",
-              :exchange => "rawlogs",
-              :name => "rawlogs_consumer"
+              :host => "<IP OF RABBIT SERVER>",
+              :exchange => "rawlogs"
             }
           ],
           :filters => [
@@ -426,9 +458,7 @@ These examples show the legacy format and need to be updated for logstash >= 1.2
     )
     run_list(
       "role[elasticsearch_server]",
-      "recipe[logstash::server]",
-      "recipe[php::module_curl]",
-      "recipe[logstash::kibana]"
+      "recipe[logstash::server]"
     )
 
 
@@ -438,7 +468,7 @@ It will produce the following logstash.conf file
 
       amqp {
         exchange => 'rawlogs'
-        host => '127.0.0.1'
+        host => '<IP OF RABBIT SERVER>'
         name => 'rawlogs_consumer'
         type => 'all'
       }

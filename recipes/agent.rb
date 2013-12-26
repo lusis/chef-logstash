@@ -142,7 +142,7 @@ if node['logstash']['agent']['config_file']
 end
 
 unless node['logstash']['agent']['config_templates'].empty? or node['logstash']['agent']['config_templates'].nil?
-  node['logstash']['server']['config_templates'].each do |config_template| 
+  node['logstash']['agent']['config_templates'].each do |config_template| 
     template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['config_dir']}/#{config_template}.conf" do
       source "#{config_template}.conf.erb"
       cookbook node['logstash']['agent']['config_templates_cookbook']
@@ -185,7 +185,7 @@ elsif node['logstash']['agent']['init_method'] == 'native'
     end
   elsif platform_family? "rhel", "fedora"
     template "/etc/init.d/logstash_agent" do
-      source "init.erb"
+      source "init.logstash_server.erb"
       owner "root"
       group "root"
       mode "0774"
@@ -210,8 +210,12 @@ end
 
 logrotate_app "logstash" do
   path "#{log_dir}/*.log"
-  frequency "daily"
-  rotate "30"
+  if node['logstash']['logging']['useFileSize']
+    size node['logstash']['logging']['maxSize']
+  else
+    frequency node['logstash']['logging']['rotateFrequency']
+  end
+  rotate node['logstash']['logging']['maxBackup']
   options node['logstash']['agent']['logrotate']['options']
   create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
   notifies :restart, "service[rsyslog]"

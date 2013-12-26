@@ -9,7 +9,9 @@ respawn limit 5 30
 
 <% if @supports_setuid  && !@ensure_supplemental_groups %>
 setuid <%= @user %>
+<% unless @group.to_s.empty? -%>
 setgid <%= @group %>
+<% end -%>
 <% end %>
 chdir <%= node['logstash']['basedir'] %>/beaver
 

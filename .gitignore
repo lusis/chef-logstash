@@ -1,3 +1,4 @@
 metadata.json
 .vagrant
 Berksfile.lock
+vendor/

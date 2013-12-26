@@ -1,7 +1,7 @@
-default['logstash']['agent']['version'] = '1.2.2'
+default['logstash']['agent']['version'] = '1.3.2'
 default['logstash']['agent']['log_file'] = '/var/log/logstash/agent.log'
-default['logstash']['agent']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.2.2-flatjar.jar'
-default['logstash']['agent']['checksum'] = '6b0974eed6814f479b68259b690e8c27ecbca2817b708c8ef2a11ce082b1183c'
+default['logstash']['agent']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.3.2-flatjar.jar'
+default['logstash']['agent']['checksum'] = '6a6a6e55efd14a182560af8143883eace1936afb11d59d0c35ce4ed5a5576a18'
 default['logstash']['agent']['install_method'] = 'jar' # Either `source` or `jar`
 default['logstash']['agent']['home'] = "#{node['logstash']['basedir']}/agent"
 default['logstash']['agent']['patterns_dir'] = 'etc/patterns'
@@ -23,6 +23,11 @@ default['logstash']['agent']['upstart_with_sudo'] = false
 default['logstash']['agent']['upstart_respawn_count'] = 5
 default['logstash']['agent']['upstart_respawn_timeout'] = 30
 default['logstash']['agent']['init_method'] = 'native' # native or runit
+default['logstash']['agent']['init_method'] = 'native'
+default['logstash']['agent']['workers'] = 1
+
+# allow control over the upstart config
+default['logstash']['server']['upstart_with_sudo'] = false
 
 # logrotate options for logstash agent
 default['logstash']['agent']['logrotate']['options'] = [ "missingok", "notifempty" ]

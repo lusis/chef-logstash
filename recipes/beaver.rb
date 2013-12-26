@@ -87,6 +87,10 @@ end
   end
 end
 
+python_pip node['logstash']['beaver']['pika']['pip_package'] do
+  action :install
+end
+
 python_pip node['logstash']['beaver']['pip_package'] do
   action :install
 end
@@ -116,8 +120,7 @@ node['logstash']['beaver']['outputs'].each do |outs|
     case name
       when "rabbitmq", "amqp" then
         outputs << "rabbitmq"
-        host = hash['host'] || logstash_server_ip || 'localhost'
-        conf['rabbitmq_host'] = hash['host'] if hash.has_key?('host')
+        conf['rabbitmq_host'] = hash['host'] || logstash_server_ip || 'localhost'
         conf['rabbitmq_port'] = hash['port'] if hash.has_key?('port')
         conf['rabbitmq_vhost'] = hash['vhost'] if hash.has_key?('vhost')
         conf['rabbitmq_username'] = hash['user'] if hash.has_key?('user')
@@ -200,8 +203,8 @@ if use_upstart
     source "logstash_beaver.conf.erb"
     variables(
               :cmd => cmd,
-              :group => node['logstash']['group'],
-              :user => node['logstash']['user'],
+              :group => node['logstash']['supervisor_gid'],
+              :user =>  node['logstash']['user'],
               :log => log_file,
               :supports_setuid => supports_setuid,
               :ensure_supplemental_groups => ensure_supplemental_groups
