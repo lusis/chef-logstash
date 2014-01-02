@@ -1,5 +1,5 @@
-default['logstash']['server']['version'] = '1.2.2'
-default['logstash']['server']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.2.2-flatjar.jar'
+default['logstash']['server']['version'] = '1.3.2'
+default['logstash']['server']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.3.2-flatjar.jar'
 default['logstash']['server']['checksum'] = '5ba0639ff4da064c2a4f6a04bd7006b1997a6573859d3691e210b6855e1e47f1'
 default['logstash']['server']['install_method'] = 'jar' # Either `source` or `jar`
 default['logstash']['server']['patterns_dir'] = 'server/etc/patterns'
