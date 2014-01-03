@@ -3,34 +3,34 @@
 # the upstart or init.d scripts, eg:  `export OPTS=$JAVA_OPTS $LOGSTASH_OPTS`.
 # Instead, we build environment variable strings in ruby and then insert them into the template later
 
-logstash_home = node['logstash']['server']['home']
-gc_opts = node['logstash']['server']['gc_opts']
+logstash_home = node['logstash']['agent']['home']
+gc_opts = node['logstash']['agent']['gc_opts']
 
-java_opts = "-server -Xms#{node['logstash']['server']['xms']}" \
-                           " -Xmx#{node['logstash']['server']['xmx']}" \
+java_opts = "-server -Xms#{node['logstash']['agent']['xms']}" \
+                           " -Xmx#{node['logstash']['agent']['xmx']}" \
                            " -Djava.io.tmpdir=#{logstash_home}/tmp/" \
-                           " #{node['logstash']['server']['java_opts']}"
+                           " #{node['logstash']['agent']['java_opts']}"
 if node['logstash']['agent']['ipv4_only']
   java_opts += '-Djava.net.preferIPv4Stack=true'
 end
 
-logstash_opts = "agent -f #{logstash_home}/#{node['logstash']['server']['config_dir']}"
-if node['logstash']['server']['pluginpath']
-  logstash_opts += " --pluginpath #{node['logstash']['server']['pluginpath']}"
+logstash_opts = "agent -f #{logstash_home}/#{node['logstash']['agent']['config_dir']}"
+if node['logstash']['agent']['pluginpath']
+  logstash_opts += " --pluginpath #{node['logstash']['agent']['pluginpath']}"
 end
-if node['logstash']['server']['debug']
+if node['logstash']['agent']['debug']
   logstash_opts += " -vv"
 end
-unless node['logstash']['server']['log_file'] == ''
-  logstash_opts += " -l #{node['logstash']['server']['log_file']}"
+unless node['logstash']['agent']['log_file'] == ''
+  logstash_opts += " -l #{node['logstash']['agent']['log_file']}"
 end
-if node['logstash']['server']['workers']
-  logstash_opts += " -w #{node['logstash']['server']['workers']}"
+if node['logstash']['agent']['workers']
+  logstash_opts += " -w #{node['logstash']['agent']['workers']}"
 end
 %>
 
 [Unit]
-Description=logstash server
+Description=logstash agent
 After=network.target
 
 [Service]
@@ -40,7 +40,7 @@ Environment="HOME=<%= logstash_home %>
 ExecStart=/usr/bin/java <%= java_opts %> <%= gc_opts %> -jar <%= logstash_home %>/lib/logstash.jar <%= logstash_opts %>
 Restart=on-failure
 RestartSec=30
-SyslogIdentifier=logstash_server
+SyslogIdentifier=logstash_agent
 
 [Install]
 WantedBy=multi-user.target
