@@ -1,0 +1,46 @@
+<%
+# systemd's Environment= does not support variable expansion, so we can't do the same things that we do in
+# the upstart or init.d scripts, eg:  `export OPTS=$JAVA_OPTS $LOGSTASH_OPTS`.
+# Instead, we build environment variable strings in ruby and then insert them into the template later
+
+logstash_home = node['logstash']['server']['home']
+gc_opts = node['logstash']['server']['gc_opts']
+
+java_opts = "-server -Xms#{node['logstash']['server']['xms']}" \
+                           " -Xmx#{node['logstash']['server']['xmx']}" \
+                           " -Djava.io.tmpdir=#{logstash_home}/tmp/" \
+                           " #{node['logstash']['server']['java_opts']}"
+if node['logstash']['agent']['ipv4_only']
+  java_opts += '-Djava.net.preferIPv4Stack=true'
+end
+
+logstash_opts = "agent -f #{logstash_home}/#{node['logstash']['server']['config_dir']}"
+if node['logstash']['server']['pluginpath']
+  logstash_opts += " --pluginpath #{node['logstash']['server']['pluginpath']}"
+end
+if node['logstash']['server']['debug']
+  logstash_opts += " -vv"
+end
+unless node['logstash']['server']['log_file'] == ''
+  logstash_opts += " -l #{node['logstash']['server']['log_file']}"
+end
+if node['logstash']['server']['workers']
+  logstash_opts += " -w #{node['logstash']['server']['workers']}"
+end
+%>
+
+[Unit]
+Description=logstash server
+After=network.target
+
+[Service]
+User=<%= node['logstash']['user'] %>
+Environment="LOGSTASH_HOME=<%= logstash_home %>
+Environment="HOME=<%= logstash_home %>
+ExecStart=/usr/bin/java <%= java_opts %> <%= gc_opts %> -jar <%= logstash_home %>/lib/logstash.jar <%= logstash_opts %>
+Restart=on-failure
+RestartSec=30
+SyslogIdentifier=logstash_server
+
+[Install]
+WantedBy=multi-user.target
