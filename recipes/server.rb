@@ -94,8 +94,9 @@ if node['logstash']['server']['install_method'] == "jar"
   end
 
   bash "patch logstash" do
+    user "root"
     cwd "#{node['logstash']['basedir']}/server/lib"
-    command "jar -uf logstash-#{node['logstash']['server']['version']}.jar logstash/event.rb"
+    code "jar -uf logstash-#{node['logstash']['server']['version']}.jar logstash/event.rb"
   end
 
   link "#{node['logstash']['basedir']}/server/lib/logstash.jar" do
