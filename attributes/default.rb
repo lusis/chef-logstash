@@ -34,5 +34,3 @@ default['logstash']['logging']['rotateFrequency'] = "daily"
 default['logstash']['logging']['maxBackup'] = 10
 default['logstash']['logging']['maxSize'] = "10M"
 default['logstash']['logging']['useFileSize'] = false
-
-

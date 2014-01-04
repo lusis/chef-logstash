@@ -16,7 +16,7 @@ include_recipe "logrotate"
 include_recipe "rabbitmq" if node['logstash']['server']['install_rabbitmq']
 
 if node['logstash']['install_zeromq']
-  include_recipe "yumrepo::zeromq" if platform_family?("rhel")
+  include_recipe 'logstash::zero_mq_repo'
   node['logstash']['zeromq_packages'].each {|p| package p }
 end
 
@@ -150,7 +150,7 @@ if node['logstash']['server']['config_file']
 end
 
 unless node['logstash']['server']['config_templates'].empty? or node['logstash']['server']['config_templates'].nil?
-  node['logstash']['server']['config_templates'].each do |config_template| 
+  node['logstash']['server']['config_templates'].each do |config_template|
     template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{config_template}.conf" do
       source "#{config_template}.conf.erb"
       cookbook node['logstash']['server']['config_templates_cookbook']

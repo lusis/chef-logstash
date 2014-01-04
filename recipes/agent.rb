@@ -3,8 +3,9 @@
 # Recipe:: agent
 #
 #
-include_recipe "java"
+include_recipe "java::default"
 include_recipe "logstash::default"
+include_recipe "yum::default"
 
 if node['logstash']['agent']['init_method'] == 'runit'
   include_recipe "runit"
@@ -20,28 +21,7 @@ else
 end
 
 if node['logstash']['install_zeromq']
-  case
-  when platform_family?("rhel")
-    include_recipe "yumrepo::zeromq"
-  when platform_family?("debian")
-    apt_repository "zeromq-ppa" do
-      uri "http://ppa.launchpad.net/chris-lea/zeromq/ubuntu"
-      distribution node['lsb']['codename']
-      components ["main"]
-      keyserver "keyserver.ubuntu.com"
-      key "C7917B12"
-      action :add
-    end
-    apt_repository "libpgm-ppa" do
-      uri "http://ppa.launchpad.net/chris-lea/libpgm/ubuntu"
-      distribution  node['lsb']['codename']
-      components ["main"]
-      keyserver "keyserver.ubuntu.com"
-      key "C7917B12"
-      action :add
-      notifies :run, "execute[apt-get update]", :immediately
-    end
-  end
+  include_recipe 'logstash::zero_mq_repo'
   node['logstash']['zeromq_packages'].each {|p| package p }
 end
 
@@ -142,7 +122,7 @@ if node['logstash']['agent']['config_file']
 end
 
 unless node['logstash']['agent']['config_templates'].empty? or node['logstash']['agent']['config_templates'].nil?
-  node['logstash']['server']['config_templates'].each do |config_template| 
+  node['logstash']['server']['config_templates'].each do |config_template|
     template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['config_dir']}/#{config_template}.conf" do
       source "#{config_template}.conf.erb"
       cookbook node['logstash']['agent']['config_templates_cookbook']
@@ -200,7 +180,7 @@ elsif node['logstash']['agent']['init_method'] == 'native'
       service_name "logstash_agent.service"
       provider Chef::Provider::Service::Systemd
       action [ :enable, :start ]
-    end    
+    end
   elsif platform_family? "rhel", "fedora"
     template "/etc/init.d/logstash_agent" do
       source "init.erb"

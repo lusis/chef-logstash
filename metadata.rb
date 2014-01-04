@@ -10,10 +10,10 @@ version          "0.7.2"
   supports os
 end
 
-%w{ build-essential runit git ant java logrotate rabbitmq yumrepo python }.each do |ckbk|
+%w{ build-essential runit git ant java logrotate rabbitmq yum python }.each do |ckbk|
   depends ckbk
 end
 
-%w{ yumrepo apt }.each do |ckbk|
+%w{ yum apt }.each do |ckbk|
   recommends ckbk
 end

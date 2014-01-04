@@ -39,9 +39,9 @@ chef_json = {
               }
             ],
             filters: [
-              { 
+              {
                 condition: 'if [type] == "syslog"',
-                block: {    
+                block: {
                   grok: {
                     match: [
                       "message",
@@ -49,7 +49,7 @@ chef_json = {
                     ]
                   },
                   date: {
-                    match: [ 
+                    match: [
                       "timestamp",
                       "MMM  d HH:mm:ss",
                       "MMM dd HH:mm:ss",
@@ -75,13 +75,13 @@ Vagrant.configure('2') do |config|
   # Common Settings
   config.omnibus.chef_version = 'latest'
   config.vm.hostname = 'logstash'
-  config.vm.network :private_network, ip: '192.168.200.50'
+  #config.vm.network :private_network, ip: '192.168.200.50'
   config.vm.provider :virtualbox do |vb|
     vb.customize ['modifyvm', :id, '--memory', '1024']
   end
   config.vm.provider :lxc do |lxc|
     lxc.customize 'cgroup.memory.limit_in_bytes', '1024M'
-  end  
+  end
 
   config.vm.define :precise64 do |dist_config|
     dist_config.vm.box       = 'opscode-ubuntu-12.04'
@@ -151,9 +151,9 @@ Vagrant.configure('2') do |config|
     end
   end
 
-  config.vm.define :fedora19 do |dist_config|
-    dist_config.vm.box       = 'fedora19'
-    dist_config.vm.box_url   = 'http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_fedora-19_chef-provisionerless.box'
+  config.vm.define :fedora18 do |dist_config|
+    dist_config.vm.box       = 'fedora18'
+    dist_config.vm.box_url   = 'http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_fedora-18_chef-provisionerless.box'
     dist_config.vm.provision :chef_solo do |chef|
       chef.cookbooks_path = ['/tmp/logstash-cookbooks']
       chef.provisioning_path = '/etc/vagrant-chef'
