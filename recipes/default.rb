@@ -8,6 +8,7 @@ if node['logstash']['create_account']
 
   group node['logstash']['group'] do
     system true
+    gid node['logstash']['gid']
   end
 
   user node['logstash']['user'] do
@@ -16,6 +17,7 @@ if node['logstash']['create_account']
     system true
     action :create
     manage_home true
+    uid node['logstash']['uid']
   end
 
 end

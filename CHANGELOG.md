@@ -2,8 +2,12 @@
 
 This file is used to list changes made in each version of chef-logstash.
 
+## 0.7.5:
+* added fedora systemd support
+* moved zeromq repos to own recipe
+
 ## 0.7.4:
-* bump logstash version to 1.3.1
+* bump logstash version to 1.3.2
 
 ## 0.7.3:
 * support for sudo with upstart for agent and server

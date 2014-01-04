@@ -3,8 +3,9 @@
 # Recipe:: agent
 #
 #
-include_recipe "java"
+include_recipe "java::default"
 include_recipe "logstash::default"
+include_recipe "yum::default"
 
 if node['logstash']['agent']['init_method'] == 'runit'
   include_recipe "runit"
@@ -20,28 +21,7 @@ else
 end
 
 if node['logstash']['install_zeromq']
-  case
-  when platform_family?("rhel")
-    include_recipe "yumrepo::zeromq"
-  when platform_family?("debian")
-    apt_repository "zeromq-ppa" do
-      uri "http://ppa.launchpad.net/chris-lea/zeromq/ubuntu"
-      distribution node['lsb']['codename']
-      components ["main"]
-      keyserver "keyserver.ubuntu.com"
-      key "C7917B12"
-      action :add
-    end
-    apt_repository "libpgm-ppa" do
-      uri "http://ppa.launchpad.net/chris-lea/libpgm/ubuntu"
-      distribution  node['lsb']['codename']
-      components ["main"]
-      keyserver "keyserver.ubuntu.com"
-      key "C7917B12"
-      action :add
-      notifies :run, "execute[apt-get update]", :immediately
-    end
-  end
+  include_recipe 'logstash::zero_mq_repo'
   node['logstash']['zeromq_packages'].each {|p| package p }
 end
 
@@ -182,6 +162,24 @@ elsif node['logstash']['agent']['init_method'] == 'native'
       end
     else
       Chef::Log.fatal("Please set node['logstash']['agent']['init_method'] to 'runit' for #{node['platform_version']}")
+    end
+  elsif platform_family? "fedora" and node["platform_version"] >= "15"
+    execute "reload-systemd" do
+      command "systemctl --system daemon-reload"
+      action :nothing
+    end
+
+    template "/etc/systemd/system/logstash_agent.service" do
+      source "logstash_agent.service.erb"
+      owner "root" and group 'root' and mode 0755
+      notifies :run, "execute[reload-systemd]", :immediately
+      notifies :restart, "service[logstash_agent]", :delayed
+    end
+
+    service "logstash_agent" do
+      service_name "logstash_agent.service"
+      provider Chef::Provider::Service::Systemd
+      action [ :enable, :start ]
     end
   elsif platform_family? "rhel", "fedora"
     template "/etc/init.d/logstash_agent" do
