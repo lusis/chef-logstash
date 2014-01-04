@@ -26,6 +26,7 @@ chef_json = {
     },
     logstash: {
         supervisor_gid: 'adm',
+        install_zeromq: true,
         agent: {
             server_ipaddress: '127.0.0.1',
             xms: '128m',

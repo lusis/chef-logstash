@@ -22,15 +22,17 @@ default['logstash']['patterns'] = {}
 default['logstash']['install_zeromq'] = false
 
 case node['platform_family']
-when "rhel"
-  default['logstash']['zeromq_packages'] = [ "zeromq",  "zeromq-devel"]
-when "debian"
-  default['logstash']['zeromq_packages'] = [ "zeromq",  "libzmq-dev"]
+when 'rhel'
+  default['logstash']['zeromq_packages'] = [ 'zeromq',  'zeromq-devel']
+when 'fedora'
+  default['logstash']['zeromq_packages'] = [ 'zeromq',  'zeromq-devel']
+when 'debian'
+  default['logstash']['zeromq_packages'] = [ 'libzmq3-dbg', 'libzmq3-dev', 'libzmq3']
 end
 
 
 # Logging features
-default['logstash']['logging']['rotateFrequency'] = "daily"
+default['logstash']['logging']['rotateFrequency'] = 'daily'
 default['logstash']['logging']['maxBackup'] = 10
-default['logstash']['logging']['maxSize'] = "10M"
+default['logstash']['logging']['maxSize'] = '10M'
 default['logstash']['logging']['useFileSize'] = false
