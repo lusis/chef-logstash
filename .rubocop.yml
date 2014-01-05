@@ -1,0 +1,7 @@
+inherit_from:
+  .rubocop-todo.yml
+
+AllCops:
+  Excludes:
+    - vendor
+    - test/support/vendor/**
