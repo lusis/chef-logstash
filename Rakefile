@@ -39,8 +39,8 @@ task :default => 'foodcritic'
 private
 
 def prepare_test_sandbox(sandbox)
-  files = %w{*.md *.rb attributes definitions files providers Strainerfile .rubocop*
-    recipes resources templates}
+  files = %w{ *.md *.rb attributes definitions files providers Strainerfile .rubocop*
+    recipes resources templates spec }
 
   rm_rf sandbox
   mkdir_p sandbox
