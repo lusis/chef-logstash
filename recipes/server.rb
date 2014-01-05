@@ -130,23 +130,23 @@ directory log_dir do
   recursive true
 end
 
-if node['logstash']['server']['config_file']
-  template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{node['logstash']['server']['config_file']}" do
-    source node['logstash']['server']['base_config']
-    cookbook node['logstash']['server']['base_config_cookbook']
-    owner node['logstash']['user']
-    group node['logstash']['group']
-    mode "0644"
-    variables(
-              :graphite_server_ip => graphite_server_ip,
-              :es_server_ip => es_server_ip,
-              :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
-              :es_cluster => node['logstash']['elasticsearch_cluster'],
-              :patterns_dir => patterns_dir
-              )
-    notifies :restart, service_resource
-    action :create
-  end
+
+template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{node['logstash']['server']['config_file']}" do
+  source node['logstash']['server']['base_config']
+  cookbook node['logstash']['server']['base_config_cookbook']
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  mode "0644"
+  variables(
+            :graphite_server_ip => graphite_server_ip,
+            :es_server_ip => es_server_ip,
+            :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
+            :es_cluster => node['logstash']['elasticsearch_cluster'],
+            :patterns_dir => patterns_dir
+            )
+  notifies :restart, service_resource
+  action :create
+  only_if { node['logstash']['server']['config_file'] }
 end
 
 unless node['logstash']['server']['config_templates'].empty? or node['logstash']['server']['config_templates'].nil?
