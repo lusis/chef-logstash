@@ -1,3 +1,4 @@
+# Encoding: utf-8
 default['logstash']['basedir'] = '/opt/logstash'
 default['logstash']['user'] = 'logstash'
 default['logstash']['uid'] = nil  # set to nil to let system pick
@@ -24,13 +25,12 @@ default['logstash']['install_rabbitmq'] = false
 
 case node['platform_family']
 when 'rhel'
-  default['logstash']['zeromq_packages'] = [ 'zeromq',  'zeromq-devel']
+  default['logstash']['zeromq_packages'] = %w{ zeromq zeromq-devel }
 when 'fedora'
-  default['logstash']['zeromq_packages'] = [ 'zeromq',  'zeromq-devel']
+  default['logstash']['zeromq_packages'] = %w{ zeromq zeromq-devel }
 when 'debian'
-  default['logstash']['zeromq_packages'] = [ 'libzmq3-dbg', 'libzmq3-dev', 'libzmq3']
+  default['logstash']['zeromq_packages'] = %w{ libzmq3-dbg libzmq3-dev libzmq3 }
 end
-
 
 # Logging features
 default['logstash']['logging']['rotateFrequency'] = 'daily'

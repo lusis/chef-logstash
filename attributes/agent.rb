@@ -1,3 +1,4 @@
+# Encoding: utf-8
 default['logstash']['agent']['version'] = '1.3.2'
 default['logstash']['agent']['log_file'] = '/var/log/logstash/agent.log'
 default['logstash']['agent']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.3.2-flatjar.jar'
@@ -9,7 +10,7 @@ default['logstash']['agent']['config_dir'] = 'etc/conf.d'
 default['logstash']['agent']['config_file'] = 'logstash.conf'
 default['logstash']['agent']['config_templates'] = []
 default['logstash']['agent']['config_templates_cookbook'] = 'logstash'
-default['logstash']['agent']['config_templates_variables'] = { }
+default['logstash']['agent']['config_templates_variables'] = {}
 default['logstash']['agent']['base_config'] = 'agent.conf.erb'
 default['logstash']['agent']['base_config_cookbook'] = 'logstash'
 default['logstash']['agent']['xms'] = '384M'
@@ -30,7 +31,7 @@ default['logstash']['agent']['workers'] = 1
 default['logstash']['server']['upstart_with_sudo'] = false
 
 # logrotate options for logstash agent
-default['logstash']['agent']['logrotate']['options'] = [ "missingok", "notifempty" ]
+default['logstash']['agent']['logrotate']['options'] = %w{ missingok notifempty }
 # stop/start on logrotate?
 default['logstash']['agent']['logrotate']['stopstartprepost'] = false
 
