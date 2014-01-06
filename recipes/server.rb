@@ -77,7 +77,6 @@ if node['logstash']['server']['install_method'] == "jar"
     group "root"
     mode "0755"
     source node['logstash']['server']['source_url']
-    checksum node['logstash']['server']['checksum']
     action :create_if_missing
   end
 
@@ -204,7 +203,8 @@ end
 logrotate_app "logstash_server" do
   path "#{node['logstash']['log_dir']}/*.log"
   frequency "daily"
-  rotate "30"
+  rotate "7"
+  maxsize "500M"
   options node['logstash']['server']['logrotate']['options']
   create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
 end
