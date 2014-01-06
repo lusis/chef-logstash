@@ -252,6 +252,13 @@ BUNDLE_GEMFILE=$(pwd)/test/support/Gemfile bundle exec berks install
 BUNDLE_GEMFILE=$(pwd)/test/support/Gemfile bundle exec strainer test
 ```
 
+## Test-Kitchen + ServerSpec
+
+```
+BUNDLE_GEMFILE=$(pwd)/test/support/Gemfile bundle exec \
+  kitchen test --destroy=always
+```
+
 Contributing
 ========
 

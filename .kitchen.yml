@@ -1,0 +1,29 @@
+---
+driver:
+  name: vagrant
+driver_config:
+  require_chef_omnibus: true
+  use_vagrant_berkshelf_plugin: true
+  customize:
+    memory: 512
+    cpus: 1
+
+provisioner:
+  name: chef_solo
+
+platforms:
+  - name: ubuntu-12.04
+
+suites:
+  - name: default
+    run_list:
+      - recipe[apt::default]
+    attributes:
+      java:
+          jdk_version: '1.7'
+      logstash:
+        server:
+          enable_embedded_es: true
+          web:
+            enabled: true
+
