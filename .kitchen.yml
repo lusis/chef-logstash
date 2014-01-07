@@ -15,12 +15,16 @@ platforms:
   - name: ubuntu-12.04
 
 suites:
-  - name: default
+  - name: server
     run_list:
       - recipe[apt::default]
+      - recipe[logstash::server]
     attributes:
       java:
-          jdk_version: '1.7'
+        jdk_version: 7
+        oracle: 
+          accept_oracle_download_terms: true
+        install_flavor: oracle
       logstash:
         server:
           enable_embedded_es: true

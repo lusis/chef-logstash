@@ -7,6 +7,7 @@ This file is used to list changes made in each version of chef-logstash.
 ** Strainer: rubocop, knife test, foodcritic, chefspec
 ** lots of style fixes for rubocop
 ** skeleton spec files for each recipe
+** testkitchen + server spec
 
 ## 0.7.5:
 * added fedora systemd support
