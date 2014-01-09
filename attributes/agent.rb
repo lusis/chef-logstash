@@ -1,7 +1,8 @@
-default['logstash']['agent']['version'] = '1.3.1'
+# Encoding: utf-8
+default['logstash']['agent']['version'] = '1.3.2'
 default['logstash']['agent']['log_file'] = '/var/log/logstash/agent.log'
-default['logstash']['agent']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.3.1-flatjar.jar'
-default['logstash']['agent']['checksum'] = '65e19a6ca69b797d8ef84e99393a128dc6e4813c16cb8496253c1717d2334fd7'
+default['logstash']['agent']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.3.2-flatjar.jar'
+default['logstash']['agent']['checksum'] = '6a6a6e55efd14a182560af8143883eace1936afb11d59d0c35ce4ed5a5576a18'
 default['logstash']['agent']['install_method'] = 'jar' # Either `source` or `jar`
 default['logstash']['agent']['home'] = "#{node['logstash']['basedir']}/agent"
 default['logstash']['agent']['patterns_dir'] = 'etc/patterns'
@@ -9,7 +10,7 @@ default['logstash']['agent']['config_dir'] = 'etc/conf.d'
 default['logstash']['agent']['config_file'] = 'logstash.conf'
 default['logstash']['agent']['config_templates'] = []
 default['logstash']['agent']['config_templates_cookbook'] = 'logstash'
-default['logstash']['agent']['config_templates_variables'] = { }
+default['logstash']['agent']['config_templates_variables'] = {}
 default['logstash']['agent']['base_config'] = 'agent.conf.erb'
 default['logstash']['agent']['base_config_cookbook'] = 'logstash'
 default['logstash']['agent']['xms'] = '384M'
@@ -30,7 +31,7 @@ default['logstash']['agent']['workers'] = 1
 default['logstash']['server']['upstart_with_sudo'] = false
 
 # logrotate options for logstash agent
-default['logstash']['agent']['logrotate']['options'] = [ "missingok", "notifempty" ]
+default['logstash']['agent']['logrotate']['options'] = %w{ missingok notifempty }
 # stop/start on logrotate?
 default['logstash']['agent']['logrotate']['stopstartprepost'] = false
 

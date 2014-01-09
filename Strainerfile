@@ -1,5 +1,5 @@
 # Strainerfile
-tailor:     bundle exec tailor
+rubocop: bundle exec rubocop -c $SANDBOX/$COOKBOOK/.rubocop.yml $SANDBOX/$COOKBOOK
 knife test: bundle exec knife cookbook test $COOKBOOK
-foodcritic: bundle exec foodcritic ${COOKBOOK_PATH}
-chefspec:   bundle exec rspec ${COOKBOOK_PATH} --color
+foodcritic: bundle exec foodcritic --epic-fail any $SANDBOX/$COOKBOOK
+chefspec: bundle exec rspec $SANDBOX/$COOKBOOK/spec

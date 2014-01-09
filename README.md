@@ -240,15 +240,31 @@ Testing
 
 ## Vagrant
 
+```
+vagrant up precise64
+```
+
 ## Strainer
 
 ```
-export COOKBOOK_PATH=`pwd`
-export BUNDLE_GEMFILE=$COOKBOOK_PATH/test/support/Gemfile
-bundle install
-bundle exec berks install
-bundle exec strainer test
+BUNDLE_GEMFILE=$(pwd)/test/support/Gemfile bundle install
+BUNDLE_GEMFILE=$(pwd)/test/support/Gemfile bundle exec berks install
+BUNDLE_GEMFILE=$(pwd)/test/support/Gemfile bundle exec strainer test
 ```
+
+## Test-Kitchen + ServerSpec
+
+```
+BUNDLE_GEMFILE=$(pwd)/test/support/Gemfile bundle exec \
+  kitchen test --destroy=always
+```
+
+Contributing
+========
+
+Any and all contributions are welcome.   We do ask that you test your contributions with the testing framework before you send a PR.
+
+Documentation contributions will earn you lots of hugs and kisses.
 
 Usage
 =====

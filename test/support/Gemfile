@@ -1,10 +1,11 @@
 source "https://rubygems.org"
 
-gem 'rake'
-gem 'foodcritic', :platforms => :ruby_19
-gem 'chef', :platforms => :ruby_19
-gem 'berkshelf', :platforms => :ruby_19
-gem 'tailor', :platforms => :ruby_19
-gem 'chefspec', :platforms => :ruby_19
-gem 'foodcritic', :platforms => :ruby_19
-gem 'strainer', :platforms => :ruby_19
+gem 'rake', '~> 10.1.0'
+gem 'foodcritic', '~> 3.0.0', :platforms => :ruby_19
+gem 'chef', '~> 11.8.0', :platforms => :ruby_19
+gem 'berkshelf', '~> 2.0.0', :platforms => :ruby_19
+gem 'rubocop', '~> 0.16.0', :platforms => :ruby_19
+gem 'chefspec', '~> 3.1.4', :platforms => :ruby_19
+gem 'strainer', '~> 3.3.0', :platforms => :ruby_19
+gem 'test-kitchen', '~> 1.1.1', :platforms => :ruby_19
+gem 'kitchen-vagrant'

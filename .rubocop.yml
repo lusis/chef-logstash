@@ -1,0 +1,15 @@
+AllCops:
+  Excludes:
+    - vendor
+    - test/support/vendor/**
+
+CyclomaticComplexity:
+  Enabled: false
+
+LineLength:
+  Enabled: true
+  Max: 200
+
+MethodLength:
+  Enabled: true
+  Max: 20

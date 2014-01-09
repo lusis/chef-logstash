@@ -6,9 +6,12 @@ exec 2>&1
 LOGSTASH_HOME="<%= node['logstash']['agent']['home'] %>"
 GC_OPTS="-XX:+UseParallelOldGC"
 JAVA_OPTS="-server -Xms<%= node['logstash']['agent']['xms'] %> -Xmx<%= node['logstash']['agent']['xmx'] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/"
-LOGSTASH_OPTS="agent -f <%= node['logstash']['agent']['config_dir'] %> -l <%= node['logstash']['agent']['log_file'] %>"
+LOGSTASH_OPTS="agent -f <%= node['logstash']['agent']['config_dir'] %>"
 <% if node['logstash']['agent']['debug'] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
+<% end -%>
+<% if node['logstash']['agent']['log_file'] -%>
+LOGSTASH_OPTS="$LOGSTASH_OPTS -l <%= node['logstash']['agent']['log_file'] %>"
 <% end -%>
 <% if node['logstash']['agent']['workers'] %>
 export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= node['logstash']['agent']['workers'] %>"

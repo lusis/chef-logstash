@@ -16,6 +16,9 @@ chef_run_list = %w[
 #      ]
 
 chef_json = {
+    java: {
+      jdk_version: '7'
+    },
     kibana: {
         webserver_listen: "0.0.0.0",
         webserver: "nginx",
@@ -36,9 +39,9 @@ chef_json = {
               }
             ],
             filters: [
-              { 
+              {
                 condition: 'if [type] == "syslog"',
-                block: {    
+                block: {
                   grok: {
                     match: [
                       "message",
@@ -46,7 +49,7 @@ chef_json = {
                     ]
                   },
                   date: {
-                    match: [ 
+                    match: [
                       "timestamp",
                       "MMM  d HH:mm:ss",
                       "MMM dd HH:mm:ss",
@@ -73,7 +76,6 @@ Vagrant.configure('2') do |config|
   # Common Settings
   config.omnibus.chef_version = 'latest'
   config.vm.hostname = 'logstash'
-  config.vm.network :private_network, ip: '192.168.200.50'
   config.vm.network "forwarded_port", guest: 9292, host: 9292
   config.vm.network "forwarded_port", guest: 9200, host: 9200
   config.vm.provider :virtualbox do |vb|
@@ -81,7 +83,7 @@ Vagrant.configure('2') do |config|
   end
   config.vm.provider :lxc do |lxc|
     lxc.customize 'cgroup.memory.limit_in_bytes', '1024M'
-  end  
+  end
 
   config.vm.define :precise64 do |dist_config|
     dist_config.vm.box       = 'opscode-ubuntu-12.04'
@@ -141,6 +143,18 @@ Vagrant.configure('2') do |config|
   config.vm.define :centos6_32 do |dist_config|
     dist_config.vm.box       = 'centos6_32'
     dist_config.vm.box_url   = 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_centos-6.4-i386_provisionerless.box'
+    dist_config.vm.provision :chef_solo do |chef|
+      chef.cookbooks_path = ['/tmp/logstash-cookbooks']
+      chef.provisioning_path = '/etc/vagrant-chef'
+      chef.log_level = log_level
+      chef.run_list = chef_run_list
+      chef.json = chef_json
+    end
+  end
+
+  config.vm.define :fedora18 do |dist_config|
+    dist_config.vm.box       = 'fedora18'
+    dist_config.vm.box_url   = 'http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_fedora-18_chef-provisionerless.box'
     dist_config.vm.provision :chef_solo do |chef|
       chef.cookbooks_path = ['/tmp/logstash-cookbooks']
       chef.provisioning_path = '/etc/vagrant-chef'
