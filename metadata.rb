@@ -10,7 +10,7 @@ version          "0.6.2"
   supports os
 end
 
-%w{ build-essential git python java ant logrotate rabbitmq }.each do |ckbk|
+%w{ build-essential git python java ant logrotate rabbitmq discovery }.each do |ckbk|
   depends ckbk
 end
 
