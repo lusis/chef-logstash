@@ -1,13 +1,6 @@
-include_recipe "python::pip"
-
 base_dir          = File.join(node['logstash']['basedir'], 'index_cleaner')
-index_cleaner_bin = File.join(base_dir, 'logstash_index_cleaner.py')
+index_cleaner_bin = File.join(base_dir, 'index_cleaner.rb')
 days_to_keep      = node['logstash']['index_cleaner']['days_to_keep']
-log_file          = node['logstash']['index_cleaner']['cron']['log_file']
-
-python_pip "pyes" do
-  action :install
-end
 
 directory base_dir do
   action :create
@@ -17,7 +10,7 @@ directory base_dir do
 end
 
 cookbook_file index_cleaner_bin do
-  source "logstash_index_cleaner.py"
+  source "index_cleaner.rb"
   owner node['logstash']['user']
   group node['logstash']['group']
   mode "0774"
@@ -31,7 +24,7 @@ file index_cleaner_bin do
 end
 
 cron "logstash_index_cleaner" do
-  command "#{index_cleaner_bin} -d #{days_to_keep} &> #{log_file}"
+  command "#{index_cleaner_bin} #{days_to_keep} #{node['logstash']['index_cleaner']['es_host']}"
   minute  node['logstash']['index_cleaner']['cron']['minute']
   hour    node['logstash']['index_cleaner']['cron']['hour']
 end
