@@ -4,3 +4,4 @@ default['logstash']['index_cleaner']['cron'] = {
   'hour'     => '*',
   'log_file' => '/dev/null'
 }
+default['logstash']['index_cleaner']['es_host'] = 'localhost'
