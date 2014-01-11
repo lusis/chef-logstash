@@ -1,3 +1,4 @@
+# Encoding: utf-8
 require 'serverspec'
 
 include Serverspec::Helper::Exec

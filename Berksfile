@@ -1,14 +1,13 @@
-metadata
+# Encoding: utf-8
 
-# Don't need to list cookbooks in here that are also listed in the metadata depends statements
-# unless there are specific overrides like git repo or version are needed
+metadata
 
 cookbook 'rabbitmq', git: 'git://github.com/opscode-cookbooks/rabbitmq.git'
 
 group :test do
-    cookbook 'minitest-handler', git: 'git://github.com/btm/minitest-handler-cookbook.git'
-    cookbook 'elasticsearch', git: 'git://github.com/elasticsearch/cookbook-elasticsearch.git'
-    cookbook 'kibana', git: 'git://github.com/lusis/chef-kibana.git'
-    cookbook 'curl'
-    cookbook 'ark'
+  cookbook 'minitest-handler', git: 'git://github.com/btm/minitest-handler-cookbook.git'
+  cookbook 'elasticsearch', git: 'git://github.com/elasticsearch/cookbook-elasticsearch.git'
+  cookbook 'kibana', git: 'git://github.com/lusis/chef-kibana.git'
+  cookbook 'curl'
+  cookbook 'ark'
 end
