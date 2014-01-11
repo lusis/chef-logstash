@@ -1,13 +1,10 @@
 # Encoding: utf-8
 require_relative 'spec_helper'
 
-describe 'logstash::beaver' do
+describe 'logstash::haproxy' do
   before { logstash_stubs }
   describe 'ubuntu' do
-    before do
-      @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
-      @chef_run.converge 'logstash::beaver'
-    end
+    let(:chef_run) { ChefSpec::Runner.new.converge(described_recipe) }
 
     it 'writes some chefspec code' do
       pending 'todo'

@@ -1,13 +1,10 @@
 # Encoding: utf-8
 require_relative 'spec_helper'
 
-describe 'logstash::zero_mq_repo' do
+describe 'logstash::index_cleaner' do
   before { logstash_stubs }
   describe 'ubuntu' do
-    before do
-      @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
-      @chef_run.converge 'logstash::zero_mq_repo'
-    end
+    let(:chef_run) { ChefSpec::Runner.new.converge(described_recipe) }
 
     it 'writes some chefspec code' do
       pending 'todo'
