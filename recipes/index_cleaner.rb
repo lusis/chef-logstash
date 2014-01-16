@@ -24,7 +24,7 @@ file index_cleaner_bin do
 end
 
 cron "logstash_index_cleaner" do
-  command "#{index_cleaner_bin} #{days_to_keep} #{node['logstash']['index_cleaner']['es_host']}"
+  command "bash -l -c '#{index_cleaner_bin} #{days_to_keep} #{node['logstash']['index_cleaner']['es_host']}'"
   minute  node['logstash']['index_cleaner']['cron']['minute']
   hour    node['logstash']['index_cleaner']['cron']['hour']
 end
