@@ -1,8 +1,12 @@
 AllCops:
   Excludes:
     - vendor
-    - test/support/vendor/**
-
+    - test/support/**
+  Includes:
+    - Rakefile
+    - Gemfile
+    - Vagrantfile
+    - Berksfile  
 CyclomaticComplexity:
   Enabled: false
 

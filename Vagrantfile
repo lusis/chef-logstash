@@ -1,3 +1,4 @@
+# Encoding: utf-8
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -20,9 +21,9 @@ chef_json = {
       jdk_version: '7'
     },
     kibana: {
-        webserver_listen: "0.0.0.0",
-        webserver: "nginx",
-        install_type: "file"
+        webserver_listen: '0.0.0.0',
+        webserver: 'nginx',
+        install_type: 'file'
     },
     logstash: {
         supervisor_gid: 'adm',
@@ -34,7 +35,7 @@ chef_json = {
             inputs: [
               file: {
                 type: 'syslog',
-                path: ['/var/log/syslog','/var/log/messages'],
+                path: ['/var/log/syslog', '/var/log/messages'],
                 start_position: 'beginning'
               }
             ],
@@ -44,16 +45,16 @@ chef_json = {
                 block: {
                   grok: {
                     match: [
-                      "message",
+                      'message',
                       "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
                     ]
                   },
                   date: {
                     match: [
-                      "timestamp",
-                      "MMM  d HH:mm:ss",
-                      "MMM dd HH:mm:ss",
-                      "ISO8601"
+                      'timestamp',
+                      'MMM  d HH:mm:ss',
+                      'MMM dd HH:mm:ss',
+                      'ISO8601'
                     ]
                   }
                 }
@@ -76,8 +77,8 @@ Vagrant.configure('2') do |config|
   # Common Settings
   config.omnibus.chef_version = 'latest'
   config.vm.hostname = 'logstash'
-  config.vm.network "forwarded_port", guest: 9292, host: 9292
-  config.vm.network "forwarded_port", guest: 9200, host: 9200
+  config.vm.network 'forwarded_port', guest: 9292, host: 9292
+  config.vm.network 'forwarded_port', guest: 9200, host: 9200
   config.vm.provider :virtualbox do |vb|
     vb.customize ['modifyvm', :id, '--memory', '1024']
   end
@@ -128,9 +129,8 @@ Vagrant.configure('2') do |config|
     end
   end
 
-
   config.vm.define :centos6_64 do |dist_config|
-    dist_config.vm.box       = 'opscode-centos-6.3' #centos6_64'
+    dist_config.vm.box       = 'opscode-centos-6.3' # centos6_64'
     dist_config.vm.box_url   = 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_centos-6.4_provisionerless.box'
     dist_config.vm.provision :chef_solo do |chef|
       chef.cookbooks_path = ['/tmp/logstash-cookbooks']
@@ -165,4 +165,3 @@ Vagrant.configure('2') do |config|
   end
 
 end
-

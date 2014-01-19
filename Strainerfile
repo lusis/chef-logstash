@@ -2,4 +2,4 @@
 rubocop: bundle exec rubocop -c $SANDBOX/$COOKBOOK/.rubocop.yml $SANDBOX/$COOKBOOK
 knife test: bundle exec knife cookbook test $COOKBOOK
 foodcritic: bundle exec foodcritic --epic-fail any $SANDBOX/$COOKBOOK
-chefspec: bundle exec rspec $SANDBOX/$COOKBOOK/spec
+chefspec: bundle exec rspec $SANDBOX/$COOKBOOK/test/unit/spec

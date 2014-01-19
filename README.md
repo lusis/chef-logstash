@@ -247,16 +247,13 @@ vagrant up precise64
 ## Strainer
 
 ```
-BUNDLE_GEMFILE=$(pwd)/test/support/Gemfile bundle install
-BUNDLE_GEMFILE=$(pwd)/test/support/Gemfile bundle exec berks install
-BUNDLE_GEMFILE=$(pwd)/test/support/Gemfile bundle exec strainer test
+rake strainer
 ```
 
 ## Test-Kitchen + ServerSpec
 
 ```
-BUNDLE_GEMFILE=$(pwd)/test/support/Gemfile bundle exec \
-  kitchen test --destroy=always
+rake kitchen
 ```
 
 Contributing
