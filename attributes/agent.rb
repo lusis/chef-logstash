@@ -24,7 +24,6 @@ default['logstash']['agent']['upstart_with_sudo'] = false
 default['logstash']['agent']['upstart_respawn_count'] = 5
 default['logstash']['agent']['upstart_respawn_timeout'] = 30
 default['logstash']['agent']['init_method'] = 'native' # native or runit
-default['logstash']['agent']['init_method'] = 'native'
 default['logstash']['agent']['workers'] = 1
 
 # allow control over the upstart config
