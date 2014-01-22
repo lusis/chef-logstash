@@ -203,8 +203,8 @@ end
 logrotate_app "logstash_server" do
   path "#{node['logstash']['log_dir']}/*.log"
   frequency "daily"
-  rotate "7"
-  maxsize "500M"
+  rotate "0"
+  maxsize "100M"
   options node['logstash']['server']['logrotate']['options']
   create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
 end
