@@ -16,6 +16,16 @@ if node['logstash']['agent']['install_zeromq']
   end
 end
 
+if node['platform_family'] == "debian" and node['platform_version'].to_f <= 10.04
+  apt_repository "git-ppa" do
+    uri "http://ppa.launchpad.net/git-core/ppa/ubuntu"
+    distribution node['lsb']['codename']
+    components ["main"]
+    keyserver "keyserver.ubuntu.com"
+    key "E1DF1F24"
+    action :add
+  end
+end
 package 'git'
 
 basedir = node['logstash']['basedir'] + '/beaver'
@@ -195,12 +205,14 @@ else
   end
 end
 
-logrotate_app 'logstash_beaver' do
-  cookbook 'logrotate'
-  path log_file
-  frequency 'daily'
-  postrotate node['logstash']['beaver']['logrotate']['postrotate']
-  options node['logstash']['beaver']['logrotate']['options']
-  rotate 30
-  create "0640 #{node['logstash']['user']} #{node['logstash']['group']}"
+unless node.recipes.include?(node['logstash']['beaver']['server_recipe'])
+  logrotate_app "logstash_beaver" do
+    cookbook "logrotate"
+    path log_file
+    frequency "daily"
+    postrotate node['logstash']['beaver']['logrotate']['postrotate']
+    options node['logstash']['beaver']['logrotate']['options']
+    rotate 30
+    create "0640 #{node['logstash']['user']} #{node['logstash']['group']}"
+  end
 end
