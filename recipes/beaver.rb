@@ -137,8 +137,8 @@ template conf_file do
   owner node['logstash']['user']
   group node['logstash']['group']
   variables(
-            conf: conf,
-            files: files
+            :conf => conf,
+            :files => files
   )
   notifies :restart, 'service[logstash_beaver]'
 end
@@ -161,17 +161,17 @@ if use_upstart
     mode '0644'
     source 'logstash_beaver.conf.erb'
     variables(
-              cmd: cmd,
-              group: node['logstash']['supervisor_gid'],
-              user: node['logstash']['user'],
-              log: log_file,
-              supports_setuid: supports_setuid
+              :cmd => cmd,
+              :group => node['logstash']['supervisor_gid'],
+              :user => node['logstash']['user'],
+              :log => log_file,
+              :supports_setuid => supports_setuid
               )
     notifies :restart, 'service[logstash_beaver]'
   end
 
   service 'logstash_beaver' do
-    supports restart: true, reload: false
+    supports :restart => true, :reload => false
     action [:enable, :start]
     provider Chef::Provider::Service::Upstart
   end
@@ -180,17 +180,17 @@ else
     mode '0755'
     source 'init-beaver.erb'
     variables(
-              cmd: cmd,
-              pid_file: pid_file,
-              user: node['logstash']['user'],
-              log: log_file,
-              platform: node['platform']
+              :cmd => cmd,
+              :pid_file => pid_file,
+              :user => node['logstash']['user'],
+              :log => log_file,
+              :platform => node['platform']
               )
     notifies :restart, 'service[logstash_beaver]'
   end
 
   service 'logstash_beaver' do
-    supports restart: true, reload: false, status: true
+    supports :restart => true, :reload => false, :status => true
     action [:enable, :start]
   end
 end

@@ -78,7 +78,7 @@ node['logstash']['patterns'].each do |file, hash|
     source 'patterns.erb'
     owner node['logstash']['user']
     group node['logstash']['group']
-    variables(patterns: hash)
+    variables(:patterns => hash)
     mode '0644'
     notifies :restart, service_resource
   end
@@ -115,8 +115,8 @@ template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['conf
   group node['logstash']['group']
   mode '0644'
   variables(
-          logstash_server_ip: logstash_server_ip,
-          patterns_dir: patterns_dir)
+          :logstash_server_ip => logstash_server_ip,
+          :patterns_dir => patterns_dir)
   notifies :restart, service_resource
   only_if { node['logstash']['agent']['config_file'] }
 end
@@ -190,17 +190,17 @@ elsif node['logstash']['agent']['init_method'] == 'native'
       group 'root'
       mode '0774'
       variables(
-        config_file: node['logstash']['agent']['config_dir'],
-        home: node['logstash']['agent']['home'],
-        log_file: node['logstash']['agent']['log_file'],
-        name: 'agent',
-        max_heap: node['logstash']['agent']['xmx'],
-        min_heap: node['logstash']['agent']['xms']
+        :config_file => node['logstash']['agent']['config_dir'],
+        :home => node['logstash']['agent']['home'],
+        :log_file => node['logstash']['agent']['log_file'],
+        :name => 'agent',
+        :max_heap => node['logstash']['agent']['xmx'],
+        :min_heap => node['logstash']['agent']['xms']
       )
     end
 
     service 'logstash_agent' do
-      supports restart: true, reload: true, status: true
+      supports :restart => true, :reload => true, :status => true
       action :enable
     end
   end
