@@ -21,24 +21,28 @@ def load_current_resource
   @java_home = new_resource.java_home
   @ls_user = new_resource.user
   @ls_group = new_resource.group
-  @ls_useropts = new_resource.user_opts
-  @do_symlink = new_resource.auto_symlink
+  @ls_useropts = new_resource.user_opts.clone
   @instance_dir = "#{@base_directory}/#{new_resource.name}"
   @updated = false
 end
 
 action :create do
 
+  ls_homedir = @ls_useropts[:homedir]
+  ls_uid = @ls_useropts[:uid]
+  ls_gid = @ls_useropts[:gid]
+
   ur = user @ls_user do
-    home @ls_useropts[:homedir]
+    home ls_homedir
     system true
     action :create
     manage_home true
-    uid @ls_useropts[:uid]
+    uid ls_uid
   end
   set_updated(ur.updated_by_last_action?)
 
   gr = group @ls_group do
+    gid ls_gid
     members @ls_user
     append true
     system true
@@ -62,7 +66,7 @@ action :create do
   set_updated(idr.updated_by_last_action?)
 
   %w{bin etc lib log tmp etc/conf.d etc/patterns}.each do |ldir|
-    r = directory "#{@instance_dir}/ldir" do
+    r = directory "#{@instance_dir}/#{ldir}" do
       action :create
       mode '0755'
       owner @ls_user
@@ -72,18 +76,21 @@ action :create do
   end
 
   if @install_type == "jar"
-    rfr = remote_file "#{@instance_dir}/lib/logstash-#{@version}.jar" do
+    ls_source_url = @source_url
+    ls_version = @version
+    ls_checksum = @checksum
+    rfr = remote_file "#{@instance_dir}/lib/logstash-#{ls_version}.jar" do
       owner 'root'
       group 'root'
       mode '0755'
-      source @source_url
-      checksum @checksum
+      source ls_source_url
+      checksum ls_checksum
     end
     set_updated(rfr.updated_by_last_action?)
 
     lr = link "#{@instance_dir}/lib/logstash.jar" do
-      to "#{@instance_dir}/lib/logstash-#{@version}.jar"
-      not_if { @do_symlink }
+      to "#{@instance_dir}/lib/logstash-#{ls_version}.jar"
+      only_if { new_resource.auto_symlink }
     end
     set_updated(lr.updated_by_last_action?)
   elsif @install_type == "source"
@@ -117,11 +124,13 @@ action :create do
     set_updated(er.updated_by_last_action?)
     lr = link "#{@instance_dir}/lib/logstash.jar" do
       to "#{@instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
+      only_if { new_resource.auto_symlink }
     end
     set_updated(lr.updated_by_last_action?)
   else
     Chef::Application.fatal!("Unknown install type: #{@install_type}")
   end
+  new_resource.updated_by_last_action(@updated)
 end
 
 private
