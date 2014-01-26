@@ -116,7 +116,7 @@ node['logstash']['patterns'].each do |file, hash|
     source 'patterns.erb'
     owner node['logstash']['user']
     group node['logstash']['group']
-    variables(patterns: hash)
+    variables(:patterns => hash)
     mode '0644'
     notifies :restart, service_resource
   end
@@ -138,11 +138,11 @@ template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['co
   group node['logstash']['group']
   mode '0644'
   variables(
-            graphite_server_ip: graphite_server_ip,
-            es_server_ip: es_server_ip,
-            enable_embedded_es: node['logstash']['server']['enable_embedded_es'],
-            es_cluster: node['logstash']['elasticsearch_cluster'],
-            patterns_dir: patterns_dir
+            :graphite_server_ip => graphite_server_ip,
+            :es_server_ip => es_server_ip,
+            :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
+            :es_cluster => node['logstash']['elasticsearch_cluster'],
+            :patterns_dir => patterns_dir
             )
   notifies :restart, service_resource
   action :create
@@ -213,17 +213,17 @@ services.each do |type|
         owner 'root'
         group 'root'
         mode '0774'
-        variables(config_file: node['logstash']['server']['config_dir'],
-                  home: node['logstash']['server']['home'],
-                  name: type,
-                  log_file: node['logstash']['server']['log_file'],
-                  max_heap: node['logstash']['server']['xmx'],
-                  min_heap: node['logstash']['server']['xms']
+        variables(:config_file => node['logstash']['server']['config_dir'],
+                  :home => node['logstash']['server']['home'],
+                  :name => type,
+                  :log_file => node['logstash']['server']['log_file'],
+                  :max_heap => node['logstash']['server']['xmx'],
+                  :min_heap => node['logstash']['server']['xms']
                   )
       end
 
       service "logstash_#{type}" do
-        supports restart: true, reload: true, status: true
+        supports :restart => true, :reload => true, :status => true
         action [:enable, :start]
       end
     end
