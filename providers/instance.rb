@@ -22,7 +22,7 @@ def load_current_resource
   @ls_user = new_resource.user
   @ls_group = new_resource.group
   @ls_useropts = new_resource.user_opts.clone
-  @instance_dir = "#{@base_directory}/#{new_resource.name}"
+  @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
   @updated = false
 end
 
@@ -79,7 +79,9 @@ action :create do
     ls_source_url = @source_url
     ls_version = @version
     ls_checksum = @checksum
-    rfr = remote_file "#{@instance_dir}/lib/logstash-#{ls_version}.jar" do
+    ls_instance_dir = @instance_dir
+
+    rfr = remote_file "#{ls_instance_dir}/lib/logstash-#{ls_version}.jar" do
       owner 'root'
       group 'root'
       mode '0755'
@@ -88,8 +90,8 @@ action :create do
     end
     set_updated(rfr.updated_by_last_action?)
 
-    lr = link "#{@instance_dir}/lib/logstash.jar" do
-      to "#{@instance_dir}/lib/logstash-#{ls_version}.jar"
+    lr = link "#{ls_instance_dir}/lib/logstash.jar" do
+      to "#{ls_instance_dir}/lib/logstash-#{ls_version}.jar"
       only_if { new_resource.auto_symlink }
     end
     set_updated(lr.updated_by_last_action?)
