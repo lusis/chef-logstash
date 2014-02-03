@@ -5,6 +5,7 @@
 log_level = :info
 
 chef_run_list = %w[
+        java::default
         logstash::server
         logstash::agent
 ]
@@ -77,8 +78,8 @@ Vagrant.configure('2') do |config|
   # Common Settings
   config.omnibus.chef_version = 'latest'
   config.vm.hostname = 'logstash'
-  config.vm.network 'forwarded_port', guest: 9292, host: 9292
-  config.vm.network 'forwarded_port', guest: 9200, host: 9200
+  config.vm.network 'forwarded_port', guest: 9292, host: 8292
+  config.vm.network 'forwarded_port', guest: 9200, host: 8200
   config.vm.provider :virtualbox do |vb|
     vb.customize ['modifyvm', :id, '--memory', '1024']
   end
