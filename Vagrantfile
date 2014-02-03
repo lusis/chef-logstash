@@ -5,6 +5,7 @@
 log_level = :info
 
 chef_run_list = %w[
+        java::default
         logstash::server
         logstash::agent
 ]

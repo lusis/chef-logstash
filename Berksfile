@@ -3,6 +3,7 @@
 metadata
 
 cookbook 'rabbitmq', git: 'git://github.com/opscode-cookbooks/rabbitmq.git'
+cookbook 'java'
 
 group :test do
   cookbook 'minitest-handler', git: 'git://github.com/btm/minitest-handler-cookbook.git'
