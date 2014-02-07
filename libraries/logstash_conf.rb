@@ -49,8 +49,16 @@ class Erubis::RubyEvaluator::LogstashConf
       result << '      ' + name.to_s + ' {'
       result << '        ' + key_value_to_str('patterns_dir', patterns_dir) if patterns_dir_plugins.include?(name.to_s) && !patterns_dir.nil? && !hash.key?('patterns_dir')
       hash.sort.each do |k, v|
-#        next if k == 'type' and type_to_condition
-        result << '        ' + key_value_to_str(k, v)
+        #        next if k == 'type' and type_to_condition
+        if v.kind_of?(Mash) && k == 'codec' && v.has_key?('multiline')
+          result << "        codec => multiline {"
+          v['multiline'].sort.each do |km, vm|
+            result << '          ' + key_value_to_str(km, vm)
+          end
+          result << "        }"
+        else
+          result << '        ' + key_value_to_str(k, v)
+        end
       end
       result << '      }'
 #      result << '  }' if hash.has_key?('type') and type_to_condition
