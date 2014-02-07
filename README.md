@@ -170,6 +170,10 @@ It is not recommended that you use this outside of basic testing. This is for se
   - Kibana2 (Ruby version): https://github.com/realityforge/chef-kibana
   - Kibana3 (HTML/JS version): https://github.com/lusis/chef-kibana
 
+## Redis
+The follwing cookbook can be used to setup Redis: https://github.com/brianbianco/redisio
+
+
 ## Beaver (alternative to Logstash Agent)
 
 * `node['logstash']['beaver']['repo']` - URL or repository to install
