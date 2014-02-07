@@ -171,7 +171,7 @@ It is not recommended that you use this outside of basic testing. This is for se
   - Kibana3 (HTML/JS version): https://github.com/lusis/chef-kibana
 
 ## Redis
-The follwing cookbook can be used to setup Redis: https://github.com/brianbianco/redisio
+The following cookbook can be used to setup Redis: https://github.com/brianbianco/redisio
 
 
 ## Beaver (alternative to Logstash Agent)
