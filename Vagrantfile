@@ -6,7 +6,6 @@ log_level = :info
 
 chef_run_list = %w[
         logstash::server
-        logstash::agent
 ]
 #        curl::default
 #        minitest-handler::default
@@ -67,7 +66,8 @@ chef_json = {
             enable_embedded_es: true,
             config_templates: ['apache'],
             config_templates_variables: { apache: { type: 'apache' } },
-            web: { enable: true }
+            web: { enable: true },
+            install_method: 'repo'
         }
     }
 }
