@@ -86,6 +86,8 @@ if node['logstash']['server']['install_method'] == 'jar'
     to "#{node['logstash']['server']['home']}/lib/logstash-#{node['logstash']['server']['version']}.jar"
     notifies :restart, service_resource
   end
+elsif node['logstash']['server']['install_method'] == 'repo'
+    include_recipe 'logstash::repoinstall'
 else
   include_recipe 'logstash::source'
 
