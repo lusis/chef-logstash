@@ -6,7 +6,6 @@
 #
 include_recipe 'java::default'
 include_recipe 'logstash::default'
-include_recipe 'yum::default'
 
 if node['logstash']['agent']['init_method'] == 'runit'
   include_recipe 'runit'
