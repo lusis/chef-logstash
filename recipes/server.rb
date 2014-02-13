@@ -21,7 +21,9 @@ if node['logstash']['install_zeromq']
   node['logstash']['zeromq_packages'].each { |p| package p }
 end
 
-if node['logstash']['server']['init_method'] == 'runit'
+if node['logstash']['server']['install_method'] == 'repo'
+  service_resource = 'service[logstash]'
+elsif node['logstash']['server']['init_method'] == 'runit'
   include_recipe 'runit'
   service_resource = 'runit_service[logstash_server]'
 else
@@ -100,11 +102,13 @@ else
   end
 end
 
-directory "#{node['logstash']['server']['home']}/etc/conf.d" do
-  action :create
-  mode '0755'
-  owner node['logstash']['user']
-  group node['logstash']['group']
+if node['logstash']['server']['install_method'] != 'repo'
+	directory "#{node['logstash']['server']['home']}/etc/conf.d" do
+	  action :create
+	  mode '0755'
+	  owner node['logstash']['user']
+	  group node['logstash']['group']
+	end
 end
 
 directory patterns_dir do
@@ -174,72 +178,80 @@ unless node['logstash']['server']['config_templates'].empty? || node['logstash']
   end
 end
 
-services = ['server']
-services << 'web' if node['logstash']['server']['web']['enable']
-
-services.each do |type|
-  if node['logstash']['server']['init_method'] == 'runit'
-    runit_service("logstash_#{type}")
-  elsif node['logstash']['server']['init_method'] == 'native'
-    if platform_family? 'debian'
-      if node['platform_version'] >= '12.04'
-        template "/etc/init/logstash_#{type}.conf" do
-          mode '0644'
-          source "logstash_#{type}.conf.erb"
-        end
-
-        service "logstash_#{type}" do
-          provider Chef::Provider::Service::Upstart
-          action [:enable, :start]
-        end
-      else
-        Chef::Log.fatal("Please set node['logstash']['server']['init_method'] to 'runit' for #{node['platform_version']}")
-      end
-
-    elsif platform_family? 'fedora' && node['platform_version'] >= '15'
-      execute 'reload-systemd' do
-        command 'systemctl --system daemon-reload'
-        action :nothing
-      end
-
-      template '/etc/systemd/system/logstash_server.service' do
-        source 'logstash_server.service.erb'
-        owner 'root'
-        group 'root'
-        mode  '0755'
-        notifies :run, 'execute[reload-systemd]', :immediately
-        notifies :restart, 'service[logstash_server]', :delayed
-      end
-
-      service 'logstash_server' do
-        service_name 'logstash_server.service'
-        provider Chef::Provider::Service::Systemd
-        action [:enable, :start]
-      end
-
-    elsif platform_family? 'rhel', 'fedora'
-      template "/etc/init.d/logstash_#{type}" do
-        source "init.logstash_#{type}.erb"
-        owner 'root'
-        group 'root'
-        mode '0774'
-        variables(:config_file => node['logstash']['server']['config_dir'],
-                  :home => node['logstash']['server']['home'],
-                  :name => type,
-                  :log_file => node['logstash']['server']['log_file'],
-                  :max_heap => node['logstash']['server']['xmx'],
-                  :min_heap => node['logstash']['server']['xms']
-                  )
-      end
-
-      service "logstash_#{type}" do
+if node['logstash']['server']['install_method'] != 'repo'
+	services = ['server']
+	services << 'web' if node['logstash']['server']['web']['enable']
+	
+	services.each do |type|
+	  if node['logstash']['server']['init_method'] == 'runit'
+	    runit_service("logstash_#{type}")
+	  elsif node['logstash']['server']['init_method'] == 'native'
+	    if platform_family? 'debian'
+	      if node['platform_version'] >= '12.04'
+	        template "/etc/init/logstash_#{type}.conf" do
+	          mode '0644'
+	          source "logstash_#{type}.conf.erb"
+	        end
+	
+	        service "logstash_#{type}" do
+	          provider Chef::Provider::Service::Upstart
+	          action [:enable, :start]
+	        end
+	      else
+	        Chef::Log.fatal("Please set node['logstash']['server']['init_method'] to 'runit' for #{node['platform_version']}")
+	      end
+	
+	    elsif platform_family? 'fedora' && node['platform_version'] >= '15'
+	      execute 'reload-systemd' do
+	        command 'systemctl --system daemon-reload'
+	        action :nothing
+	      end
+	
+	      template '/etc/systemd/system/logstash_server.service' do
+	        source 'logstash_server.service.erb'
+	        owner 'root'
+	        group 'root'
+	        mode  '0755'
+	        notifies :run, 'execute[reload-systemd]', :immediately
+	        notifies :restart, 'service[logstash_server]', :delayed
+	      end
+	
+	      service 'logstash_server' do
+	        service_name 'logstash_server.service'
+	        provider Chef::Provider::Service::Systemd
+	        action [:enable, :start]
+	      end
+	
+	    elsif platform_family? 'rhel', 'fedora'
+	      template "/etc/init.d/logstash_#{type}" do
+	        source "init.logstash_#{type}.erb"
+	        owner 'root'
+	        group 'root'
+	        mode '0774'
+	        variables(:config_file => node['logstash']['server']['config_dir'],
+	                  :home => node['logstash']['server']['home'],
+	                  :name => type,
+	                  :log_file => node['logstash']['server']['log_file'],
+	                  :max_heap => node['logstash']['server']['xmx'],
+	                  :min_heap => node['logstash']['server']['xms']
+	                  )
+	      end
+	
+	      service "logstash_#{type}" do
+	        supports :restart => true, :reload => true, :status => true
+	        action [:enable, :start]
+	      end
+	    end
+	  else
+	    Chef::Log.fatal("Unsupported init method: #{node['logstash']['server']['init_method']}")
+	  end
+	end
+else
+    service "logstash" do
+        service_name 'logstash'
         supports :restart => true, :reload => true, :status => true
         action [:enable, :start]
-      end
     end
-  else
-    Chef::Log.fatal("Unsupported init method: #{node['logstash']['server']['init_method']}")
-  end
 end
 
 logrotate_app 'logstash_server' do
