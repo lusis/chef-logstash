@@ -55,22 +55,24 @@ else
 end
 
 # Create directory for logstash
-directory node['logstash']['server']['home'] do
-  action :create
-  mode '0755'
-  owner node['logstash']['user']
-  group node['logstash']['group']
+if node['logstash']['server']['install_method'] != 'repo'
+	directory node['logstash']['server']['home'] do
+	  action :create
+	  mode '0755'
+	  owner node['logstash']['user']
+	  group node['logstash']['group']
+	end
+	
+	%w{bin etc lib log tmp }.each do |ldir|
+	  directory "#{node['logstash']['server']['home']}/#{ldir}" do
+	    action :create
+	    mode '0755'
+	    owner node['logstash']['user']
+	    group node['logstash']['group']
+	  end
+	end
 end
-
-%w{bin etc lib log tmp }.each do |ldir|
-  directory "#{node['logstash']['server']['home']}/#{ldir}" do
-    action :create
-    mode '0755'
-    owner node['logstash']['user']
-    group node['logstash']['group']
-  end
-end
-
+	
 # installation
 if node['logstash']['server']['install_method'] == 'jar'
   remote_file "#{node['logstash']['server']['home']}/lib/logstash-#{node['logstash']['server']['version']}.jar" do
@@ -133,7 +135,13 @@ directory log_dir do
   recursive true
 end
 
-template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{node['logstash']['server']['config_file']}" do
+if node['logstash']['server']['install_method'] == 'repo'
+    config_dir = "#{node['logstash']['server']['config_dir']}"
+else
+    config_dir = "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}"
+end
+
+template "#{config_dir}/#{node['logstash']['server']['config_file']}" do
   source node['logstash']['server']['base_config']
   cookbook node['logstash']['server']['base_config_cookbook']
   owner node['logstash']['user']
@@ -153,7 +161,7 @@ end
 
 unless node['logstash']['server']['config_templates'].empty? || node['logstash']['server']['config_templates'].nil?
   node['logstash']['server']['config_templates'].each do |config_template|
-    template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{config_template}.conf" do
+    template "#{config_dir}/#{config_template}.conf" do
       source "#{config_template}.conf.erb"
       cookbook node['logstash']['server']['config_templates_cookbook']
       owner node['logstash']['user']

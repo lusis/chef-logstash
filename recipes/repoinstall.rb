@@ -18,12 +18,8 @@ when "centos","redhat","rhel"
         baseurl "http://packages.elasticsearch.org/logstash/1.3/centos"
         gpgkey "http://packages.elasticsearch.org/GPG-KEY-elasticsearch"
         action :create
-
+    end
 end
-
-
-
-
 
 package 'logstash' do
     action :install

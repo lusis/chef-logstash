@@ -67,7 +67,10 @@ chef_json = {
             config_templates: ['apache'],
             config_templates_variables: { apache: { type: 'apache' } },
             web: { enable: true },
-            install_method: 'repo'
+            install_method: 'repo',
+            init_method: 'native',
+            patterns_dir: '/etc/logstash/patterns',
+            config_dir: '/etc/logstash/conf.d'
         }
     }
 }
