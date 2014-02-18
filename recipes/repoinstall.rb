@@ -1,22 +1,23 @@
 # Encoding: utf-8
 include_recipe 'java'
 
+
 case node[:platform]
 when "debian","ubuntu"
     include_recipe 'apt'
     apt_repository "logstash" do
-        uri "http://packages.elasticsearch.org/logstash/1.3/debian"
-        distribution "stable"
-        components ["main"]
-        key "http://packages.elasticsearch.org/GPG-KEY-elasticsearch"
+        uri node['logstash']['repo']['apt']['url']
+        distribution node['logstash']['repo']['apt']['distro']
+        components node['logstash']['repo']['apt']['components']
+        key node['logstash']['repo']['apt']['gpgkey']
         action :add
     end
 when "centos","redhat","rhel"
     include_recipe 'yum'
     yum_repository "logstash" do
-        description "logstash repository"
-        baseurl "http://packages.elasticsearch.org/logstash/1.3/centos"
-        gpgkey "http://packages.elasticsearch.org/GPG-KEY-elasticsearch"
+        description node['logstash']['repo']['yum']['description']
+        baseurl node['logstash']['repo']['yum']['url']
+        gpgkey node['logstash']['repo']['yum']['gpgkey']
         action :create
     end
 end
