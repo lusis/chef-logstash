@@ -12,7 +12,7 @@ export PIDFILE="$PIDDIR/<%= @name %>.pid"
 export LS_HOME="<%= @home %>"
 LS_USER="<%= node['logstash']['user'] %>"
 export JAVA_OPTS="-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=$LS_HOME/tmp/"
-BIN_SCRIPT="/usr/bin/env java $JAVA_OPTS -jar $LS_HOME/lib/logstash.jar web -a <%= node['logstash']['server']['web']['address'] + '-p' + node['logstash']['server']['web']['port'] %> 2>&1 &  echo \$! > $PIDFILE"
+BIN_SCRIPT="/usr/bin/env java $JAVA_OPTS -jar $LS_HOME/lib/logstash.jar web -a <%= node['logstash']['server']['web']['address'] + ' -p' + node['logstash']['server']['web']['port'] %> 2>&1 &  echo \$! > $PIDFILE"
 
 if [ -f /etc/init.d/functions ] ; then
   . /etc/init.d/functions
