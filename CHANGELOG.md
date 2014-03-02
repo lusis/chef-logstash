@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of chef-logstash.
 
+## 0.7.7
+* Support for new beaver config [#239](https://github.com/lusis/chef-logstash/pull/239)
+* Support for multiline codec [#240](https://github.com/lusis/chef-logstash/pull/240)
+* Parameterize /var/lib/logstash [#242](https://github.com/lusis/chef-logstash/pull/242)
+* Fix parameter spacing option [#244](https://github.com/lusis/chef-logstash/pull/244)
+
 ## 0.7.6:
 * introduced more testing
 ** Strainer: rubocop, knife test, foodcritic, chefspec
