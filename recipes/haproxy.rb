@@ -17,7 +17,8 @@ directory "#{node['logstash']['server']['home']}/apache_logs" do
   group node['logstash']['group']
 end
 
-link '/var/lib/logstash/apache_logs' do
+apache_logs = "#{node['logstash']['homedir']}/apache_logs"
+link apache_logs do
   to "#{node['logstash']['server']['home']}/apache_logs"
 end
 

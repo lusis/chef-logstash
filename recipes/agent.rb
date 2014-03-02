@@ -53,7 +53,7 @@ end
     group node['logstash']['group']
   end
 
-  link "/var/lib/logstash/#{ldir}" do
+  link "#{node['logstash']['homedir']}/#{ldir}" do
     to "#{node['logstash']['agent']['home']}/#{ldir}"
   end
 end

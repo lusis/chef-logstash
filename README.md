@@ -31,6 +31,7 @@ Attributes
 
 ## Default
 
+* `node['logstash']['homedir']` - the home directory of the logstash user
 * `node['logstash']['basedir']` - the base directory for all the
   Logstash components
 * `node['logstash']['user']` - the owner for all Logstash components
