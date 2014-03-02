@@ -4,7 +4,6 @@
 # Recipe:: zero_mq_repo
 #
 #
-include_recipe 'java::default'
 include_recipe 'yum::default'
 
 major_version = node['platform_version'].split('.').first.to_i
