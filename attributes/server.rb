@@ -1,9 +1,9 @@
 # Encoding: utf-8
-default['logstash']['server']['version'] = '1.3.2'
+default['logstash']['server']['version'] = '1.3.3'
 default['logstash']['server']['home'] = "#{node['logstash']['basedir']}/server"
 default['logstash']['server']['log_file'] = '/var/log/logstash/server.log'
-default['logstash']['server']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.3.2-flatjar.jar'
-default['logstash']['server']['checksum'] = '6a6a6e55efd14a182560af8143883eace1936afb11d59d0c35ce4ed5a5576a18'
+default['logstash']['server']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.3.3-flatjar.jar'
+default['logstash']['server']['checksum'] = 'a83503bd2aa32e1554b98f812d0b411fbc5f7b6b21cebb48b7d344474f2dfc6d'
 default['logstash']['server']['install_method'] = 'jar' # Either `source` or `jar`
 default['logstash']['server']['patterns_dir'] = 'etc/patterns'
 default['logstash']['server']['config_dir'] = 'etc/conf.d'
