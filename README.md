@@ -31,6 +31,7 @@ Attributes
 
 ## Default
 
+* `node['logstash']['homedir']` - the home directory of the logstash user
 * `node['logstash']['basedir']` - the base directory for all the
   Logstash components
 * `node['logstash']['user']` - the owner for all Logstash components
@@ -240,15 +241,28 @@ Testing
 
 ## Vagrant
 
+```
+vagrant up precise64
+```
+
 ## Strainer
 
 ```
-export COOKBOOK_PATH=`pwd`
-export BUNDLE_GEMFILE=$COOKBOOK_PATH/test/support/Gemfile
-bundle install
-bundle exec berks install
-bundle exec strainer test
+rake strainer
 ```
+
+## Test-Kitchen + ServerSpec
+
+```
+rake kitchen
+```
+
+Contributing
+========
+
+Any and all contributions are welcome.   We do ask that you test your contributions with the testing framework before you send a PR.
+
+Documentation contributions will earn you lots of hugs and kisses.
 
 Usage
 =====

@@ -1,10 +1,14 @@
+# Encoding: utf-8
 default['logstash']['basedir'] = '/opt/logstash'
 default['logstash']['user'] = 'logstash'
+default['logstash']['uid'] = nil  # set to nil to let system pick
 default['logstash']['group'] = 'logstash'
+default['logstash']['gid'] = nil  # set to nil to let system pick
 default['logstash']['supervisor_gid'] = node['logstash']['group']
 default['logstash']['pid_dir'] = '/var/run/logstash'
 default['logstash']['create_account'] = true
 default['logstash']['join_groups'] = []
+default['logstash']['homedir'] = '/var/lib/logstash'
 
 # roles/flags for various search/discovery
 default['logstash']['graphite_role'] = 'graphite_server'
@@ -21,17 +25,16 @@ default['logstash']['install_zeromq'] = false
 default['logstash']['install_rabbitmq'] = false
 
 case node['platform_family']
-when "rhel"
-  default['logstash']['zeromq_packages'] = [ "zeromq",  "zeromq-devel"]
-when "debian"
-  default['logstash']['zeromq_packages'] = [ "zeromq",  "libzmq-dev"]
+when 'rhel'
+  default['logstash']['zeromq_packages'] = %w{ zeromq zeromq-devel }
+when 'fedora'
+  default['logstash']['zeromq_packages'] = %w{ zeromq zeromq-devel }
+when 'debian'
+  default['logstash']['zeromq_packages'] = %w{ libzmq3-dbg libzmq3-dev libzmq3 }
 end
 
-
 # Logging features
-default['logstash']['logging']['rotateFrequency'] = "daily"
+default['logstash']['logging']['rotateFrequency'] = 'daily'
 default['logstash']['logging']['maxBackup'] = 10
-default['logstash']['logging']['maxSize'] = "10M"
+default['logstash']['logging']['maxSize'] = '10M'
 default['logstash']['logging']['useFileSize'] = false
-
-

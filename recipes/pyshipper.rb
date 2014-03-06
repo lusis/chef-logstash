@@ -1,3 +1,4 @@
+# Encoding: utf-8
 #
 # Author:: John E. Vincent
 # Copyright 2012, John E. Vincent
@@ -6,16 +7,16 @@
 # Recipe:: pyshipper
 #
 #
-include_recipe "build-essential"
-include_recipe "logstash::default"
-include_recipe "python::pip"
-include_recipe "git"
+include_recipe 'build-essential'
+include_recipe 'logstash::default'
+include_recipe 'python::pip'
+include_recipe 'git'
 
-package "python-dev"
+package 'python-dev'
 
 git "#{node['logstash']['basedir']}/shipper" do
-  repository "git://github.com/lusis/logstash-shipper.git"
-  reference "master"
+  repository 'git://github.com/lusis/logstash-shipper.git'
+  reference 'master'
   action :sync
 end
 

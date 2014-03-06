@@ -1,0 +1,19 @@
+AllCops:
+  Excludes:
+    - vendor
+    - test/support/**
+  Includes:
+    - Rakefile
+    - Gemfile
+    - Vagrantfile
+    - Berksfile  
+CyclomaticComplexity:
+  Enabled: false
+
+LineLength:
+  Enabled: true
+  Max: 200
+
+MethodLength:
+  Enabled: true
+  Max: 20
