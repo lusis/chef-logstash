@@ -18,6 +18,7 @@ suites:
   - name: server
     run_list:
       - recipe[apt::default]
+      - recipe[java::default]
       - recipe[logstash::server]
     attributes:
       java:
