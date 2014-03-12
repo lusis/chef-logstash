@@ -49,12 +49,12 @@ suites:
                   match:
                     - 'message'
                     - '%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}'
-                  date:
-                    match:
-                      - 'timestamp'
-                      - 'MMM  d HH:mm:ss'
-                      - 'MMM dd HH:mm:ss'
-                      - 'ISO8601'
+                date:
+                  match:
+                    - 'timestamp'
+                    - 'MMM  d HH:mm:ss'
+                    - 'MMM dd HH:mm:ss'
+                    - 'ISO8601'
         server:
           enable_embedded_es: true
           web:
