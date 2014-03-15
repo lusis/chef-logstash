@@ -4,8 +4,10 @@ default['logstash']['user'] = 'logstash'
 default['logstash']['uid'] = nil  # set to nil to let system pick
 default['logstash']['group'] = 'logstash'
 default['logstash']['gid'] = nil  # set to nil to let system pick
-default['logstash']['default_version'] = '1.3.2'
-default['logstash']['default_checksum'] = '6a6a6e55efd14a182560af8143883eace1936afb11d59d0c35ce4ed5a5576a18'
+default['logstash']['default_version'] = '1.4.0.rc1'
+default['logstash']['default_checksum'] = 'b015fa130d589af957c9a48e6f59754f5c0954835abf44bd013547a6b6520e59'
+default['logstash']['default_source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.4.0.rc1.tar.gz'
+default['logstash']['default_install_type'] = 'tarball'
 default['logstash']['supervisor_gid'] = node['logstash']['group']
 default['logstash']['pid_dir'] = '/var/run/logstash'
 default['logstash']['create_account'] = true
@@ -40,3 +42,4 @@ default['logstash']['logging']['rotateFrequency'] = 'daily'
 default['logstash']['logging']['maxBackup'] = 10
 default['logstash']['logging']['maxSize'] = '10M'
 default['logstash']['logging']['useFileSize'] = false
+

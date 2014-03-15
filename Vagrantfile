@@ -7,7 +7,6 @@ log_level = :info
 chef_run_list = %w[
         java::default
         logstash::server
-        logstash::agent
 ]
 #        curl::default
 #        minitest-handler::default
@@ -88,6 +87,9 @@ Vagrant.configure('2') do |config|
   end
 
   config.vm.define :precise64 do |dist_config|
+    if Vagrant.has_plugin?("vagrant-cachier")
+      dist_config.cache.scope = :box
+    end
     dist_config.vm.box       = 'opscode-ubuntu-12.04'
     dist_config.vm.box_url   = 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04_provisionerless.box'
 

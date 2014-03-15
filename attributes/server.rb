@@ -1,25 +1,27 @@
 # Encoding: utf-8
-default['logstash']['server']['version'] = '1.3.3'
-default['logstash']['server']['home'] = "#{node['logstash']['basedir']}/server"
-default['logstash']['server']['log_file'] = '/var/log/logstash/server.log'
-default['logstash']['server']['source_url'] = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.3.3-flatjar.jar'
-default['logstash']['server']['checksum'] = 'a83503bd2aa32e1554b98f812d0b411fbc5f7b6b21cebb48b7d344474f2dfc6d'
-default['logstash']['server']['install_method'] = 'jar' # Either `source` or `jar`
-default['logstash']['server']['patterns_dir'] = 'etc/patterns'
-default['logstash']['server']['config_dir'] = 'etc/conf.d'
-default['logstash']['server']['config_file'] = 'logstash.conf'
+default['logstash']['server']['name']           = 'server'
+default['logstash']['server']['home']           = "/opt/logstash/#{node['logstash']['server']['name']}"
+default['logstash']['server']['version']        = '1.4.0.rc1'
+default['logstash']['server']['source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.4.0.rc1.tar.gz'
+default['logstash']['server']['checksum']       = 'b015fa130d589af957c9a48e6f59754f5c0954835abf44bd013547a6b6520e59'
+default['logstash']['server']['install_method'] = 'tarball'
+default['logstash']['server']['config_file']    = 'logstash.conf'
+default['logstash']['server']['log_file']       = 'server.log'
+default['logstash']['server']['base_config']    = 'server.conf.erb' # set blank if don't want data driven config
+
+default['logstash']['server']['xms']        = '1024M'
+default['logstash']['server']['xmx']        = '1024M'
+default['logstash']['server']['java_opts']  = ''
+default['logstash']['server']['gc_opts']    = '-XX:+UseParallelOldGC'
+default['logstash']['server']['ipv4_only']  = false
+default['logstash']['server']['debug']      = false
+default['logstash']['server']['workers']    = 1
+default['logstash']['server']['patterns']   = []
+
+default['logstash']['server']['base_config_cookbook'] = 'logstash'
 default['logstash']['server']['config_templates'] = []
 default['logstash']['server']['config_templates_cookbook'] = 'logstash'
 default['logstash']['server']['config_templates_variables'] = {}
-default['logstash']['server']['base_config'] = 'server.conf.erb' # set blank if don't want data driven config
-default['logstash']['server']['base_config_cookbook'] = 'logstash'
-default['logstash']['server']['xms'] = '1024M'
-default['logstash']['server']['xmx'] = '1024M'
-default['logstash']['server']['java_opts'] = ''
-default['logstash']['server']['gc_opts'] = '-XX:+UseParallelOldGC'
-default['logstash']['server']['ipv4_only'] = false
-default['logstash']['server']['debug'] = false
-default['logstash']['server']['workers'] = 1
 
 # allow control over the upstart config
 default['logstash']['server']['upstart_with_sudo'] = false

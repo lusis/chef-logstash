@@ -10,29 +10,26 @@
 #
 #
 
-include_recipe 'logstash::default'
-include_recipe 'logrotate'
+# install logstash 'server'
+logstash_instance node['logstash']['server']['name'] do
+  base_directory    node['logstash']['server']['basedir']
+  version           node['logstash']['server']['version']
+  checksum          node['logstash']['server']['checksum']
+  source_url        node['logstash']['server']['source_url']
+  install_type      node['logstash']['server']['install_type']
+  user              node['logstash']['user']
+  group             node['logstash']['group']
+end
 
+
+# check for rabbit / zero install
 include_recipe 'rabbitmq' if node['logstash']['install_rabbitmq']
-
 if node['logstash']['install_zeromq']
   include_recipe 'logstash::zero_mq_repo'
   node['logstash']['zeromq_packages'].each { |p| package p }
 end
 
-if node['logstash']['server']['init_method'] == 'runit'
-  include_recipe 'runit'
-  service_resource = 'runit_service[logstash_server]'
-else
-  service_resource = 'service[logstash_server]'
-end
-
-if node['logstash']['server']['patterns_dir'][0] == '/'
-  patterns_dir = node['logstash']['server']['patterns_dir']
-else
-  patterns_dir = node['logstash']['server']['home'] + '/' + node['logstash']['server']['patterns_dir']
-end
-
+# fix search if chef solo
 if Chef::Config[:solo]
   es_server_ip = node['logstash']['elasticsearch_ip']
   graphite_server_ip = node['logstash']['graphite_ip']
@@ -53,63 +50,9 @@ else
   end
 end
 
-# Create directory for logstash
-directory node['logstash']['server']['home'] do
-  action :create
-  mode '0755'
-  owner node['logstash']['user']
-  group node['logstash']['group']
-end
-
-%w{bin etc lib log tmp }.each do |ldir|
-  directory "#{node['logstash']['server']['home']}/#{ldir}" do
-    action :create
-    mode '0755'
-    owner node['logstash']['user']
-    group node['logstash']['group']
-  end
-end
-
-# installation
-if node['logstash']['server']['install_method'] == 'jar'
-  remote_file "#{node['logstash']['server']['home']}/lib/logstash-#{node['logstash']['server']['version']}.jar" do
-    owner 'root'
-    group 'root'
-    mode '0755'
-    source node['logstash']['server']['source_url']
-    checksum node['logstash']['server']['checksum']
-    action :create_if_missing
-  end
-
-  link "#{node['logstash']['server']['home']}/lib/logstash.jar" do
-    to "#{node['logstash']['server']['home']}/lib/logstash-#{node['logstash']['server']['version']}.jar"
-    notifies :restart, service_resource
-  end
-else
-  include_recipe 'logstash::source'
-
-  logstash_version = node['logstash']['source']['sha'] || "v#{node['logstash']['server']['version']}"
-  link "#{node['logstash']['server']['home']}/lib/logstash.jar" do
-    to "#{node['logstash']['basedir']}/source/build/logstash-#{logstash_version}-monolithic.jar"
-    notifies :restart, service_resource
-  end
-end
-
-directory "#{node['logstash']['server']['home']}/etc/conf.d" do
-  action :create
-  mode '0755'
-  owner node['logstash']['user']
-  group node['logstash']['group']
-end
-
-directory patterns_dir do
-  action :create
-  mode '0755'
-  owner node['logstash']['user']
-  group node['logstash']['group']
-end
-
-node['logstash']['patterns'].each do |file, hash|
+# add in any custom patterns
+patterns_dir = "#{node['logstash']['server']['home']}/patterns"
+node['logstash']['server']['patterns'].each do |file, hash|
   template_name = patterns_dir + '/' + file
   template template_name do
     source 'patterns.erb'
@@ -121,49 +64,15 @@ node['logstash']['patterns'].each do |file, hash|
   end
 end
 
-log_dir = ::File.dirname node['logstash']['server']['log_file']
-directory log_dir do
-  action :create
-  mode '0755'
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  recursive true
+# services are hard!
+if node['logstash']['server']['init_method'] == 'runit'
+  include_recipe 'runit'
+  service_resource = 'runit_service[logstash_server]'
+else
+  service_resource = 'service[logstash_server]'
 end
 
-template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{node['logstash']['server']['config_file']}" do
-  source node['logstash']['server']['base_config']
-  cookbook node['logstash']['server']['base_config_cookbook']
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  mode '0644'
-  variables(
-            :graphite_server_ip => graphite_server_ip,
-            :es_server_ip => es_server_ip,
-            :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
-            :es_cluster => node['logstash']['elasticsearch_cluster'],
-            :patterns_dir => patterns_dir
-            )
-  notifies :restart, service_resource
-  action :create
-  only_if { node['logstash']['server']['config_file'] }
-end
-
-unless node['logstash']['server']['config_templates'].empty? || node['logstash']['server']['config_templates'].nil?
-  node['logstash']['server']['config_templates'].each do |config_template|
-    template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['config_dir']}/#{config_template}.conf" do
-      source "#{config_template}.conf.erb"
-      cookbook node['logstash']['server']['config_templates_cookbook']
-      owner node['logstash']['user']
-      group node['logstash']['group']
-      mode '0644'
-      variables node['logstash']['server']['config_templates_variables'][config_template]
-      notifies :restart, service_resource
-      action :create
-    end
-  end
-end
-
-services = ['server']
+services = [node['logstash']['server']['name']]
 services << 'web' if node['logstash']['server']['web']['enable']
 
 services.each do |type|
@@ -212,12 +121,12 @@ services.each do |type|
         owner 'root'
         group 'root'
         mode '0774'
-        variables(:config_file => node['logstash']['server']['config_dir'],
-                  :home => node['logstash']['server']['home'],
-                  :name => type,
-                  :log_file => node['logstash']['server']['log_file'],
-                  :max_heap => node['logstash']['server']['xmx'],
-                  :min_heap => node['logstash']['server']['xms']
+        variables(:config_file  => node['logstash']['server']['config_dir'],
+                  :home         => node['logstash']['server']['home'],
+                  :name         => type,
+                  :log_file     => "#{node['logstash']['server']['home']/log/log_file}",
+                  :max_heap     => node['logstash']['server']['xmx'],
+                  :min_heap     => node['logstash']['server']['xms']
                   )
       end
 
@@ -231,6 +140,43 @@ services.each do |type|
   end
 end
 
+
+# config files
+template "#{node['logstash']['server']['home']}/etc/conf.d/#{node['logstash']['server']['config_file']}" do
+  source node['logstash']['server']['base_config']
+  cookbook node['logstash']['server']['base_config_cookbook']
+  owner node['logstash']['user']
+  group node['logstash']['group']
+  mode '0644'
+  variables(
+            :graphite_server_ip => graphite_server_ip,
+            :es_server_ip => es_server_ip,
+            :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
+            :es_cluster => node['logstash']['elasticsearch_cluster'],
+            :patterns_dir => patterns_dir
+            )
+  notifies :restart, service_resource
+  action :create
+  only_if { node['logstash']['server']['config_file'] }
+end
+
+unless node['logstash']['server']['config_templates'].empty? || node['logstash']['server']['config_templates'].nil?
+  node['logstash']['server']['config_templates'].each do |config_template|
+    template "#{node['logstash']['server']['home']}/etc/conf.d/#{config_template}.conf" do
+      source "#{config_template}.conf.erb"
+      cookbook node['logstash']['server']['config_templates_cookbook']
+      owner node['logstash']['user']
+      group node['logstash']['group']
+      mode '0644'
+      variables node['logstash']['server']['config_templates_variables'][config_template]
+      notifies :restart, service_resource
+      action :create
+    end
+  end
+end
+
+# set up logrotate
+include_recipe 'logrotate'
 logrotate_app 'logstash_server' do
   path "#{log_dir}/*.log"
   size node['logstash']['logging']['maxSize'] if node['logstash']['logging']['useFileSize']

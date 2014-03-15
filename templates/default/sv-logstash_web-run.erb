@@ -11,9 +11,16 @@ GC_OPTS="<%= node['logstash']['server']['gc_opts'] %>"
 
 LOGSTASH_OPTS="web -a <%= node['logstash']['server']['web']['address'] %> -p <%= node['logstash']['server']['web']['port'] %>"
 
-
-<% if ! node['logstash']['supervisor_gid'].empty? -%>
-HOME=$LOGSTASH_HOME exec chpst -u <%= node['logstash']['user'] %>:<%= node['logstash']['supervisor_gid'] %> java $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
+<% if node['logstash']['server']['install_method'] == 'tarball' -%>
+<%   if ! node['logstash']['supervisor_gid'].empty? -%>
+HOME=$LOGSTASH_HOME exec chpst -u <%= node['logstash']['user'] %>:<%= node['logstash']['supervisor_gid'] %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
+<%   else -%>
+HOME=$LOGSTASH_HOME exec chpst -u <%= node['logstash']['user'] %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
+<%   end -%>
 <% else -%>
+<%   if ! node['logstash']['supervisor_gid'].empty? -%>
+HOME=$LOGSTASH_HOME exec chpst -u <%= node['logstash']['user'] %>:<%= node['logstash']['supervisor_gid'] %> java $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
+<%   else -%>
 HOME=$LOGSTASH_HOME exec chpst -u <%= node['logstash']['user'] %> java $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
+<%   end -%>
 <% end -%>

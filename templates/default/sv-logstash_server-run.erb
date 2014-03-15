@@ -9,7 +9,7 @@ exec 2>&1
 LOGSTASH_HOME="<%= node['logstash']['server']['home'] %>"
 GC_OPTS="<%= node['logstash']['server']['gc_opts'] %>"
 JAVA_OPTS="-server -Xms<%= node['logstash']['server']['xms'] %> -Xmx<%= node['logstash']['server']['xmx'] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= node['logstash']['server']['java_opts'] %> <%= '-Djava.net.preferIPv4Stack=true' if node['logstash']['agent']['ipv4_only'] %>"
-LOGSTASH_OPTS="agent -f <%= node['logstash']['server']['config_dir'] %>"
+LOGSTASH_OPTS="agent -f <%= node['logstash']['server']['home'] %>/etc/conf.d"
 <% if node['logstash']['server']['pluginpath'] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath <%= node['logstash']['server']['pluginpath'] %>"
 <% end -%>
@@ -19,11 +19,19 @@ LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
 <% if node['logstash']['server']['log_file'] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS -l <%= node['logstash']['server']['log_file'] %>"
 <% end -%>
-<% if node['logstash']['server']['workers'] %>
+<% if node['logstash']['server']['workers'] -%>
 export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= node['logstash']['server']['workers'] %>"
-<% end %>
-<% if node['logstash']['supervisor_gid'] -%>
-HOME=$LOGSTASH_HOME exec chpst -u <%= node["logstash"]["user"] %>:<%= node["logstash"]["supervisor_gid"] %> java $JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
+<% end -%>
+<% if node['logstash']['server']['install_method'] == 'tarball' -%>
+<%    if node['logstash']['supervisor_gid'] -%>
+HOME=$LOGSTASH_HOME exec chpst -u <%= node["logstash"]["user"] %>:<%= node["logstash"]["supervisor_gid"] %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
+<%    else -%>
+HOME=$LOGSTASH_HOME exec chpst -u <%= node["logstash"]["user"] %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
+<%    end -%>
 <% else -%>
+<%    if node['logstash']['supervisor_gid'] -%>
+HOME=$LOGSTASH_HOME exec chpst -u <%= node["logstash"]["user"] %>:<%= node["logstash"]["supervisor_gid"] %> java $JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
+<%    else -%>
 HOME=$LOGSTASH_HOME exec chpst -u <%= node["logstash"]["user"] %> java $JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
+<%    end -%>
 <% end -%>

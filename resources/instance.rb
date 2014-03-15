@@ -10,10 +10,10 @@ actions :create, :delete
 default_action :create if defined?(default_action)
 
 attribute :name, :kind_of => String, :name_attribute => true
-attribute :base_directory, :kind_of => String, :default => "/opt/logstash"
-attribute :install_type, :kind_of => String, :equal_to => ["source", "jar"], :default => 'jar'
+attribute :base_directory, :kind_of => String
+attribute :install_type, :kind_of => String
 attribute :auto_symlink, :kind_of => [TrueClass, FalseClass], :default => true
-# version/checksum/source_url used by `jar` install_type
+# version/checksum/source_url used by `jar`, `tarball` install_type
 attribute :version, :kind_of => String
 attribute :checksum, :kind_of => String
 attribute :source_url, :kind_of => String
