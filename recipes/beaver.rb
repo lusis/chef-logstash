@@ -127,6 +127,8 @@ node['logstash']['beaver']['outputs'].each do |outs|
   end
 end
 
+conf['logstash_version'] = node['logstash']['server']['version'] >= '1.2' ? '1' : '0'
+
 output = outputs[0]
 log("multiple outpus detected, will consider only the first: #{output}") { level :warn } if outputs.length > 1
 cmd = "beaver  -t #{output} -c #{conf_file} -F #{format}"

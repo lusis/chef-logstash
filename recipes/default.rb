@@ -14,13 +14,21 @@ if node['logstash']['create_account']
 
   user node['logstash']['user'] do
     group node['logstash']['group']
-    home '/var/lib/logstash'
+    home node['logstash']['homedir']
     system true
     action :create
     manage_home true
     uid node['logstash']['uid']
   end
 
+else
+  directory node['logstash']['homedir'] do
+    recursive true
+    action :create
+    group node['logstash']['group']
+    owner node['logstash']['user']
+    mode '0755'
+  end
 end
 
 directory node['logstash']['basedir'] do
