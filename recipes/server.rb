@@ -11,23 +11,18 @@
 #
 
 # install logstash 'server'
+
 logstash_instance node['logstash']['server']['name'] do
   base_directory    node['logstash']['server']['basedir']
   version           node['logstash']['server']['version']
   checksum          node['logstash']['server']['checksum']
   source_url        node['logstash']['server']['source_url']
   install_type      node['logstash']['server']['install_type']
-  user              node['logstash']['user']
-  group             node['logstash']['group']
+  user              node['logstash']['server']['user']
+  group             node['logstash']['server']['group']
 end
 
-
-# check for rabbit / zero install
-include_recipe 'rabbitmq' if node['logstash']['install_rabbitmq']
-if node['logstash']['install_zeromq']
-  include_recipe 'logstash::zero_mq_repo'
-  node['logstash']['zeromq_packages'].each { |p| package p }
-end
+logstash_home = "#{node['logstash']['server']['basedir']}/#{node['logstash']['server']['name']}"
 
 # fix search if chef solo
 if Chef::Config[:solo]
@@ -50,138 +45,66 @@ else
   end
 end
 
+# services are hard!
+include_recipe 'pleaserun::default'
+service_resource = "service[logstash_#{node['logstash']['server']['name']}]"
+
+logstash_args = ['agent', '-f', "#{node['logstash']['server']['home']}/etc/conf.d/"]
+logstash_args.concat ['--pluginpath', node['logstash']['server']['pluginpath']] if node['logstash']['server']['pluginpath']
+logstash_args.concat ['-vv'] if node['logstash']['server']['debug']
+logstash_args.concat ['-l', "#{logstash_home}/log/#{node['logstash']['server']['log_file']}"] if node['logstash']['server']['log_file']
+logstash_args.concat ['-w', node['logstash']['server']['workers'].to_s ] if node['logstash']['server']['workers']
+
+pleaserun "logstash_#{node['logstash']['server']['name']}" do
+  name        "logstash_#{node['logstash']['server']['name']}"
+  program     "#{logstash_home}/bin/logstash"
+  args        logstash_args
+  description "logstash_#{node['logstash']['server']['name']}"
+  chdir       logstash_home
+  user        node['logstash']['server']['user']
+  group       node['logstash']['server']['group']
+  action      :create
+end
+
 # add in any custom patterns
-patterns_dir = "#{node['logstash']['server']['home']}/patterns"
-node['logstash']['server']['patterns'].each do |file, hash|
-  template_name = patterns_dir + '/' + file
-  template template_name do
-    source 'patterns.erb'
-    owner node['logstash']['user']
-    group node['logstash']['group']
-    variables(:patterns => hash)
+node['logstash']['server']['patterns_templates'].each do |name, template|
+  template "#{node['logstash']['server']['home']}/patterns/#{File.basename(template)}" do
+    source "#{template}.erb"
+    cookbook node['logstash']['server']['patterns_templates_cookbook']
+    owner node['logstash']['server']['user']
+    group node['logstash']['server']['group']
     mode '0644'
     notifies :restart, service_resource
+    not_if { node['logstash']['server']['patterns_templates'].empty? }
   end
 end
 
-# services are hard!
-if node['logstash']['server']['init_method'] == 'runit'
-  include_recipe 'runit'
-  service_resource = 'runit_service[logstash_server]'
-else
-  service_resource = 'service[logstash_server]'
-end
-
-services = [node['logstash']['server']['name']]
-services << 'web' if node['logstash']['server']['web']['enable']
-
-services.each do |type|
-  if node['logstash']['server']['init_method'] == 'runit'
-    runit_service("logstash_#{type}")
-  elsif node['logstash']['server']['init_method'] == 'native'
-    if platform_family? 'debian'
-      if node['platform_version'] >= '12.04'
-        template "/etc/init/logstash_#{type}.conf" do
-          mode '0644'
-          source "logstash_#{type}.conf.erb"
-        end
-
-        service "logstash_#{type}" do
-          provider Chef::Provider::Service::Upstart
-          action [:enable, :start]
-        end
-      else
-        Chef::Log.fatal("Please set node['logstash']['server']['init_method'] to 'runit' for #{node['platform_version']}")
-      end
-
-    elsif platform_family? 'fedora' && node['platform_version'] >= '15'
-      execute 'reload-systemd' do
-        command 'systemctl --system daemon-reload'
-        action :nothing
-      end
-
-      template '/etc/systemd/system/logstash_server.service' do
-        source 'logstash_server.service.erb'
-        owner 'root'
-        group 'root'
-        mode  '0755'
-        notifies :run, 'execute[reload-systemd]', :immediately
-        notifies :restart, 'service[logstash_server]', :delayed
-      end
-
-      service 'logstash_server' do
-        service_name 'logstash_server.service'
-        provider Chef::Provider::Service::Systemd
-        action [:enable, :start]
-      end
-
-    elsif platform_family? 'rhel', 'fedora'
-      template "/etc/init.d/logstash_#{type}" do
-        source "init.logstash_#{type}.erb"
-        owner 'root'
-        group 'root'
-        mode '0774'
-        variables(:config_file  => node['logstash']['server']['config_dir'],
-                  :home         => node['logstash']['server']['home'],
-                  :name         => type,
-                  :log_file     => "#{node['logstash']['server']['home']/log/log_file}",
-                  :max_heap     => node['logstash']['server']['xmx'],
-                  :min_heap     => node['logstash']['server']['xms']
-                  )
-      end
-
-      service "logstash_#{type}" do
-        supports :restart => true, :reload => true, :status => true
-        action [:enable, :start]
-      end
-    end
-  else
-    Chef::Log.fatal("Unsupported init method: #{node['logstash']['server']['init_method']}")
+node['logstash']['server']['config_templates'].each do |name, template|
+  template "#{node['logstash']['server']['home']}/etc/conf.d/#{File.basename(template)}" do
+    source "#{template}.erb"
+    cookbook node['logstash']['server']['config_templates_cookbook']
+    owner node['logstash']['server']['user']
+    group node['logstash']['server']['group']
+    mode '0644'
+    # variables node['logstash']['server']['config_templates_variables'][config_template]
+    notifies :restart, service_resource
+    action :create
+    not_if { node['logstash']['server']['config_templates'].empty? }
   end
 end
 
-
-# config files
-template "#{node['logstash']['server']['home']}/etc/conf.d/#{node['logstash']['server']['config_file']}" do
-  source node['logstash']['server']['base_config']
-  cookbook node['logstash']['server']['base_config_cookbook']
-  owner node['logstash']['user']
-  group node['logstash']['group']
-  mode '0644'
-  variables(
-            :graphite_server_ip => graphite_server_ip,
-            :es_server_ip => es_server_ip,
-            :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
-            :es_cluster => node['logstash']['elasticsearch_cluster'],
-            :patterns_dir => patterns_dir
-            )
-  notifies :restart, service_resource
-  action :create
-  only_if { node['logstash']['server']['config_file'] }
-end
-
-unless node['logstash']['server']['config_templates'].empty? || node['logstash']['server']['config_templates'].nil?
-  node['logstash']['server']['config_templates'].each do |config_template|
-    template "#{node['logstash']['server']['home']}/etc/conf.d/#{config_template}.conf" do
-      source "#{config_template}.conf.erb"
-      cookbook node['logstash']['server']['config_templates_cookbook']
-      owner node['logstash']['user']
-      group node['logstash']['group']
-      mode '0644'
-      variables node['logstash']['server']['config_templates_variables'][config_template]
-      notifies :restart, service_resource
-      action :create
-    end
-  end
+service "logstash_#{node['logstash']['server']['name']}" do
+  supports restart: true, reload: true, start: true, enable: true
+  action  [:enable, :start]
 end
 
 # set up logrotate
 include_recipe 'logrotate'
-logrotate_app 'logstash_server' do
+logrotate_app "logstash_#{node['logstash']['server']['name']}" do
   path "#{log_dir}/*.log"
-  size node['logstash']['logging']['maxSize'] if node['logstash']['logging']['useFileSize']
-  frequency node['logstash']['logging']['rotateFrequency']
-  rotate node['logstash']['logging']['maxBackup']
+  size node['logstash']['server']['logging']['maxSize'] if node['logstash']['server']['logging']['useFileSize']
+  frequency node['logstash']['server']['logging']['rotateFrequency']
+  rotate node['logstash']['server']['logging']['maxBackup']
   options node['logstash']['server']['logrotate']['options']
-  create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
+  create "664 #{node['logstash']['server']['user']} #{node['logstash']['server']['group']}"
 end

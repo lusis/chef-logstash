@@ -17,3 +17,12 @@ LineLength:
 MethodLength:
   Enabled: true
   Max: 20
+
+AccessorMethodName:
+  Enabled: false
+
+ClassAndModuleChildren:
+  Enabled: false
+
+UselessAssignment:
+  Enabled: false

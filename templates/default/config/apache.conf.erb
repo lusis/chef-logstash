@@ -7,8 +7,8 @@ filter {
     date {
       match => [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z", "dd/MMM/yyyy:HH:mm:ss" ]
     }
-    geoip {
-      source => "clientip"
-    }
+#    geoip {
+#      source => "clientip"
+#    }
   }
 }

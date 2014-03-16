@@ -1,7 +1,7 @@
 language: ruby
 gemfile:
-  - test/support/Gemfile
 rvm:
   - 1.9.3
-install: BUNDLE_GEMFILE=$PWD/test/support/Gemfile bundle install
-script: BUNDLE_GEMFILE=$PWD/test/support/Gemfile bundle exec rake strainer
+install: bundle install
+script: bundle exec berks install
+script: bundle exec rake style spec

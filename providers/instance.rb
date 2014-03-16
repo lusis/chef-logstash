@@ -1,4 +1,4 @@
-#
+# Encoding: utf-8
 # Cookbook Name:: logstash
 # Provider:: instance
 # Author:: John E. Vincent
@@ -11,11 +11,11 @@ require 'chef/mixin/language'
 include Chef::Mixin::ShellOut
 
 def load_current_resource
-  @base_directory = new_resource.base_directory || node['logstash']['basedir']
-  @install_type = new_resource.install_type || node['logstash']['default_install_type']
-  @version = new_resource.version || node['logstash']['default_version']
-  @checksum = new_resource.checksum || node['logstash']['default_checksum']
-  @source_url = new_resource.source_url || node['logstash']['default_source_url']
+  @base_directory = new_resource.base_directory || node['logstash']['default']['basedir']
+  @install_type = new_resource.install_type || node['logstash']['default']['install_type']
+  @version = new_resource.version || node['logstash']['default']['version']
+  @checksum = new_resource.checksum || node['logstash']['default']['checksum']
+  @source_url = new_resource.source_url || node['logstash']['default']['source_url']
   @repo = new_resource.repo
   @sha = new_resource.sha
   @java_home = new_resource.java_home
@@ -23,7 +23,6 @@ def load_current_resource
   @group = new_resource.group
   @useropts = new_resource.user_opts.clone
   @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
-  @updated = false
   @name = new_resource.name
 end
 
@@ -38,7 +37,6 @@ action :create do
   ls_basedir = @base_directory
   ls_user = @user
   ls_group = @group
-  ls_dir = @dir
   ls_name = @name
 
   ur = user ls_user do
@@ -48,7 +46,7 @@ action :create do
     manage_home true
     uid ls_uid
   end
-  set_updated(ur.updated_by_last_action?)
+  new_resource.updated_by_last_action(ur.updated_by_last_action?)
 
   gr = group ls_group do
     gid ls_gid
@@ -56,11 +54,11 @@ action :create do
     append true
     system true
   end
-  set_updated(gr.updated_by_last_action?)
+  new_resource.updated_by_last_action(gr.updated_by_last_action?)
 
   case @install_type
   when 'tarball'
-    @run_context.include_recipe "ark::default"
+    @run_context.include_recipe 'ark::default'
     arkit = ark ls_name do
       url       ls_source_url
       checksum  ls_checksum
@@ -68,29 +66,29 @@ action :create do
       group     ls_group
       mode      0755
       version   ls_version
-      path      "#{ls_basedir}"
+      path      ls_basedir
       action    :put
     end
-    set_updated(arkit.updated_by_last_action?)
+    new_resource.updated_by_last_action(arkit.updated_by_last_action?)
 
-    %w{bin etc lib log tmp etc/conf.d patterns}.each do |ldir|
+    %w(bin etc lib log tmp etc/conf.d patterns).each do |ldir|
       r = directory "#{@instance_dir}/#{ldir}" do
         action :create
         mode '0755'
         owner ls_user
         group ls_group
       end
-      set_updated(r.updated_by_last_action?)
+      new_resource.updated_by_last_action(r.updated_by_last_action?)
     end
 
-  when "jar"
+  when 'jar'
     bdr = directory @base_directory do
       action :create
       mode '0755'
       owner ls_user
       group ls_group
     end
-    set_updated(bdr.updated_by_last_action?)
+    new_resource.updated_by_last_action(bdr.updated_by_last_action?)
 
     idr = directory @instance_dir do
       action :create
@@ -98,16 +96,16 @@ action :create do
       owner ls_user
       group ls_group
     end
-    set_updated(idr.updated_by_last_action?)
+    new_resource.updated_by_last_action(idr.updated_by_last_action?)
 
-    %w{bin etc lib log tmp etc/conf.d patterns}.each do |ldir|
+    %w(bin etc lib log tmp etc/conf.d patterns).each do |ldir|
       r = directory "#{@instance_dir}/#{ldir}" do
         action :create
         mode '0755'
         owner ls_user
         group ls_group
       end
-      set_updated(r.updated_by_last_action?)
+      new_resource.updated_by_last_action(r.updated_by_last_action?)
     end
 
     rfr = remote_file "#{ls_instance_dir}/lib/logstash-#{ls_version}.jar" do
@@ -117,22 +115,22 @@ action :create do
       source ls_source_url
       checksum ls_checksum
     end
-    set_updated(rfr.updated_by_last_action?)
+    new_resource.updated_by_last_action(rfr.updated_by_last_action?)
 
     lr = link "#{ls_instance_dir}/lib/logstash.jar" do
       to "#{ls_instance_dir}/lib/logstash-#{ls_version}.jar"
       only_if { new_resource.auto_symlink }
     end
-    set_updated(lr.updated_by_last_action?)
+    new_resource.updated_by_last_action(lr.updated_by_last_action?)
 
-  when "source"
+  when 'source'
     bdr = directory @base_directory do
       action :create
       mode '0755'
       owner ls_user
       group ls_group
     end
-    set_updated(bdr.updated_by_last_action?)
+    new_resource.updated_by_last_action(bdr.updated_by_last_action?)
 
     idr = directory @instance_dir do
       action :create
@@ -140,16 +138,16 @@ action :create do
       owner ls_user
       group ls_group
     end
-    set_updated(idr.updated_by_last_action?)
+    new_resource.updated_by_last_action(idr.updated_by_last_action?)
 
-    %w{bin etc lib log tmp etc/conf.d patterns}.each do |ldir|
+    %w(bin etc lib log tmp etc/conf.d patterns).each do |ldir|
       r = directory "#{@instance_dir}/#{ldir}" do
         action :create
         mode '0755'
         owner ls_user
         group ls_group
       end
-      set_updated(r.updated_by_last_action?)
+      new_resource.updated_by_last_action(r.updated_by_last_action?)
     end
 
     sd = directory "#{@instance_dir}/source" do
@@ -158,7 +156,7 @@ action :create do
       group ls_group
       mode '0755'
     end
-    set_updated(sd.updated_by_last_action?)
+    new_resource.updated_by_last_action(sd.updated_by_last_action?)
 
     gr = git "#{@instance_dir}/source" do
       repository @repo
@@ -167,31 +165,25 @@ action :create do
       user ls_user
       group ls_group
     end
-    set_updated(gr.updated_by_last_action?)
+    new_resource.updated_by_last_action(gr.updated_by_last_action?)
 
     source_version = @sha || "v#{@version}"
-    er = execute "build-logstash" do
+    er = execute 'build-logstash' do
       cwd "#{@instance_dir}/source"
-      environment(:JAVA_HOME => @java_home)
+      environment(JAVA_HOME: @java_home)
       user ls_user # Changed from root cause building as root...WHA?
       command "make clean && make VERSION=#{source_version} jar"
       action :run
       creates "#{@instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
       not_if "test -f #{@instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
     end
-    set_updated(er.updated_by_last_action?)
+    new_resource.updated_by_last_action(er.updated_by_last_action?)
     lr = link "#{@instance_dir}/lib/logstash.jar" do
       to "#{@instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
       only_if { new_resource.auto_symlink }
     end
-    set_updated(lr.updated_by_last_action?)
+    new_resource.updated_by_last_action(lr.updated_by_last_action?)
   else
     Chef::Application.fatal!("Unknown install type: #{@install_type}")
   end
-  new_resource.updated_by_last_action(@updated)
-end
-
-private
-def set_updated(u)
-  @updated = u unless @updated == true
 end

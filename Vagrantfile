@@ -4,10 +4,10 @@
 
 log_level = :info
 
-chef_run_list = %w[
-        java::default
-        logstash::server
-]
+chef_run_list = %w(
+  java::default
+  logstash::server
+)
 #        curl::default
 #        minitest-handler::default
 #        logstash::server
@@ -17,57 +17,57 @@ chef_run_list = %w[
 #      ]
 
 chef_json = {
-    java: {
-      jdk_version: '7'
+  java: {
+    jdk_version: '7'
+  },
+  kibana: {
+    webserver_listen: '0.0.0.0',
+    webserver: 'nginx',
+    install_type: 'file'
     },
-    kibana: {
-        webserver_listen: '0.0.0.0',
-        webserver: 'nginx',
-        install_type: 'file'
-    },
-    logstash: {
-        supervisor_gid: 'adm',
-        agent: {
-            server_ipaddress: '127.0.0.1',
-            xms: '128m',
-            xmx: '128m',
-            enable_embedded_es: false,
-            inputs: [
-              file: {
-                type: 'syslog',
-                path: ['/var/log/syslog', '/var/log/messages'],
-                start_position: 'beginning'
-              }
+  logstash: {
+    supervisor_gid: 'adm',
+    agent: {
+      server_ipaddress: '127.0.0.1',
+      xms: '128m',
+      xmx: '128m',
+      enable_embedded_es: false,
+      inputs: [
+        file: {
+          type: 'syslog',
+          path: ['/var/log/syslog', '/var/log/messages'],
+          start_position: 'beginning'
+        }
             ],
-            filters: [
-              {
-                condition: 'if [type] == "syslog"',
-                block: {
-                  grok: {
-                    match: [
-                      'message',
-                      "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
-                    ]
-                  },
-                  date: {
-                    match: [
-                      'timestamp',
-                      'MMM  d HH:mm:ss',
-                      'MMM dd HH:mm:ss',
-                      'ISO8601'
-                    ]
-                  }
-                }
+      filters: [
+        {
+          condition: 'if [type] == "syslog"',
+          block: {
+            grok: {
+              match: [
+                'message',
+                "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
+              ]
+            },
+            date: {
+              match: [
+                'timestamp',
+                'MMM  d HH:mm:ss',
+                'MMM dd HH:mm:ss',
+                'ISO8601'
+              ]
             }
+          }
+      }
           ]
         },
-        server: {
-            xms: '128m',
-            xmx: '128m',
-            enable_embedded_es: true,
-            config_templates: ['apache'],
-            config_templates_variables: { apache: { type: 'apache' } },
-            web: { enable: true }
+    server: {
+      xms: '128m',
+      xmx: '128m',
+      enable_embedded_es: true,
+      config_templates: ['apache'],
+      config_templates_variables: { apache: { type: 'apache' } },
+      web: { enable: true }
         }
     }
 }
@@ -87,9 +87,7 @@ Vagrant.configure('2') do |config|
   end
 
   config.vm.define :precise64 do |dist_config|
-    if Vagrant.has_plugin?("vagrant-cachier")
-      dist_config.cache.scope = :box
-    end
+    dist_config.cache.scope  = :box if Vagrant.has_plugin?('vagrant-cachier')
     dist_config.vm.box       = 'opscode-ubuntu-12.04'
     dist_config.vm.box_url   = 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04_provisionerless.box'
 

@@ -7,14 +7,14 @@ description      'Installs/Configures logstash'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '0.8.1'
 
-%w{ ubuntu debian redhat centos scientific amazon fedora }.each do |os|
+%w(ubuntu debian redhat centos scientific amazon fedora).each do |os|
   supports os
 end
 
-%w{ build-essential runit git ant java logrotate rabbitmq yum python ark }.each do |ckbk|
+%w(build-essential runit git ant java logrotate rabbitmq yum python ark pleaserun).each do |ckbk|
   depends ckbk
 end
 
-%w{ yum apt }.each do |ckbk|
+%w(yum apt).each do |ckbk|
   recommends ckbk
 end

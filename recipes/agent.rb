@@ -44,7 +44,7 @@ directory node['logstash']['agent']['home'] do
   group node['logstash']['group']
 end
 
-%w{bin etc lib tmp log}.each do |ldir|
+%w(bin etc lib tmp log).each do |ldir|
   directory "#{node['logstash']['agent']['home']}/#{ldir}" do
     action :create
     mode '0755'
@@ -71,17 +71,17 @@ directory patterns_dir do
   group node['logstash']['group']
 end
 
-node['logstash']['patterns'].each do |file, hash|
-  template_name = patterns_dir + '/' + file
-  template template_name do
-    source 'patterns.erb'
-    owner node['logstash']['user']
-    group node['logstash']['group']
-    variables(:patterns => hash)
-    mode '0644'
-    notifies :restart, service_resource
-  end
-end
+# node['logstash']['patterns'].each do |file, hash|
+#  template_name = patterns_dir + '/' + file
+#  template template_name do
+#    source 'patterns.erb'
+#    owner node['logstash']['user']
+#    group node['logstash']['group']
+#    variables(patterns: hash)
+#    mode '0644'
+#    notifies :restart, service_resource
+#  end
+# end
 
 if node['logstash']['agent']['install_method'] == 'jar'
   remote_file "#{node['logstash']['agent']['home']}/lib/logstash-#{node['logstash']['agent']['version']}.jar" do
@@ -114,8 +114,8 @@ template "#{node['logstash']['agent']['home']}/#{node['logstash']['agent']['conf
   group node['logstash']['group']
   mode '0644'
   variables(
-          :logstash_server_ip => logstash_server_ip,
-          :patterns_dir => patterns_dir)
+          logstash_server_ip: logstash_server_ip,
+          patterns_dir: patterns_dir)
   notifies :restart, service_resource
   only_if { node['logstash']['agent']['config_file'] }
 end
@@ -162,7 +162,7 @@ elsif node['logstash']['agent']['init_method'] == 'native'
     else
       Chef::Log.fatal("Please set node['logstash']['agent']['init_method'] to 'runit' for #{node['platform_version']}")
     end
-  elsif platform_family? 'fedora' && node['platform_version'] >= '15'
+  elsif platform_family?('fedora') && node['platform_version'] >= '15'
     execute 'reload-systemd' do
       command 'systemctl --system daemon-reload'
       action :nothing
@@ -189,17 +189,17 @@ elsif node['logstash']['agent']['init_method'] == 'native'
       group 'root'
       mode '0774'
       variables(
-        :config_file => node['logstash']['agent']['config_dir'],
-        :home => node['logstash']['agent']['home'],
-        :log_file => node['logstash']['agent']['log_file'],
-        :name => 'agent',
-        :max_heap => node['logstash']['agent']['xmx'],
-        :min_heap => node['logstash']['agent']['xms']
+        config_file: node['logstash']['agent']['config_dir'],
+        home: node['logstash']['agent']['home'],
+        log_file: node['logstash']['agent']['log_file'],
+        name: 'agent',
+        max_heap: node['logstash']['agent']['xmx'],
+        min_heap: node['logstash']['agent']['xms']
       )
     end
 
     service 'logstash_agent' do
-      supports :restart => true, :reload => true, :status => true
+      supports restart: true, reload: true, status: true
       action :enable
     end
   end

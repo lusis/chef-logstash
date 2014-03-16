@@ -26,7 +26,7 @@ end
 execute 'build-logstash' do
   cwd "#{node['logstash']['basedir']}/source"
   environment(
-    :JAVA_HOME => node['logstash']['source']['java_home']
+    JAVA_HOME: node['logstash']['source']['java_home']
   )
   user 'root'
   # This variant is useful for troubleshooting stupid environment problems
