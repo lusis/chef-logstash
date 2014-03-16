@@ -11,11 +11,11 @@ require 'chef/mixin/language'
 include Chef::Mixin::ShellOut
 
 def load_current_resource
-  @base_directory = new_resource.base_directory || node['logstash']['default']['basedir']
-  @install_type = new_resource.install_type || node['logstash']['default']['install_type']
-  @version = new_resource.version || node['logstash']['default']['version']
-  @checksum = new_resource.checksum || node['logstash']['default']['checksum']
-  @source_url = new_resource.source_url || node['logstash']['default']['source_url']
+  @base_directory = new_resource.base_directory || node['logstash']['instance']['default']['basedir']
+  @install_type = new_resource.install_type || node['logstash']['instance']['default']['install_type']
+  @version = new_resource.version || node['logstash']['instance']['default']['version']
+  @checksum = new_resource.checksum || node['logstash']['instance']['default']['checksum']
+  @source_url = new_resource.source_url || node['logstash']['instance']['default']['source_url']
   @repo = new_resource.repo
   @sha = new_resource.sha
   @java_home = new_resource.java_home
@@ -24,6 +24,39 @@ def load_current_resource
   @useropts = new_resource.user_opts.clone
   @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
   @name = new_resource.name
+end
+
+action :delete do
+  ls_instance_dir = @instance_dir
+  ls_name  = @name
+  ls_user  = @user
+  ls_group = @group
+
+  idr = directory ls_instance_dir do
+    recursive   true
+    action      :delete
+  end
+  new_resource.updated_by_last_action(idr.updated_by_last_action?)
+
+  delete_user  = true
+  delete_group = true
+  node['logstash']['instance'].each do |instance, contents|
+    next if instance == ls_name
+    delete_user  = false if node['logstash']['instance'][instance]['user']
+    delete_group = false if node['logstash']['instance'][instance]['group']
+  end
+
+  ur = user ls_user do
+    action :remove
+    only_if { delete_user }
+  end
+  new_resource.updated_by_last_action(ur.updated_by_last_action?)
+
+  gr = group ls_group do
+    action :remove
+    only_if { delete_group }
+  end
+  new_resource.updated_by_last_action(gr.updated_by_last_action?)
 end
 
 action :create do
@@ -38,6 +71,7 @@ action :create do
   ls_user = @user
   ls_group = @group
   ls_name = @name
+  ls_instance_dir = @instance_dir
 
   ur = user ls_user do
     home ls_homedir
@@ -72,7 +106,7 @@ action :create do
     new_resource.updated_by_last_action(arkit.updated_by_last_action?)
 
     %w(bin etc lib log tmp etc/conf.d patterns).each do |ldir|
-      r = directory "#{@instance_dir}/#{ldir}" do
+      r = directory "#{ls_instance_dir}/#{ldir}" do
         action :create
         mode '0755'
         owner ls_user
@@ -90,7 +124,7 @@ action :create do
     end
     new_resource.updated_by_last_action(bdr.updated_by_last_action?)
 
-    idr = directory @instance_dir do
+    idr = directory ls_instance_dir do
       action :create
       mode '0755'
       owner ls_user
@@ -99,7 +133,7 @@ action :create do
     new_resource.updated_by_last_action(idr.updated_by_last_action?)
 
     %w(bin etc lib log tmp etc/conf.d patterns).each do |ldir|
-      r = directory "#{@instance_dir}/#{ldir}" do
+      r = directory "#{ls_instance_dir}/#{ldir}" do
         action :create
         mode '0755'
         owner ls_user
@@ -132,7 +166,7 @@ action :create do
     end
     new_resource.updated_by_last_action(bdr.updated_by_last_action?)
 
-    idr = directory @instance_dir do
+    idr = directory ls_instance_dir do
       action :create
       mode '0755'
       owner ls_user
@@ -141,7 +175,7 @@ action :create do
     new_resource.updated_by_last_action(idr.updated_by_last_action?)
 
     %w(bin etc lib log tmp etc/conf.d patterns).each do |ldir|
-      r = directory "#{@instance_dir}/#{ldir}" do
+      r = directory "#{ls_instance_dir}/#{ldir}" do
         action :create
         mode '0755'
         owner ls_user
@@ -150,7 +184,7 @@ action :create do
       new_resource.updated_by_last_action(r.updated_by_last_action?)
     end
 
-    sd = directory "#{@instance_dir}/source" do
+    sd = directory "#{ls_instance_dir}/source" do
       action :create
       owner ls_user
       group ls_group
@@ -158,7 +192,7 @@ action :create do
     end
     new_resource.updated_by_last_action(sd.updated_by_last_action?)
 
-    gr = git "#{@instance_dir}/source" do
+    gr = git "#{ls_instance_dir}/source" do
       repository @repo
       reference @sha
       action :sync
@@ -169,17 +203,17 @@ action :create do
 
     source_version = @sha || "v#{@version}"
     er = execute 'build-logstash' do
-      cwd "#{@instance_dir}/source"
+      cwd "#{ls_instance_dir}/source"
       environment(JAVA_HOME: @java_home)
       user ls_user # Changed from root cause building as root...WHA?
       command "make clean && make VERSION=#{source_version} jar"
       action :run
-      creates "#{@instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
-      not_if "test -f #{@instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
+      creates "#{ls_instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
+      not_if "test -f #{ls_instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
     end
     new_resource.updated_by_last_action(er.updated_by_last_action?)
-    lr = link "#{@instance_dir}/lib/logstash.jar" do
-      to "#{@instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
+    lr = link "#{ls_instance_dir}/lib/logstash.jar" do
+      to "#{ls_instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
       only_if { new_resource.auto_symlink }
     end
     new_resource.updated_by_last_action(lr.updated_by_last_action?)

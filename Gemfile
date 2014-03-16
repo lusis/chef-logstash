@@ -8,6 +8,7 @@ gem 'rubocop', '~> 0.18'
 gem 'chef', '~> 11.8'
 gem 'berkshelf', '~> 2.0'
 gem 'test-kitchen', '~> 1.1'
+gem 'kitchen-vagrant'
 gem 'serverspec', '~> 0.14'
 gem 'rake'
 
