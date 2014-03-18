@@ -1,0 +1,47 @@
+description "Logstash"
+author "Chef"
+
+start on (filesystem and net-device-up)
+stop on runlevel [!2345]
+
+respawn
+respawn limit 5 30
+limit nofile 65550 65550
+
+chdir <%= @home %>
+
+<% unless node['logstash']['instance'][@name]['upstart_with_sudo'] -%>
+setuid <%= node['logstash']['instance'][@name]['user'] %>
+  <% unless node['logstash']['instance'][@name]['supervisor_gid'].to_s.empty? -%>
+setgid <%= node['logstash']['instance'][@name]['supervisor_gid'] %>
+  <% end -%>
+<% end -%>
+
+script
+  export LOGSTASH_HOME="<%= @home %>"
+  export HOME=$LOGSTASH_HOME
+  export GC_OPTS="<%= node['logstash']['instance'][@name]['gc_opts'] %>"
+  export JAVA_OPTS="-server -Xms<%= node['logstash']['instance'][@name]['xms'] %> -Xmx<%= node['logstash']['instance'][@name]['xmx'] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= node['logstash']['instance'][@name]['java_opts'] %> <%= '-Djava.net.preferIPv4Stack=true' if node['logstash']['instance'][@name]['ipv4_only'] %>"
+  export LOGSTASH_OPTS="agent -f <%= node['logstash']['instance'][@name]['home'] %>/etc/conf.d"
+  <% if node['logstash']['instance'][@name]['pluginpath'] -%>
+  export LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath <%= node['logstash']['instance'][@name]['pluginpath'] %>"
+  <% end -%>
+  <% if node['logstash']['instance'][@name]['workers'] %>
+  export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= node['logstash']['instance'][@name]['workers'] %>"
+  <% end %>
+  <% if node['logstash']['instance'][@name]['log_file'] -%>
+  export LOGSTASH_OPTS="$LOGSTASH_OPTS -l <%= @home %>/log/<%= node['logstash']['instance'][@name]['log_file'] %>"
+  <% end -%>
+  <% if node['logstash']['instance'][@name]['debug'] -%>
+  export LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
+  <% end -%>
+  export OPTS="$JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS"
+
+  <% if node['logstash']['instance'][@name]['upstart_with_sudo'] -%>
+  exec sudo -u <%= node['logstash']['instance'][@name]['user'] %> /usr/bin/java $OPTS
+  <% else -%>
+  exec /usr/bin/java $OPTS
+  <% end -%>
+end script
+
+emits logstash-server-running

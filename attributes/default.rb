@@ -22,14 +22,11 @@ default['logstash']['instance']['default']['create_account'] = true
 default['logstash']['instance']['default']['join_groups'] = []
 default['logstash']['instance']['default']['homedir'] = '/var/lib/logstash'
 
-default['logstash']['instance']['default']['name']           = 'server'
-default['logstash']['instance']['default']['home']           = "/opt/logstash/#{node['logstash']['instance']['default']['name']}"
 default['logstash']['instance']['default']['version']        = '1.4.0.rc1'
 default['logstash']['instance']['default']['source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.4.0.rc1.tar.gz'
 default['logstash']['instance']['default']['checksum']       = 'b015fa130d589af957c9a48e6f59754f5c0954835abf44bd013547a6b6520e59'
 default['logstash']['instance']['default']['install_type']   = 'tarball'
-default['logstash']['instance']['default']['log_file']       = 'server.log'
-default['logstash']['instance']['default']['base_config']    = 'server.conf.erb' # set blank if don't want data driven config
+default['logstash']['instance']['default']['log_file']       = 'logstash.log'
 
 default['logstash']['instance']['default']['xms']        = '1024M'
 default['logstash']['instance']['default']['xmx']        = '1024M'
@@ -43,6 +40,8 @@ default['logstash']['instance']['default']['patterns_templates_cookbook'] = 'log
 default['logstash']['instance']['default']['patterns_templates']          = {}
 
 default['logstash']['instance']['default']['base_config_cookbook']       = 'logstash'
+default['logstash']['instance']['default']['base_config']    = '' # set if want data driven
+
 default['logstash']['instance']['default']['config_file']                = ''
 default['logstash']['instance']['default']['config_templates']           = {}
 default['logstash']['instance']['default']['config_templates_cookbook']  = 'logstash'
@@ -51,7 +50,7 @@ default['logstash']['instance']['default']['config_templates_variables'] = {}
 # allow control over the upstart config
 default['logstash']['instance']['default']['upstart_with_sudo'] = false
 
-default['logstash']['instance']['default']['init_method'] = 'native' # native or runit
+default['logstash']['instance']['default']['init_method'] = 'native' # pleaserun or native or runit
 # roles/flags for various autoconfig/discovery components
 default['logstash']['instance']['default']['enable_embedded_es'] = true
 
@@ -63,6 +62,7 @@ default['logstash']['instance']['default']['web']['enable']  = false
 default['logstash']['instance']['default']['web']['address'] = '0.0.0.0'
 default['logstash']['instance']['default']['web']['port']    = '9292'
 
+default['logstash']['instance']['default']['logrotate']['enable']  = true
 default['logstash']['instance']['default']['logrotate']['options'] = %w(missingok notifempty compress copytruncate)
 
 # Logging features

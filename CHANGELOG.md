@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of chef-logstash.
 
+## 0.8.0
+* major refactor towards being a library cookbook
+* support for Logstash 1.4
+
 ## 0.7.7
 * Support for new beaver config [#239](https://github.com/lusis/chef-logstash/pull/239)
 * Support for multiline codec [#240](https://github.com/lusis/chef-logstash/pull/240)

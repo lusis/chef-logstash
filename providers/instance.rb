@@ -11,11 +11,13 @@ require 'chef/mixin/language'
 include Chef::Mixin::ShellOut
 
 def load_current_resource
-  @base_directory = new_resource.base_directory || node['logstash']['instance']['default']['basedir']
-  @install_type = new_resource.install_type || node['logstash']['instance']['default']['install_type']
-  @version = new_resource.version || node['logstash']['instance']['default']['version']
-  @checksum = new_resource.checksum || node['logstash']['instance']['default']['checksum']
-  @source_url = new_resource.source_url || node['logstash']['instance']['default']['source_url']
+  @name = new_resource.name || 'default'
+  @base_directory = new_resource.base_directory || node['logstash']['instance'][@name]['basedir']
+  @install_type = new_resource.install_type || node['logstash']['instance'][@name]['install_type']
+  @version = new_resource.version || node['logstash']['instance'][@name]['version']
+  @checksum = new_resource.checksum || node['logstash']['instance'][@name]['checksum']
+  @source_url = new_resource.source_url || node['logstash']['instance'][@name]['source_url']
+  @enable_logrotate = new_resource.enable_logrotate || node['logstash']['instance']['default']['enable_logrotate']
   @repo = new_resource.repo
   @sha = new_resource.sha
   @java_home = new_resource.java_home
@@ -23,7 +25,6 @@ def load_current_resource
   @group = new_resource.group
   @useropts = new_resource.user_opts.clone
   @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
-  @name = new_resource.name
 end
 
 action :delete do
@@ -72,6 +73,7 @@ action :create do
   ls_group = @group
   ls_name = @name
   ls_instance_dir = @instance_dir
+  ls_enable_logrotate = @enable_logrotate
 
   ur = user ls_user do
     home ls_homedir
@@ -219,5 +221,21 @@ action :create do
     new_resource.updated_by_last_action(lr.updated_by_last_action?)
   else
     Chef::Application.fatal!("Unknown install type: #{@install_type}")
+  end
+  logrotate(ls_name)
+
+end
+
+private
+
+def logrotate(name)
+  @run_context.include_recipe 'logrotate::default'
+  logrotate_app "logstash_#{name}" do
+    path "#{log_dir}/*.log"
+    size node['logstash']['instance'][name]['logging']['maxSize'] if node['logstash']['instance'][name]['logging']['useFileSize']
+    frequency node['logstash']['instance'][name]['logging']['rotateFrequency']
+    rotate node['logstash']['instance'][name]['logging']['maxBackup']
+    options node['logstash']['instance'][name]['logrotate']['options']
+    create "664 #{node['logstash']['instance'][name]['user']} #{node['logstash']['instance'][name]['group']}"
   end
 end

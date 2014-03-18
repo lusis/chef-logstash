@@ -31,43 +31,13 @@ chef_json = {
       server_ipaddress: '127.0.0.1',
       xms: '128m',
       xmx: '128m',
-      enable_embedded_es: false,
-      inputs: [
-        file: {
-          type: 'syslog',
-          path: ['/var/log/syslog', '/var/log/messages'],
-          start_position: 'beginning'
-        }
-            ],
-      filters: [
-        {
-          condition: 'if [type] == "syslog"',
-          block: {
-            grok: {
-              match: [
-                'message',
-                "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}"
-              ]
-            },
-            date: {
-              match: [
-                'timestamp',
-                'MMM  d HH:mm:ss',
-                'MMM dd HH:mm:ss',
-                'ISO8601'
-              ]
-            }
-          }
-      }
-          ]
-        },
+      enable_embedded_es: false
+    },
     server: {
       xms: '128m',
       xmx: '128m',
       enable_embedded_es: true,
-      config_templates: ['apache'],
-      config_templates_variables: { apache: { type: 'apache' } },
-      web: { enable: true }
+      web: { enable: false }
         }
     }
 }
