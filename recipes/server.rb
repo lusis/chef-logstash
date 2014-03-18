@@ -66,7 +66,7 @@ node['logstash']['instance'][name]['patterns_templates'].each do |template, file
     owner node['logstash']['instance'][name]['user']
     group node['logstash']['instance'][name]['group']
     mode '0644'
-    notifies :restart, service_resource
+    # notifies :restart, service_resource
     not_if { node['logstash']['instance'][name]['patterns_templates'].empty? }
   end
 end
@@ -79,16 +79,17 @@ node['logstash']['instance'][name]['config_templates'].each do |template, file|
     group node['logstash']['instance'][name]['group']
     mode '0644'
     # variables node['logstash']['instance'][name]['config_templates_variables'][config_template]
-    notifies :restart, service_resource
+    # notifies :restart, service_resource
     action :create
     not_if { node['logstash']['instance'][name]['config_templates'].empty? }
   end
 end
 
-service "logstash_#{name}" do
-  supports restart: true, reload: true, start: true, enable: true
-  action  [:enable]
-end
+# service "logstash_#{name}" do
+#  supports restart: true, reload: true, start: true, enable: true
+#  method = node['logstash']['instance'][name]['init_method']
+#  action  [:enable]
+# end
 
 # set up logrotate
 include_recipe 'logrotate'
