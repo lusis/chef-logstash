@@ -20,8 +20,6 @@ setgid <%= node['logstash']['instance'][@name]['supervisor_gid'] %>
 script
   export LOGSTASH_HOME="<%= @home %>"
   export HOME=$LOGSTASH_HOME
-  export GC_OPTS="<%= node['logstash']['instance'][@name]['gc_opts'] %>"
-  export JAVA_OPTS="-server -Xms<%= node['logstash']['instance'][@name]['xms'] %> -Xmx<%= node['logstash']['instance'][@name]['xmx'] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= node['logstash']['instance'][@name]['java_opts'] %> <%= '-Djava.net.preferIPv4Stack=true' if node['logstash']['instance'][@name]['ipv4_only'] %>"
   export LOGSTASH_OPTS="agent -f <%= node['logstash']['instance'][@name]['home'] %>/etc/conf.d"
   <% if node['logstash']['instance'][@name]['pluginpath'] -%>
   export LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath <%= node['logstash']['instance'][@name]['pluginpath'] %>"
@@ -38,9 +36,9 @@ script
   export OPTS="$JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS"
 
   <% if node['logstash']['instance'][@name]['upstart_with_sudo'] -%>
-  exec sudo -u <%= node['logstash']['instance'][@name]['user'] %> /usr/bin/java $OPTS
+  exec sudo -u <%= node['logstash']['instance'][@name]['user'] %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
   <% else -%>
-  exec /usr/bin/java $OPTS
+  exec $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
   <% end -%>
 end script
 

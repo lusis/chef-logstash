@@ -24,3 +24,4 @@ attribute :java_home, kind_of: String, default: '/usr/lib/jvm/java-6-openjdk' # 
 attribute :user, kind_of: String, default: 'logstash'
 attribute :group, kind_of: String, default: 'logstash'
 attribute :user_opts, kind_of: Hash, default: { homedir: '/var/lib/logstash', uid: nil, gid: nil }
+attribute :enable_logrotate, kind_of: [TrueClass, FalseClass]

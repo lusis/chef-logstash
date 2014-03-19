@@ -63,6 +63,7 @@ default['logstash']['instance']['default']['web']['enable']  = false
 default['logstash']['instance']['default']['web']['address'] = '0.0.0.0'
 default['logstash']['instance']['default']['web']['port']    = '9292'
 
+default['logstash']['instance']['default']['logrotate']['enable']  = true
 default['logstash']['instance']['default']['logrotate']['options'] = %w(missingok notifempty compress copytruncate)
 
 # Logging features

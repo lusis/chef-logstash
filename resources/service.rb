@@ -5,9 +5,9 @@
 # Copyright 2014, John E. Vincent
 # License:: Apache 2.0
 
-actions :create, :delete
+actions :enable, :start, :restart, :reload, :stop
 
-default_action :create if defined?(default_action)
+default_action :enable if defined?(default_action)
 
 attribute :instance, kind_of: String, name_attribute: true
 attribute :service_name, kind_of: String
