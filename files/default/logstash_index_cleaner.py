@@ -72,7 +72,7 @@ def find_expired_indices(connection, days_to_keep=None, hours_to_keep=None, sepa
     days_cutoff = utc_now_time - days_to_keep * 24 * 60 * 60 if days_to_keep is not None else None
     hours_cutoff = utc_now_time - hours_to_keep * 60 * 60 if hours_to_keep is not None else None
 
-    for index_name in sorted(set(connection.get_indices().keys())):
+    for index_name in sorted(set(connection.indices.get_indices().keys())):
         if not index_name.startswith(prefix):
             print >> out, 'Skipping index due to missing prefix {0}: {1}'.format(prefix, index_name)
             continue
@@ -138,7 +138,7 @@ def main():
 
         print 'Deleting index {0} because it was {1} older than cutoff.'.format(index_name, expiration)
 
-        deletion = connection.delete_index_if_exists(index_name)
+        deletion = connection.indices.delete_index_if_exists(index_name)
         # ES returns a dict on the format {u'acknowledged': True, u'ok': True} on success.
         if deletion.get('ok'):
             print 'Successfully deleted index: {0}'.format(index_name)
