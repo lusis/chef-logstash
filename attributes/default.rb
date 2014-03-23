@@ -36,8 +36,9 @@ default['logstash']['instance']['default']['ipv4_only']  = false
 default['logstash']['instance']['default']['debug']      = false
 default['logstash']['instance']['default']['workers']    = 1
 
-default['logstash']['instance']['default']['patterns_templates_cookbook'] = 'logstash'
-default['logstash']['instance']['default']['patterns_templates']          = {}
+default['logstash']['instance']['default']['pattern_templates_cookbook']  = 'logstash'
+default['logstash']['instance']['default']['pattern_templates']           = {}
+default['logstash']['instance']['default']['pattern_templates_variables'] = {}
 
 default['logstash']['instance']['default']['base_config_cookbook']       = 'logstash'
 default['logstash']['instance']['default']['base_config']    = '' # set if want data driven
@@ -52,7 +53,7 @@ default['logstash']['instance']['default']['upstart_with_sudo'] = false
 
 default['logstash']['instance']['default']['init_method'] = 'native' # pleaserun or native or runit
 # roles/flags for various autoconfig/discovery components
-default['logstash']['instance']['default']['enable_embedded_es'] = true
+default['logstash']['instance']['default']['enable_embedded_es'] = false
 
 default['logstash']['instance']['default']['inputs'] = []
 default['logstash']['instance']['default']['filters'] = []

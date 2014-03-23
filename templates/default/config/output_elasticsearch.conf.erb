@@ -1,0 +1,10 @@
+output {
+  elasticsearch {
+<% if @elasticsearch_ip -%>
+    host => "<%= @elasticsearch_ip %>"
+<% end -%>
+<% if @elasticsearch_embedded -%>
+    embedded => true
+<% end -%>
+  }
+}

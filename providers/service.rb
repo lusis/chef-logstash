@@ -12,15 +12,20 @@ include Chef::Mixin::ShellOut
 
 def load_current_resource
   @instance = new_resource.instance
+  if node['logstash']['instance'].key?(@instance)
+    @attributes = node['logstash']['instance'][@instance]
+  else
+    @attributes = node['logstash']['instance']['default']
+  end
   @service_name = new_resource.service_name || "logstash_#{@instance}"
-  @home = "#{node['logstash']['instance'][@instance]['basedir']}/#{@instance}"
-  @method = new_resource.method || node['logstash']['instance'][@instance]['init_method']
+  @home = "#{@attributes['basedir']}/#{@instance}"
+  @method = new_resource.method || @attributes['init_method']
   @command = new_resource.command || "#{@home}/bin/logstash"
   @args = new_resource.args || default_args
   @description = new_resource.description || @service_name
   @chdir = new_resource.chdir || @home
-  @user = new_resource.user || node['logstash']['instance'][@instance]['user']
-  @group = new_resource.group || node['logstash']['instance'][@instance]['group']
+  @user = new_resource.user || @attributes['user']
+  @group = new_resource.group || @attributes['group']
 end
 
 action :restart do
@@ -73,7 +78,7 @@ end
 
 action :enable do
   svc = svc_vars
-  Chef::Log.info("Using init method #{svc[:method]} for #{svc[:service_name]} - #{svc.inspect}")
+  Chef::Log.info("Using init method #{svc[:method]} for #{svc[:service_name]}")
   case svc[:method]
   when 'pleaserun'
     @run_context.include_recipe 'pleaserun::default'
@@ -96,7 +101,7 @@ action :enable do
   when 'native'
     if platform_family? 'debian'
       if node['platform_version'] >= '12.04'
-        if node['logstash']['instance'][svc[:name]]['install_type'] == 'tarball'
+        if @attributes['install_type'] == 'tarball'
           tp_source = 'init/binary_upstart.erb'
         else
           tp_source = 'init/java_upstart.erb'
@@ -104,7 +109,7 @@ action :enable do
         tp = template "/etc/init/#{svc[:service_name]}.conf" do
           mode      '0644'
           source    tp_source
-          variables(home: "#{node['logstash']['instance'][svc[:name]]['basedir']}/#{svc[:name]}",
+          variables(home: svc[:home],
                     name: svc[:name],
                     command: svc[:command]
                     )
@@ -148,12 +153,12 @@ action :enable do
         owner 'root'
         group 'root'
         mode '0774'
-        variables(config_file: node['logstash']['server']['config_dir'],
-                  home: node['logstash']['server']['home'],
+        variables(config_file: @attributes['config_dir'],
+                  home: svc[:home],
                   name: svc[:name],
-                  log_file: node['logstash']['server']['log_file'],
-                  max_heap: node['logstash']['server']['xmx'],
-                  min_heap: node['logstash']['server']['xms']
+                  log_file: @attributes['log_file'],
+                  max_heap: @attributes['xmx'],
+                  min_heap: @attributes['xms']
                   )
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
@@ -172,12 +177,12 @@ end
 private
 
 def default_args
-  logstash_home = "#{node['logstash']['instance'][@instance]['basedir']}/#{@instance}"
-  args      = ['agent', '-f', "#{node['logstash']['instance'][@instance]['home']}/etc/conf.d/"]
-  args.concat ['--pluginpath', node['logstash']['instance'][@instance]['pluginpath']] if node['logstash']['instance'][@instance]['pluginpath']
-  args.concat ['-vv'] if node['logstash']['instance'][@instance]['debug']
-  args.concat ['-l', "#{logstash_home}/log/#{node['logstash']['instance'][@instance]['log_file']}"] if node['logstash']['instance'][@instance]['log_file']
-  args.concat ['-w', node['logstash']['instance'][@instance]['workers'].to_s] if node['logstash']['instance'][@instance]['workers']
+  svc = svc_vars
+  args      = ['agent', '-f', "#{svc[:home]}/etc/conf.d/"]
+  args.concat ['--pluginpath', @attributes['pluginpath']] if @attributes['pluginpath']
+  args.concat ['-vv'] if @attributes['debug']
+  args.concat ['-l', "#{svc[:home]}/log/#{@attributes['log_file']}"] if @attributes['log_file']
+  args.concat ['-w', @attributes['workers'].to_s] if @attributes['workers']
   args
 end
 

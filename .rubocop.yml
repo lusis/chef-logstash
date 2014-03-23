@@ -26,3 +26,9 @@ ClassAndModuleChildren:
 
 UselessAssignment:
   Enabled: false
+
+BlockNesting:
+  Max: 4
+
+Documentation:
+  Enabled: false

@@ -1,6 +1,6 @@
 # Encoding: utf-8
 # Cookbook Name:: logstash
-# Provider:: config
+# Provider:: patterns
 # Author:: John E. Vincent
 # License:: Apache 2.0
 #
@@ -17,27 +17,27 @@ def load_current_resource
   else
     attributes = node['logstash']['instance']['default']
   end
-  @templates = new_resource.templates           || attributes['config_templates']
-  @templates_cookbook = new_resource.templates_cookbook  || attributes['config_templates_cookbook']
-  @variables = new_resource.variables           || attributes['config_templates_variables']
-  @path      = new_resource.path                || "#{attributes['basedir']}/#{@instance}/etc/conf.d"
+  @templates = new_resource.templates           || attributes['pattern_templates']
+  @variables = new_resource.variables           || attributes['pattern_templates_variables']
+  @path      = new_resource.path                || "#{attributes['basedir']}/#{@instance}/patterns"
   @owner     = new_resource.owner               || attributes['user']
   @group     = new_resource.group               || attributes['group']
   @mode      = new_resource.mode                || '0644'
+  @templates_cookbook = new_resource.templates_cookbook  || attributes['pattern_templates_cookbook']
 end
 
 action :create do
-  conf = conf_vars
+  pattern = pattern_vars
   # Chef::Log.info("config vars: #{conf.inspect}")
-  conf[:templates].each do |template, file|
-    tp = template"#{conf[:path]}/#{::File.basename(file).chomp(::File.extname(file))}" do
+  pattern[:templates].each do |template, file|
+    tp = template"#{pattern[:path]}/#{::File.basename(file).chomp(::File.extname(file))}" do
       source      file
-      cookbook    conf[:templates_cookbook]
-      owner       conf[:owner]
-      group       conf[:group]
-      mode        conf[:mode]
-      variables   conf[:variables]
-      notifies    :restart, "logstash_service[#{conf[:instance]}]"
+      cookbook    pattern[:templates_cookbook]
+      owner       pattern[:owner]
+      group       pattern[:group]
+      mode        pattern[:mode]
+      variables   pattern[:variables]
+      notifies    :restart, "logstash_service[#{pattern[:instance]}]"
       action      :create
     end
     new_resource.updated_by_last_action(tp.updated_by_last_action?)
@@ -46,8 +46,8 @@ end
 
 private
 
-def conf_vars
-  conf = {
+def pattern_vars
+  pattern = {
     instance:   @instance,
     templates:  @templates,
     variables:  @variables,
@@ -57,5 +57,5 @@ def conf_vars
     mode:       @mode,
     templates_cookbook:   @templates_cookbook
   }
-  conf
+  pattern
 end

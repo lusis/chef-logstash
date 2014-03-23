@@ -12,11 +12,16 @@ include Chef::Mixin::ShellOut
 
 def load_current_resource
   @name = new_resource.name || 'default'
-  @base_directory = new_resource.base_directory || node['logstash']['instance'][@name]['basedir']
-  @install_type = new_resource.install_type || node['logstash']['instance'][@name]['install_type']
-  @version = new_resource.version || node['logstash']['instance'][@name]['version']
-  @checksum = new_resource.checksum || node['logstash']['instance'][@name]['checksum']
-  @source_url = new_resource.source_url || node['logstash']['instance'][@name]['source_url']
+  if node['logstash']['instance'].key?(@name)
+    attributes = node['logstash']['instance'][@name]
+  else
+    attributes = node['logstash']['instance']['default']
+  end
+  @base_directory = new_resource.base_directory || attributes['basedir']
+  @install_type = new_resource.install_type || attributes['install_type']
+  @version = new_resource.version || attributes['version']
+  @checksum = new_resource.checksum || attributes['checksum']
+  @source_url = new_resource.source_url || attributes['source_url']
   @enable_logrotate = new_resource.enable_logrotate || node['logstash']['instance']['default']['enable_logrotate']
   @repo = new_resource.repo
   @sha = new_resource.sha

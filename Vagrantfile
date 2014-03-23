@@ -6,15 +6,12 @@ log_level = :info
 
 chef_run_list = %w(
   java::default
+  curl::default
   logstash::server
+  logstash::agent
 )
-#        curl::default
 #        minitest-handler::default
-#        logstash::server
-#        logstash::agent
-#        ark::default
 #        kibana::default
-#      ]
 
 chef_json = {
   java: {
@@ -24,22 +21,7 @@ chef_json = {
     webserver_listen: '0.0.0.0',
     webserver: 'nginx',
     install_type: 'file'
-    },
-  logstash: {
-    supervisor_gid: 'adm',
-    agent: {
-      server_ipaddress: '127.0.0.1',
-      xms: '128m',
-      xmx: '128m',
-      enable_embedded_es: false
-    },
-    server: {
-      xms: '128m',
-      xmx: '128m',
-      enable_embedded_es: true,
-      web: { enable: false }
-        }
-    }
+  }
 }
 
 Vagrant.configure('2') do |config|
@@ -68,7 +50,6 @@ Vagrant.configure('2') do |config|
       chef.run_list = chef_run_list
       chef.json = chef_json
       chef.run_list.unshift('apt')
-      chef.json[:logstash][:server][:init_method] = 'runit'
     end
   end
 
@@ -83,7 +64,6 @@ Vagrant.configure('2') do |config|
       chef.run_list = chef_run_list
       chef.json = chef_json
       chef.run_list.unshift('apt')
-      chef.json[:logstash][:server][:init_method] = 'runit'
     end
   end
   config.vm.define :lucid32 do |dist_config|
@@ -96,7 +76,6 @@ Vagrant.configure('2') do |config|
       chef.run_list = chef_run_list
       chef.json = chef_json
       chef.run_list.unshift('apt')
-      chef.json[:logstash][:server][:init_method] = 'runit'
     end
   end
 

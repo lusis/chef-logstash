@@ -20,7 +20,7 @@ setgid <%= node['logstash']['instance'][@name]['supervisor_gid'] %>
 script
   export LOGSTASH_HOME="<%= @home %>"
   export HOME=$LOGSTASH_HOME
-  export LOGSTASH_OPTS="agent -f <%= node['logstash']['instance'][@name]['home'] %>/etc/conf.d"
+  export LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/conf.d"
   <% if node['logstash']['instance'][@name]['pluginpath'] -%>
   export LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath <%= node['logstash']['instance'][@name]['pluginpath'] %>"
   <% end -%>
@@ -28,7 +28,7 @@ script
   export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= node['logstash']['instance'][@name]['workers'] %>"
   <% end %>
   <% if node['logstash']['instance'][@name]['log_file'] -%>
-  export LOGSTASH_OPTS="$LOGSTASH_OPTS -l <%= @home %>/log/<%= node['logstash']['instance'][@name]['log_file'] %>"
+  export LOGSTASH_OPTS="$LOGSTASH_OPTS -l $LOGSTASH_HOME/log/<%= node['logstash']['instance'][@name]['log_file'] %>"
   <% end -%>
   <% if node['logstash']['instance'][@name]['debug'] -%>
   export LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
