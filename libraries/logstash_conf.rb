@@ -93,7 +93,7 @@ class Erubis::RubyEvaluator::LogstashConf
         result << indent(indent) + segment['condition'] + ' {' if segment['condition']
         if segment['block'].kind_of?(Array)
           segment['block'].each do |plugin|
-            plugin_to_arr(plugin, patterns_dir_plugins, patterns_dir, indent)
+            result << plugin_to_arr(plugin, patterns_dir_plugins, patterns_dir, indent)
           end
         else
           result << plugin_to_arr(segment['block'], patterns_dir_plugins, patterns_dir, indent)
