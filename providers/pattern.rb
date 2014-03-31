@@ -30,7 +30,7 @@ action :create do
   pattern = pattern_vars
   # Chef::Log.info("config vars: #{conf.inspect}")
   pattern[:templates].each do |template, file|
-    tp = template"#{pattern[:path]}/#{::File.basename(file).chomp(::File.extname(file))}" do
+    tp = template "#{pattern[:path]}/#{::File.basename(file).chomp(::File.extname(file))}" do
       source      file
       cookbook    pattern[:templates_cookbook]
       owner       pattern[:owner]
