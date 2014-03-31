@@ -8,10 +8,10 @@ chef_run_list = %w(
   java::default
   curl::default
   logstash::server
-  logstash::agent
 )
-#        minitest-handler::default
-#        kibana::default
+#  logstash::agent
+#  minitest-handler::default
+#  kibana::default
 
 chef_json = {
   java: {

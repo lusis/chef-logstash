@@ -22,12 +22,19 @@ default['logstash']['instance']['default']['create_account'] = true
 default['logstash']['instance']['default']['join_groups'] = []
 default['logstash']['instance']['default']['homedir'] = '/var/lib/logstash'
 
-default['logstash']['instance']['default']['version']        = '1.4.0.rc1'
-default['logstash']['instance']['default']['source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.4.0.rc1.tar.gz'
-default['logstash']['instance']['default']['checksum']       = 'b015fa130d589af957c9a48e6f59754f5c0954835abf44bd013547a6b6520e59'
+default['logstash']['instance']['default']['version']        = '1.4.0'
+default['logstash']['instance']['default']['source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.4.0.tar.gz'
+default['logstash']['instance']['default']['checksum']       = 'ab62394bb56da10cb20ee106badf22734402b21435977ec4f9aa65257627c629'
 default['logstash']['instance']['default']['install_type']   = 'tarball'
-default['logstash']['instance']['default']['log_file']       = 'logstash.log'
 
+default['logstash']['instance']['default']['plugins']['install_type']   = 'native' # native|tarball
+default['logstash']['instance']['default']['plugins']['version']        = '1.4.0'
+default['logstash']['instance']['default']['plugins']['source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-contrib-1.4.0.tar.gz'
+default['logstash']['instance']['default']['plugins']['checksum']       = '23aa397a7832d6e3553eba8360ff5d4ccfff98aac1e4a1b8201c21755e8d77c9'
+default['logstash']['instance']['default']['plugins']['install_type']   = 'tarball'
+default['logstash']['instance']['default']['plugins']['check_if_installed']  = 'lib/logstash/filters/translate.rb'
+
+default['logstash']['instance']['default']['log_file']       = 'logstash.log'
 default['logstash']['instance']['default']['xms']        = '1024M'
 default['logstash']['instance']['default']['xmx']        = '1024M'
 default['logstash']['instance']['default']['java_opts']  = ''
