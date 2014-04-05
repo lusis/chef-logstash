@@ -13,6 +13,9 @@ tags: <%= file['tags'].join(',') %>
 <% if file.has_key?('exclude') -%>
 exclude: (<%= file['exclude'].join('|') %>)
 <% end -%>
+<% if file.has_key?('format') -%>
+format: (<%= file['format'].join('|') %>)
+<% end -%>
 <% if file.has_key?('add_field') -%>
 add_field: <%= file['add_field'].join(',') %>
 <% end -%>
