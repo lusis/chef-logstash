@@ -1,7 +1,7 @@
 # Encoding: utf-8
 require_relative 'spec_helper'
 
-describe 'logstash::source' do
+describe 'logstash::index_cleaner' do
   describe 'ubuntu' do
     let(:runner) { ChefSpec::Runner.new(::UBUNTU_OPTS) }
     let(:node) { runner.node }

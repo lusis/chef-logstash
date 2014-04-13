@@ -11,21 +11,25 @@ describe 'logstash::server' do
     end
     include_context 'stubs-common'
 
-    it 'calls the logstash_instance LWPR' do
+    it 'calls the logstash_instance LWRP' do
       expect(chef_run).to create_logstash_instance('server')
     end
 
-    it 'calls the logstash_config LWPR' do
+    it 'calls the logstash_config LWRP' do
       expect(chef_run).to create_logstash_config('server')
     end
 
-    it 'calls the logstash_pattern LWPR' do
+    it 'calls the logstash_pattern LWRP' do
       expect(chef_run).to create_logstash_pattern('server')
     end
 
-    it 'calls the logstash_instance LWPR' do
+    it 'calls the logstash_instance LWRP' do
       expect(chef_run).to enable_logstash_service('server')
       expect(chef_run).to start_logstash_service('server')
+    end
+
+    it 'calls the logstash_plugins LWRP' do
+      expect(chef_run).to create_logstash_plugins('contrib')
     end
 
   end

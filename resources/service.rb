@@ -15,6 +15,5 @@ attribute :method, kind_of: String
 attribute :command, kind_of: String
 attribute :args, kind_of: Array
 attribute :description, kind_of: String
-attribute :chdir, kind_of: String
 attribute :user, kind_of: String
 attribute :group, kind_of: String

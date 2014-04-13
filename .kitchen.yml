@@ -20,46 +20,15 @@ suites:
       - recipe[apt::default]
       - recipe[java::default]
       - recipe[logstash::server]
-      - recipe[logstash::agent]
-      - recipe[kibana::default]
     attributes:
-      java:
-        jdk_version: 7
-        oracle: 
-          accept_oracle_download_terms: true
-        install_flavor: oracle
       logstash:
-        supervisor_gid: 'adm'
-        agent:
-          server_ipaddress: 127.0.0.1
-          xms: 128m
-          xmx: 128m
-          enable_embedded_es: false
-          inputs:
-            - file:
-                type: syslog
-                path:
-                  - /var/log/syslog
-                  - /var/log/messages
-                start_position: beginning
-          filters:
-            - condition: 'if [type] == "syslog"'
-              block:
-                grok:
-                  match:
-                    - 'message'
-                    - '%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}'
-                date:
-                  match:
-                    - 'timestamp'
-                    - 'MMM  d HH:mm:ss'
-                    - 'MMM dd HH:mm:ss'
-                    - 'ISO8601'
-        server:
-          enable_embedded_es: true
-          web:
-            enabled: true
-      kibana:
-        webserver_listen: '0.0.0.0'
-        webserver: 'nginx'
-        install_type: 'file'
+        instance:
+          server:
+            config_templates:
+              input_syslog: 'config/input_syslog.conf.erb'
+              output_stdout: 'config/output_stdout.conf.erb'
+              output_elasticsearch: 'config/output_elasticsearch.conf.erb'
+            pattern_templates:
+              default: 'patterns/custom_patterns.erb'
+            elasticsearch_ip: '127.0.0.1'
+            enable_embedded_es: true

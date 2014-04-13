@@ -10,33 +10,20 @@ limit nofile 65550 65550
 
 chdir <%= @home %>
 
-<% unless node['logstash']['instance'][@name]['upstart_with_sudo'] -%>
-setuid <%= node['logstash']['instance'][@name]['user'] %>
-  <% unless node['logstash']['instance'][@name]['supervisor_gid'].to_s.empty? -%>
-setgid <%= node['logstash']['instance'][@name]['supervisor_gid'] %>
+<% unless @upstart_with_sudo -%>
+setuid <%= @user %>
+  <% unless @supervisor_gid.to_s.empty? -%>
+setgid <%= @supervisor_gid %>
   <% end -%>
 <% end -%>
 
 script
   export LOGSTASH_HOME="<%= @home %>"
   export HOME=$LOGSTASH_HOME
-  export LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/conf.d"
-  <% if node['logstash']['instance'][@name]['pluginpath'] -%>
-  export LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath <%= node['logstash']['instance'][@name]['pluginpath'] %>"
-  <% end -%>
-  <% if node['logstash']['instance'][@name]['workers'] %>
-  export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= node['logstash']['instance'][@name]['workers'] %>"
-  <% end %>
-  <% if node['logstash']['instance'][@name]['log_file'] -%>
-  export LOGSTASH_OPTS="$LOGSTASH_OPTS -l $LOGSTASH_HOME/log/<%= node['logstash']['instance'][@name]['log_file'] %>"
-  <% end -%>
-  <% if node['logstash']['instance'][@name]['debug'] -%>
-  export LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
-  <% end -%>
-  export OPTS="$JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS"
+  export LOGSTASH_OPTS="<%= @args %>"
 
-  <% if node['logstash']['instance'][@name]['upstart_with_sudo'] -%>
-  exec sudo -u <%= node['logstash']['instance'][@name]['user'] %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
+  <% if @upstart_with_sudo -%>
+  exec sudo -u <%= @user %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
   <% else -%>
   exec $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
   <% end -%>

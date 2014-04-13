@@ -2,12 +2,14 @@
 require_relative 'spec_helper'
 
 describe 'logstash::pyshipper' do
-  before { logstash_stubs }
   describe 'ubuntu' do
-    before do
-      @chef_run = ::ChefSpec::Runner.new ::UBUNTU_OPTS
-      @chef_run.converge 'logstash::pyshipper'
+    let(:runner) { ChefSpec::Runner.new(::UBUNTU_OPTS) }
+    let(:node) { runner.node }
+    let(:chef_run) do
+      # runner.node.set['logstash'] ...
+      runner.converge(described_recipe)
     end
+    include_context 'stubs-common'
 
     it 'writes some chefspec code' do
       pending 'todo'

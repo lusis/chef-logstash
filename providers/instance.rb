@@ -14,84 +14,56 @@ def load_current_resource
   @name = new_resource.name || 'default'
   if node['logstash']['instance'].key?(@name)
     attributes = node['logstash']['instance'][@name]
+    defaults = node['logstash']['instance']['default']
   else
     attributes = node['logstash']['instance']['default']
   end
-  @base_directory = new_resource.base_directory || attributes['basedir']
-  @install_type = new_resource.install_type || attributes['install_type']
-  @version = new_resource.version || attributes['version']
-  @checksum = new_resource.checksum || attributes['checksum']
-  @source_url = new_resource.source_url || attributes['source_url']
-  @enable_logrotate = new_resource.enable_logrotate || node['logstash']['instance']['default']['enable_logrotate']
+  @base_directory = new_resource.base_directory || attributes['basedir'] || defaults['basedir']
+  @install_type = new_resource.install_type || attributes['install_type'] || defaults['install_type']
+  @version = new_resource.version || attributes['version'] || defaults['version']
+  @checksum = new_resource.checksum || attributes['checksum'] || defaults['checksum']
+  @source_url = new_resource.source_url || attributes['source_url'] || defaults['source_url']
+  @enable_logrotate = new_resource.enable_logrotate || attributes['enable_logrotate'] || defaults['enable_logrotate']
   @repo = new_resource.repo
   @sha = new_resource.sha
   @java_home = new_resource.java_home
-  @user = new_resource.user
-  @group = new_resource.group
-  @useropts = new_resource.user_opts.clone
+  @user = new_resource.user || attributes['user'] || defaults['user']
+  @group = new_resource.group || attributes['group'] || defaults['group']
+  @useropts = attributes['user_opts'] || defaults['user_opts']
   @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
+  @logrotate_size = attributes['logrotate_max_size'] || defaults['logrotate_max_size']
+  @logrotate_use_filesize = attributes['logrotate_use_filesize'] || defaults['logrotate_use_filesize']
+  @logrotate_rotate_frequency = attributes['logrotate_rotate_frequency'] || defaults['logrotate_rotate_frequency']
+  @logrotate_max_backup = attributes['logrotate_max_backup'] || defaults['logrotate_max_backup']
+  @logrotate_options = attributes['logrotate_options'] || defaults['logrotate_options']
+  @logrotate_enable = attributes['logrotate_enable'] || defaults['logrotate_enable']
 end
 
 action :delete do
-  ls_instance_dir = @instance_dir
-  ls_name  = @name
-  ls_user  = @user
-  ls_group = @group
+  ls = ls_vars
 
-  idr = directory ls_instance_dir do
+  idr = directory ls[:instance_dir] do
     recursive   true
     action      :delete
   end
   new_resource.updated_by_last_action(idr.updated_by_last_action?)
-
-  delete_user  = true
-  delete_group = true
-  node['logstash']['instance'].each do |instance, contents|
-    next if instance == ls_name
-    delete_user  = false if node['logstash']['instance'][instance]['user']
-    delete_group = false if node['logstash']['instance'][instance]['group']
-  end
-
-  ur = user ls_user do
-    action :remove
-    only_if { delete_user }
-  end
-  new_resource.updated_by_last_action(ur.updated_by_last_action?)
-
-  gr = group ls_group do
-    action :remove
-    only_if { delete_group }
-  end
-  new_resource.updated_by_last_action(gr.updated_by_last_action?)
 end
 
 action :create do
+  ls = ls_vars
 
-  ls_homedir = @useropts[:homedir]
-  ls_uid = @useropts[:uid]
-  ls_gid = @useropts[:gid]
-  ls_source_url = @source_url
-  ls_version = @version
-  ls_checksum = @checksum
-  ls_basedir = @base_directory
-  ls_user = @user
-  ls_group = @group
-  ls_name = @name
-  ls_instance_dir = @instance_dir
-  ls_enable_logrotate = @enable_logrotate
-
-  ur = user ls_user do
-    home ls_homedir
+  ur = user ls[:user] do
+    home ls[:homedir]
     system true
     action :create
     manage_home true
-    uid ls_uid
+    uid ls[:uid]
   end
   new_resource.updated_by_last_action(ur.updated_by_last_action?)
 
-  gr = group ls_group do
-    gid ls_gid
-    members ls_user
+  gr = group ls[:group] do
+    gid ls[:gid]
+    members ls[:user]
     append true
     system true
   end
@@ -100,24 +72,24 @@ action :create do
   case @install_type
   when 'tarball'
     @run_context.include_recipe 'ark::default'
-    arkit = ark ls_name do
-      url       ls_source_url
-      checksum  ls_checksum
-      owner     ls_user
-      group     ls_group
+    arkit = ark ls[:name] do
+      url       ls[:source_url]
+      checksum  ls[:checksum]
+      owner     ls[:user]
+      group     ls[:group]
       mode      0755
-      version   ls_version
-      path      ls_basedir
+      version   ls[:version]
+      path      ls[:basedir]
       action    :put
     end
     new_resource.updated_by_last_action(arkit.updated_by_last_action?)
 
     %w(bin etc lib log tmp etc/conf.d patterns).each do |ldir|
-      r = directory "#{ls_instance_dir}/#{ldir}" do
+      r = directory "#{ls[:instance_dir]}/#{ldir}" do
         action :create
         mode '0755'
-        owner ls_user
-        group ls_group
+        owner ls[:user]
+        group ls[:group]
       end
       new_resource.updated_by_last_action(r.updated_by_last_action?)
     end
@@ -126,40 +98,40 @@ action :create do
     bdr = directory @base_directory do
       action :create
       mode '0755'
-      owner ls_user
-      group ls_group
+      owner ls[:user]
+      group ls[:group]
     end
     new_resource.updated_by_last_action(bdr.updated_by_last_action?)
 
-    idr = directory ls_instance_dir do
+    idr = directory ls[:instance_dir] do
       action :create
       mode '0755'
-      owner ls_user
-      group ls_group
+      owner ls[:user]
+      group ls[:group]
     end
     new_resource.updated_by_last_action(idr.updated_by_last_action?)
 
     %w(bin etc lib log tmp etc/conf.d patterns).each do |ldir|
-      r = directory "#{ls_instance_dir}/#{ldir}" do
+      r = directory "#{ls[:instance_dir]}/#{ldir}" do
         action :create
         mode '0755'
-        owner ls_user
-        group ls_group
+        owner ls[:user]
+        group ls[:group]
       end
       new_resource.updated_by_last_action(r.updated_by_last_action?)
     end
 
-    rfr = remote_file "#{ls_instance_dir}/lib/logstash-#{ls_version}.jar" do
+    rfr = remote_file "#{ls[:instance_dir]}/lib/logstash-#{ls[:version]}.jar" do
       owner 'root'
       group 'root'
       mode '0755'
-      source ls_source_url
-      checksum ls_checksum
+      source ls[:source_url]
+      checksum ls[:checksum]
     end
     new_resource.updated_by_last_action(rfr.updated_by_last_action?)
 
-    lr = link "#{ls_instance_dir}/lib/logstash.jar" do
-      to "#{ls_instance_dir}/lib/logstash-#{ls_version}.jar"
+    lr = link "#{ls[:instance_dir]}/lib/logstash.jar" do
+      to "#{ls[:instance_dir]}/lib/logstash-#{ls[:version]}.jar"
       only_if { new_resource.auto_symlink }
     end
     new_resource.updated_by_last_action(lr.updated_by_last_action?)
@@ -168,79 +140,106 @@ action :create do
     bdr = directory @base_directory do
       action :create
       mode '0755'
-      owner ls_user
-      group ls_group
+      owner ls[:user]
+      group ls[:group]
     end
     new_resource.updated_by_last_action(bdr.updated_by_last_action?)
 
-    idr = directory ls_instance_dir do
+    idr = directory ls[:instance_dir] do
       action :create
       mode '0755'
-      owner ls_user
-      group ls_group
+      owner ls[:user]
+      group ls[:group]
     end
     new_resource.updated_by_last_action(idr.updated_by_last_action?)
 
     %w(bin etc lib log tmp etc/conf.d patterns).each do |ldir|
-      r = directory "#{ls_instance_dir}/#{ldir}" do
+      r = directory "#{ls[:instance_dir]}/#{ldir}" do
         action :create
         mode '0755'
-        owner ls_user
-        group ls_group
+        owner ls[:user]
+        group ls[:group]
       end
       new_resource.updated_by_last_action(r.updated_by_last_action?)
     end
 
-    sd = directory "#{ls_instance_dir}/source" do
+    sd = directory "#{ls[:instance_dir]}/source" do
       action :create
-      owner ls_user
-      group ls_group
+      owner ls[:user]
+      group ls[:group]
       mode '0755'
     end
     new_resource.updated_by_last_action(sd.updated_by_last_action?)
 
-    gr = git "#{ls_instance_dir}/source" do
+    gr = git "#{ls[:instance_dir]}/source" do
       repository @repo
       reference @sha
       action :sync
-      user ls_user
-      group ls_group
+      user ls[:user]
+      group ls[:group]
     end
     new_resource.updated_by_last_action(gr.updated_by_last_action?)
 
     source_version = @sha || "v#{@version}"
     er = execute 'build-logstash' do
-      cwd "#{ls_instance_dir}/source"
+      cwd "#{ls[:instance_dir]}/source"
       environment(JAVA_HOME: @java_home)
       user ls_user # Changed from root cause building as root...WHA?
       command "make clean && make VERSION=#{source_version} jar"
       action :run
-      creates "#{ls_instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
-      not_if "test -f #{ls_instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
+      creates "#{ls[:instance_dir]}/source/build/logstash-#{source_version}--monolithic.jar"
+      not_if "test -f #{ls[:instance_dir]}/source/build/logstash-#{source_version}--monolithic.jar"
     end
     new_resource.updated_by_last_action(er.updated_by_last_action?)
-    lr = link "#{ls_instance_dir}/lib/logstash.jar" do
-      to "#{ls_instance_dir}/source/build/logstash-#{source_version}--monolithic.jar"
+    lr = link "#{ls[:instance_dir]}/lib/logstash.jar" do
+      to "#{ls[:instance_dir]}/source/build/logstash-#{source_version}--monolithic.jar"
       only_if { new_resource.auto_symlink }
     end
     new_resource.updated_by_last_action(lr.updated_by_last_action?)
   else
     Chef::Application.fatal!("Unknown install type: #{@install_type}")
   end
-  logrotate(ls_name)
+  logrotate(ls) if ls[:logrotate_enable]
 
 end
 
 private
 
-def logrotate(name)
+def logrotate(ls)
+  name = ls[:name]
+
   @run_context.include_recipe 'logrotate::default'
+
   logrotate_app "logstash_#{name}" do
     path "#{log_dir}/*.log"
-    size node['logstash']['instance'][name]['logging']['maxSize'] if node['logstash']['instance'][name]['logging']['useFileSize']
-    frequency node['logstash']['instance'][name]['logging']['rotateFrequency']
-    rotate node['logstash']['instance'][name]['logging']['maxBackup']
-    options node['logstash']['instance'][name]['logrotate']['options']
-    create "664 #{node['logstash']['instance'][name]['user']} #{node['logstash']['instance'][name]['group']}"
+    size ls[:logrotate_size] if ls[:logrotate_use_filesize]
+    frequency ls[:logrotate_rotate_frequency]
+    rotate ls[:logrotate_max_backup]
+    options ls[:logrotate_options]
+    create "664 #{ls[:user]} #{ls[:group]}"
   end
+end
+
+def ls_vars
+  ls = {
+    homedir: @useropts[:homedir],
+    uid: @useropts[:uid],
+    gid: @useropts[:gid],
+    source_url: @source_url,
+    version: @version,
+    checksum: @checksum,
+    basedir: @base_directory,
+    user: @user,
+    group: @group,
+    name: @name,
+    instance_dir: @instance_dir,
+    enable_logrotate: @enable_logrotate,
+    logrotate_size: @logrotate_size,
+    logrotate_use_filesize: @logrotate_use_filesize,
+    logrotate_rotate_frequency: @logrotate_rotate_frequency,
+    logrotate_max_backup: @logrotate_max_backup,
+    logrotate_options: @logrotate_options,
+    logrotate_enable: @logrotate_enable
+  }
+  ls
 end

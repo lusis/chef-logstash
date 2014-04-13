@@ -7,6 +7,8 @@
 
 name = 'agent'
 
+Chef::Application.fatal!("attribute hash node['logstash']['instance']['#{name}'] must exist.") if node['logstash']['instance'][name].nil?
+
 # these should all default correctly.  listing out for example.
 logstash_instance name do
   action            :create

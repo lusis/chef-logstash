@@ -14,14 +14,12 @@ describe 'logstash::server' do
       runner.node.set['logstash']['instance']['server']['config_templates'] = {
         output_stdout: 'config/output_stdout.conf.erb'
       }
-      runner.node.set['logstash']['instance']['server']['config_templates_variables'] = {
-        elasticsearch_ip: '127.0.0.1',
-        elasticsearch_embedded: true
-      }
       runner.node.set['logstash']['instance']['server']['basedir'] = '/opt/logstash'
       runner.node.set['logstash']['instance']['server']['user'] = 'logstash'
       runner.node.set['logstash']['instance']['server']['group'] = 'logstash'
       runner.node.set['logstash']['instance']['server']['config_templates_cookbook'] = 'logstash'
+      runner.node.set['logstash']['instance']['server']['elasticsearch_ip'] = '127.0.0.1'
+      runner.node.set['logstash']['instance']['server']['elasticsearch_embedded'] = true
       runner.converge(described_recipe)
     end
     include_context 'stubs-common'

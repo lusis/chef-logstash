@@ -13,7 +13,8 @@
 # install logstash 'server'
 
 name = 'server'
-attributes = node['logstash']['instance'][name]
+
+Chef::Application.fatal!("attribute hash node['logstash']['instance']['#{name}'] must exist.") if node['logstash']['instance'][name].nil?
 
 # these should all default correctly.  listing out for example.
 logstash_instance name do
@@ -22,7 +23,7 @@ end
 
 # services are hard! Let's go LWRP'ing.   FIREBALL! FIREBALL! FIREBALL!
 logstash_service name do
-  action      [:enable, :start]
+  action      [:enable]
 end
 
 es_ip = service_ip(name, 'elasticsearch')
@@ -30,16 +31,20 @@ es_ip = service_ip(name, 'elasticsearch')
 logstash_config name do
   action [:create]
   variables(
-      elasticsearch_ip: es_ip,
-      elasticsearch_embedded: true
+    elasticsearch_ip: es_ip,
+    elasticsearch_embedded: true
   )
 end
 
 logstash_plugins 'contrib' do
-    instance name
+  instance name
   action [:create]
 end
 
 logstash_pattern name do
   action [:create]
+end
+
+logstash_service name do
+  action      [:start]
 end

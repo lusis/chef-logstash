@@ -32,3 +32,6 @@ BlockNesting:
 
 Documentation:
   Enabled: false
+
+MethodLength:
+  Max: 26

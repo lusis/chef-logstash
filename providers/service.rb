@@ -13,19 +13,28 @@ include Chef::Mixin::ShellOut
 def load_current_resource
   @instance = new_resource.instance
   if node['logstash']['instance'].key?(@instance)
-    @attributes = node['logstash']['instance'][@instance]
+    attributes = node['logstash']['instance'][@instance]
+    defaults = node['logstash']['instance']['default']
   else
-    @attributes = node['logstash']['instance']['default']
+    attributes = node['logstash']['instance']['default']
   end
+
+  @basedir = attributes['basedir'] || defaults['basedir']
   @service_name = new_resource.service_name || "logstash_#{@instance}"
-  @home = "#{@attributes['basedir']}/#{@instance}"
-  @method = new_resource.method || @attributes['init_method']
+  @home = "#{@basedir}/#{@instance}"
+  @method = new_resource.method || attributes['init_method'] || defaults['init_method']
   @command = new_resource.command || "#{@home}/bin/logstash"
-  @args = new_resource.args || default_args
+  @user = new_resource.user || attributes['user'] || defaults['user']
+  @group = new_resource.group || attributes['group'] || defaults['group']
+  @log_file = attributes['log_file'] || defaults['log_file']
+  @max_heap = attributes['xmx'] || defaults['xmx']
+  @min_heap = attributes['xms'] || defaults['xms']
   @description = new_resource.description || @service_name
-  @chdir = new_resource.chdir || @home
-  @user = new_resource.user || @attributes['user']
-  @group = new_resource.group || @attributes['group']
+  @chdir = @home
+  @workers =  attributes['workers'] || defaults['workers']
+  @debug =  attributes['debug'] || defaults['debug']
+  @install_type = attributes['install_type'] || defaults['install_type']
+  @supervisor_gid = attributes['supervisor_gid'] || defaults['supervisor_gid']
 end
 
 action :restart do
@@ -85,7 +94,7 @@ action :enable do
     pr = pleaserun svc[:service_name] do
       name        svc[:service_name]
       program     svc[:command]
-      args        svc[:args]
+      args        default_args
       description svc[:description]
       chdir       svc[:chdir]
       user        svc[:user]
@@ -101,17 +110,24 @@ action :enable do
   when 'native'
     if platform_family? 'debian'
       if node['platform_version'] >= '12.04'
-        if @attributes['install_type'] == 'tarball'
+        if svc[:install_type] == 'tarball'
           tp_source = 'init/binary_upstart.erb'
         else
           tp_source = 'init/java_upstart.erb'
         end
+        args = default_args
         tp = template "/etc/init/#{svc[:service_name]}.conf" do
           mode      '0644'
           source    tp_source
-          variables(home: svc[:home],
-                    name: svc[:name],
-                    command: svc[:command]
+          variables(
+                      home: svc[:home],
+                      name: svc[:name],
+                      command: svc[:command],
+                      args: args,
+                      user: svc[:user],
+                      group: svc[:group],
+                      description: svc[:description],
+                      supervisor_gid: svc[:supervisor_gid]
                     )
         end
         new_resource.updated_by_last_action(tp.updated_by_last_action?)
@@ -153,12 +169,13 @@ action :enable do
         owner 'root'
         group 'root'
         mode '0774'
-        variables(config_file: @attributes['config_dir'],
-                  home: svc[:home],
-                  name: svc[:name],
-                  log_file: @attributes['log_file'],
-                  max_heap: @attributes['xmx'],
-                  min_heap: @attributes['xms']
+        variables(
+                  config_file: "#{svc[:home]}/etc/conf.d",
+                  home:     svc[:home],
+                  name:     svc[:name],
+                  log_file: svc[:log_file],
+                  max_heap: svc[:max_heap],
+                  min_heap: svc[:min_heap]
                   )
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
@@ -179,10 +196,9 @@ private
 def default_args
   svc = svc_vars
   args      = ['agent', '-f', "#{svc[:home]}/etc/conf.d/"]
-  args.concat ['--pluginpath', @attributes['pluginpath']] if @attributes['pluginpath']
-  args.concat ['-vv'] if @attributes['debug']
-  args.concat ['-l', "#{svc[:home]}/log/#{@attributes['log_file']}"] if @attributes['log_file']
-  args.concat ['-w', @attributes['workers'].to_s] if @attributes['workers']
+  args.concat ['-vv'] if svc[:debug]
+  args.concat ['-l', "#{svc[:home]}/log/#{svc[:log_file]}"] if svc[:log_file]
+  args.concat ['-w', svc[:workers].to_s] if svc[:workers]
   args
 end
 
@@ -193,11 +209,17 @@ def svc_vars
     home: @home,
     method: @method,
     command: @command,
-    args: @args,
     description: @description,
     chdir: @chdir,
     user: @user,
-    group: @group
+    group: @group,
+    log_file: @log_file,
+    max_heap: @max_heap,
+    min_heap: @min_heap,
+    workers: @workers,
+    debug: @debug,
+    install_type: @install_type,
+    supervisor_gid: @supervisor_gid
   }
   svc
 end

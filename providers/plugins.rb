@@ -15,18 +15,19 @@ def load_current_resource
   @instance = new_resource.instance || 'default'
   if node['logstash']['instance'].key?(@instance)
     attributes = node['logstash']['instance'][@instance]
+    defaults = node['logstash']['instance']['default']
   else
     attributes = node['logstash']['instance']['default']
   end
-  @base_directory = new_resource.base_directory || attributes['basedir']
-  @version = new_resource.version || attributes['plugins']['version']
-  @checksum = new_resource.checksum || attributes['plugins']['checksum']
-  @source_url = new_resource.source_url || attributes['plugins']['source_url']
-  @user = new_resource.user || attributes['user']
-  @group = new_resource.group || attributes['group']
+  @base_directory = new_resource.base_directory || attributes['basedir'] || defaults['basedir']
+  @version = new_resource.version || attributes['plugins_version'] || defaults['plugins_version']
+  @checksum = new_resource.checksum || attributes['plugins_checksum'] || defaults['plugins_checksum']
+  @source_url = new_resource.source_url || attributes['plugins_source_url'] || defaults['plugins_source_url']
+  @user = new_resource.user || attributes['user'] || defaults['user']
+  @group = new_resource.group || attributes['group'] || defaults['group']
   @instance_dir = "#{@base_directory}/#{@instance}"
-  @install_type = new_resource.install_type || attributes['plugins']['install_type']
-  @install_check = new_resource.install_check || attributes['plugins']['check_if_installed']
+  @install_type = new_resource.install_type || attributes['plugins_install_type'] || defaults['plugins_install_type']
+  @install_check = new_resource.install_check || attributes['plugins_check_if_installed'] || defaults['plugins_check_if_installed']
 end
 
 action :create do

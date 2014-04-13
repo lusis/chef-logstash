@@ -13,9 +13,8 @@ default['logstash']['instance']['default']['graphite_ip'] = ''
 # Default logstash instance variables
 default['logstash']['instance']['default']['basedir'] = '/opt/logstash'
 default['logstash']['instance']['default']['user'] = 'logstash'
-default['logstash']['instance']['default']['uid'] = nil  # set to nil to let system pick
 default['logstash']['instance']['default']['group'] = 'logstash'
-default['logstash']['instance']['default']['gid'] = nil  # set to nil to let system pick
+default['logstash']['instance']['default']['user_opts'] = { homedir: '/var/lib/logstash', uid: nil, gid: nil }
 default['logstash']['instance']['default']['supervisor_gid'] = node['logstash']['group']
 default['logstash']['instance']['default']['pid_dir'] = '/var/run/logstash'
 default['logstash']['instance']['default']['create_account'] = true
@@ -27,12 +26,12 @@ default['logstash']['instance']['default']['source_url']     = 'https://download
 default['logstash']['instance']['default']['checksum']       = 'ab62394bb56da10cb20ee106badf22734402b21435977ec4f9aa65257627c629'
 default['logstash']['instance']['default']['install_type']   = 'tarball'
 
-default['logstash']['instance']['default']['plugins']['install_type']   = 'native' # native|tarball
-default['logstash']['instance']['default']['plugins']['version']        = '1.4.0'
-default['logstash']['instance']['default']['plugins']['source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-contrib-1.4.0.tar.gz'
-default['logstash']['instance']['default']['plugins']['checksum']       = '23aa397a7832d6e3553eba8360ff5d4ccfff98aac1e4a1b8201c21755e8d77c9'
-default['logstash']['instance']['default']['plugins']['install_type']   = 'tarball'
-default['logstash']['instance']['default']['plugins']['check_if_installed']  = 'lib/logstash/filters/translate.rb'
+default['logstash']['instance']['default']['plugins_install_type']   = 'native' # native|tarball
+default['logstash']['instance']['default']['plugins_version']        = '1.4.0'
+default['logstash']['instance']['default']['plugins_source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-contrib-1.4.0.tar.gz'
+default['logstash']['instance']['default']['plugins_checksum']       = '23aa397a7832d6e3553eba8360ff5d4ccfff98aac1e4a1b8201c21755e8d77c9'
+default['logstash']['instance']['default']['plugins_install_type']   = 'tarball'
+default['logstash']['instance']['default']['plugins_check_if_installed']  = 'lib/logstash/filters/translate.rb'
 
 default['logstash']['instance']['default']['log_file']       = 'logstash.log'
 default['logstash']['instance']['default']['xms']        = '1024M'
@@ -70,11 +69,10 @@ default['logstash']['instance']['default']['web']['enable']  = false
 default['logstash']['instance']['default']['web']['address'] = '0.0.0.0'
 default['logstash']['instance']['default']['web']['port']    = '9292'
 
-default['logstash']['instance']['default']['logrotate']['enable']  = true
-default['logstash']['instance']['default']['logrotate']['options'] = %w(missingok notifempty compress copytruncate)
-
 # Logging features
-default['logstash']['instance']['default']['logging']['rotateFrequency'] = 'daily'
-default['logstash']['instance']['default']['logging']['maxBackup'] = 10
-default['logstash']['instance']['default']['logging']['maxSize'] = '10M'
-default['logstash']['instance']['default']['logging']['useFileSize'] = false
+default['logstash']['instance']['default']['logrotate_enable']  = true
+default['logstash']['instance']['default']['logrotate_options'] = %w(missingok notifempty compress copytruncate)
+default['logstash']['instance']['default']['logrotate_frequency'] = 'daily'
+default['logstash']['instance']['default']['logrotate_max_backup'] = 10
+default['logstash']['instance']['default']['logrotate_max_size'] = '10M'
+default['logstash']['instance']['default']['logrotate_use_filesize'] = false

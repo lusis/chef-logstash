@@ -14,16 +14,18 @@ def load_current_resource
   @instance  = new_resource.instance
   if node['logstash']['instance'].key?(@instance)
     attributes = node['logstash']['instance'][@instance]
+    defaults   = node['logstash']['instance']['default']
   else
     attributes = node['logstash']['instance']['default']
   end
-  @templates = new_resource.templates           || attributes['config_templates']
-  @templates_cookbook = new_resource.templates_cookbook  || attributes['config_templates_cookbook']
-  @variables = new_resource.variables           || attributes['config_templates_variables']
-  @path      = new_resource.path                || "#{attributes['basedir']}/#{@instance}/etc/conf.d"
-  @owner     = new_resource.owner               || attributes['user']
-  @group     = new_resource.group               || attributes['group']
-  @mode      = new_resource.mode                || '0644'
+  @basedir = attributes['basedir'] || defaults['basedir']
+  @templates = new_resource.templates || attributes['config_templates'] || defaults['config_templates']
+  @templates_cookbook = new_resource.templates_cookbook  || attributes['config_templates_cookbook'] || defaults['config_templates_cookbook']
+  @variables = new_resource.variables || attributes['config_templates_variables'] || defaults['config_templates_variables']
+  @owner     = new_resource.owner || attributes['user'] || defaults['user']
+  @group     = new_resource.group || attributes['group'] || defaults['group']
+  @mode      = new_resource.mode || '0644'
+  @path      = new_resource.path || "#{@basedir}/#{@instance}/etc/conf.d"
 end
 
 action :create do
