@@ -20,6 +20,7 @@ def load_current_resource
   end
 
   @basedir = attributes['basedir'] || defaults['basedir']
+  @templates_cookbook = new_resource.templates_cookbook  || attributes['service_templates_cookbook'] || defaults['service_templates_cookbook']
   @service_name = new_resource.service_name || "logstash_#{@instance}"
   @home = "#{@basedir}/#{@instance}"
   @method = new_resource.method || attributes['init_method'] || defaults['init_method']
@@ -119,6 +120,7 @@ action :enable do
         tp = template "/etc/init/#{svc[:service_name]}.conf" do
           mode      '0644'
           source    tp_source
+          cookbook  svc[:templates_cookbook]
           variables(
                       home: svc[:home],
                       name: svc[:name],
@@ -148,6 +150,7 @@ action :enable do
       new_resource.updated_by_last_action(ex.updated_by_last_action?)
       template '/etc/systemd/system/logstash_server.service' do
         tp = source 'logstash_server.service.erb'
+        cookbook  svc[:templates_cookbook]
         owner 'root'
         group 'root'
         mode '0755'
@@ -166,6 +169,7 @@ action :enable do
     elsif platform_family? 'rhel', 'fedora'
       tp = template "/etc/init.d/#{svc[:service_name]}" do
         source "init.#{svc[:service_name]}.erb"
+        cookbook  svc[:templates_cookbook]
         owner 'root'
         group 'root'
         mode '0774'
@@ -219,7 +223,8 @@ def svc_vars
     workers: @workers,
     debug: @debug,
     install_type: @install_type,
-    supervisor_gid: @supervisor_gid
+    supervisor_gid: @supervisor_gid,
+    templates_cookbook: @templates_cookbook
   }
   svc
 end
