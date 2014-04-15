@@ -5,7 +5,11 @@ Description
 
 This is the semi-official 'all-in-one' Logstash cookbook.
 
-If you are using logstash < 1.2 you might want to use the 0.6.1 branch.
+If you are using logstash < 1.2 you might want to use the 0.6.1 branch.  This
+cookbook is best for logstash 1.2 and 1.3.
+
+*Looking for a logstash >= 1.4 cookbook?* See the `logstash_1.4` branch. Now 
+with LWRPs, but still in heavy development, so use with caution.
 
 Requirements
 ============
