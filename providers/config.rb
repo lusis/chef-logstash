@@ -26,6 +26,7 @@ def load_current_resource
   @group     = new_resource.group || attributes['group'] || defaults['group']
   @mode      = new_resource.mode || '0644'
   @path      = new_resource.path || "#{@basedir}/#{@instance}/etc/conf.d"
+  @service_name = new_resource.service_name || "logstash_#{@instance}"
 end
 
 action :create do
@@ -39,7 +40,7 @@ action :create do
       group       conf[:group]
       mode        conf[:mode]
       variables   conf[:variables]
-      notifies    :restart, "logstash_service[#{conf[:instance]}]"
+      notifies    :restart, "logstash_service[#{conf[:service_name]}]"
       action      :create
     end
     new_resource.updated_by_last_action(tp.updated_by_last_action?)
@@ -57,6 +58,7 @@ def conf_vars
     owner:      @owner,
     group:      @group,
     mode:       @mode,
+    service_name: @service_name,
     templates_cookbook:   @templates_cookbook
   }
   conf
