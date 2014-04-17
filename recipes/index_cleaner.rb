@@ -5,8 +5,8 @@ index_cleaner_bin = File.join(base_dir, 'logstash_index_cleaner.py')
 days_to_keep      = node['logstash']['index_cleaner']['days_to_keep']
 log_file          = node['logstash']['index_cleaner']['cron']['log_file']
 
-python_pip "pyes" do
-  action :install
+["pyes", "argparse"].each do |package|
+  python_pip package 
 end
 
 directory base_dir do
