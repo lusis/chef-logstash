@@ -30,6 +30,7 @@ GEM
       varia_model (~> 0.1)
     buff-extensions (0.5.0)
     buff-ignore (1.1.1)
+    buff-platform (0.1.0)
     buff-ruby_engine (0.1.0)
     buff-shell_out (0.1.1)
       buff-ruby_engine (~> 0.1.0)
@@ -251,6 +252,9 @@ GEM
     slop (3.5.0)
     solve (0.8.2)
     specinfra (0.7.1)
+    strainer (3.3.0)
+      berkshelf (~> 2.0)
+      buff-platform (~> 0.1)
     stud (0.0.17)
       ffi
       metriks
@@ -301,4 +305,5 @@ DEPENDENCIES
   rake
   rubocop (~> 0.18)
   serverspec (~> 0.14)
+  strainer (~> 3.3)
   test-kitchen (~> 1.1)

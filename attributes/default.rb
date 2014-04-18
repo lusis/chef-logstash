@@ -58,6 +58,8 @@ default['logstash']['instance']['default']['config_templates_variables'] = {}
 default['logstash']['instance']['default']['upstart_with_sudo'] = false
 
 default['logstash']['instance']['default']['init_method'] = 'native' # pleaserun or native or runit
+default['logstash']['instance']['default']['service_templates_cookbook']  = 'logstash'
+
 # roles/flags for various autoconfig/discovery components
 default['logstash']['instance']['default']['enable_embedded_es'] = false
 
