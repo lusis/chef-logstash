@@ -18,6 +18,7 @@ setgid <%= @supervisor_gid %>
 <% end -%>
 
 script
+  export LS_HEAP_SIZE="<%= @max_heap %>"
   export LOGSTASH_HOME="<%= @home %>"
   export HOME=$LOGSTASH_HOME
   export LOGSTASH_OPTS="<%= @args.join(' ') %>"
