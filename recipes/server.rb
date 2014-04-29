@@ -33,26 +33,6 @@ else
   patterns_dir = node['logstash']['server']['home'] + '/' + node['logstash']['server']['patterns_dir']
 end
 
-if Chef::Config[:solo]
-  es_server_ip = node['logstash']['elasticsearch_ip']
-  graphite_server_ip = node['logstash']['graphite_ip']
-else
-  es_results = search(:node, node['logstash']['elasticsearch_query'])
-  graphite_results = search(:node, node['logstash']['graphite_query'])
-
-  if !es_results.empty?
-    es_server_ip = es_results[0]['ipaddress']
-  else
-    es_server_ip = node['logstash']['elasticsearch_ip']
-  end
-
-  if !graphite_results.empty?
-    graphite_server_ip = graphite_results[0]['ipaddress']
-  else
-    graphite_server_ip = node['logstash']['graphite_ip']
-  end
-end
-
 # Create directory for logstash
 directory node['logstash']['server']['home'] do
   action :create
@@ -137,8 +117,8 @@ template "#{node['logstash']['server']['home']}/#{node['logstash']['server']['co
   group node['logstash']['group']
   mode '0644'
   variables(
-            :graphite_server_ip => graphite_server_ip,
-            :es_server_ip => es_server_ip,
+            :graphite_server_ip => ::Logstash.graphite_server_ip(node),
+            :es_server_ip => ::Logstash.es_server_ip(node),
             :enable_embedded_es => node['logstash']['server']['enable_embedded_es'],
             :es_cluster => node['logstash']['elasticsearch_cluster'],
             :patterns_dir => patterns_dir
