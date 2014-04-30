@@ -1,4 +1,7 @@
 # Encoding: utf-8
+
+include_attribute 'logstash::customize'
+
 default['logstash']['basedir'] = '/opt/logstash'
 default['logstash']['user'] = 'logstash'
 default['logstash']['uid'] = nil  # set to nil to let system pick
