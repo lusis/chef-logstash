@@ -11,6 +11,7 @@ describe 'logstash::server' do
     let(:runner) { ChefSpec::Runner.new(::LWRP) }
     let(:node) { runner.node }
     let(:chef_run) do
+      runner.node.set['memory']['total'] = '1024000kb'
       runner.node.set['logstash']['instance']['server']['config_templates'] = {
         output_stdout: 'config/output_stdout.conf.erb'
       }

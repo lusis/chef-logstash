@@ -7,6 +7,7 @@ describe 'logstash::agent' do
     let(:node) { runner.node }
     let(:chef_run) do
       # runner.node.set['logstash'] ...
+      runner.node.set['memory']['total'] = '1024000kb'
       runner.converge(described_recipe)
     end
     include_context 'stubs-common'

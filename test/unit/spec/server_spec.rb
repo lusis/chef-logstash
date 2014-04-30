@@ -7,6 +7,7 @@ describe 'logstash::server' do
     let(:node) { runner.node }
     let(:chef_run) do
       # runner.node.set['logstash'] ...
+      runner.node.set['memory']['total'] = '1024000kb'
       runner.converge(described_recipe)
     end
     include_context 'stubs-common'
@@ -23,7 +24,7 @@ describe 'logstash::server' do
       expect(chef_run).to create_logstash_pattern('server')
     end
 
-    it 'calls the logstash_instance LWRP' do
+    it 'calls the logstash_service LWRP' do
       expect(chef_run).to enable_logstash_service('server')
       expect(chef_run).to start_logstash_service('server')
     end

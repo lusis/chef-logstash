@@ -125,6 +125,7 @@ action :enable do
                       home: svc[:home],
                       name: svc[:name],
                       command: svc[:command],
+                      max_heap: svc[:max_heap],
                       args: args,
                       user: svc[:user],
                       group: svc[:group],

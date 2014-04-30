@@ -26,7 +26,7 @@ def load_current_resource
   @group     = new_resource.group || attributes['group'] || defaults['group']
   @mode      = new_resource.mode || '0644'
   @path      = new_resource.path || "#{@basedir}/#{@instance}/etc/conf.d"
-  @service_name = new_resource.service_name || "logstash_#{@instance}"
+  @service_name = new_resource.service_name || @instance
 end
 
 action :create do
