@@ -1,7 +1,7 @@
 # Encoding: utf-8
 include_recipe 'python::pip'
 
-base_dir          = File.join(node['logstash']['basedir'], 'index_cleaner')
+base_dir          = File.join(node['logstash']['instance']['default']['basedir'], 'index_cleaner')
 index_cleaner_bin = File.join(base_dir, 'logstash_index_cleaner.py')
 days_to_keep      = node['logstash']['index_cleaner']['days_to_keep']
 log_file          = node['logstash']['index_cleaner']['cron']['log_file']
@@ -13,14 +13,14 @@ end
 directory base_dir do
   action :create
   mode '0755'
-  owner node['logstash']['user']
-  group node['logstash']['group']
+  owner node['logstash']['instance']['default']['user']
+  group node['logstash']['instance']['default']['group']
 end
 
 cookbook_file index_cleaner_bin do
   source 'logstash_index_cleaner.py'
-  owner node['logstash']['user']
-  group node['logstash']['group']
+  owner node['logstash']['instance']['default']['user']
+  group node['logstash']['instance']['default']['group']
   mode '0774'
 end
 
