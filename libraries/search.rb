@@ -14,8 +14,8 @@ class Chef
       end
       if Chef::Config[:solo]
         service_ip = attributes["#{service}_ip"] || defaults["#{service}_ip"]
-        service_query = attributes["#{service}_query"] || defaults["#{service}_query"]
       else
+        service_query = attributes["#{service}_query"] || defaults["#{service}_query"]
         results = search(:node, service_query)
         if !results.empty?
           service_ip = results[0]['ipaddress']
