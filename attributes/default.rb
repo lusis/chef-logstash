@@ -2,9 +2,9 @@
 
 # roles/flags for various search/discovery
 default['logstash']['instance']['default']['graphite_role'] = 'graphite_server'
-default['logstash']['instance']['default']['graphite_query'] = "roles:#{node['logstash']['graphite_role']} AND chef_environment:#{node.chef_environment}"
+default['logstash']['instance']['default']['graphite_query'] = "roles:#{node['logstash']['instance']['default']['graphite_role']} AND chef_environment:#{node.chef_environment}"
 default['logstash']['instance']['default']['elasticsearch_role'] = 'elasticsearch_server'
-default['logstash']['instance']['default']['elasticsearch_query'] = "roles:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}"
+default['logstash']['instance']['default']['elasticsearch_query'] = "roles:#{node['logstash']['instance']['default']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}"
 default['logstash']['instance']['default']['elasticsearch_cluster'] = 'logstash'
 default['logstash']['instance']['default']['elasticsearch_ip'] = ''
 default['logstash']['instance']['default']['elasticsearch_port'] = ''
@@ -15,7 +15,7 @@ default['logstash']['instance']['default']['basedir'] = '/opt/logstash'
 default['logstash']['instance']['default']['user'] = 'logstash'
 default['logstash']['instance']['default']['group'] = 'logstash'
 default['logstash']['instance']['default']['user_opts'] = { homedir: '/var/lib/logstash', uid: nil, gid: nil }
-default['logstash']['instance']['default']['supervisor_gid'] = node['logstash']['group']
+default['logstash']['instance']['default']['supervisor_gid'] = node['logstash']['instance']['default']['group']
 default['logstash']['instance']['default']['pid_dir'] = '/var/run/logstash'
 default['logstash']['instance']['default']['create_account'] = true
 default['logstash']['instance']['default']['join_groups'] = []
