@@ -28,11 +28,17 @@ end
 
 es_ip = service_ip(name, 'elasticsearch')
 
+if node[:logstash][:instance][name].key?('enable_embedded_es')
+  embedded_es = node[:logstash][:instance][name][:enable_embedded_es]
+else
+  embedded_es = node[:logstash][:instance][:default][:enable_embedded_es]
+end
+
 logstash_config name do
   action [:create]
   variables(
     elasticsearch_ip: es_ip,
-    elasticsearch_embedded: true
+    elasticsearch_embedded: embedded_es
   )
 end
 
