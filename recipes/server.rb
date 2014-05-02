@@ -34,7 +34,14 @@ else
   embedded_es = node[:logstash][:instance][:default][:enable_embedded_es]
 end
 
+my_templates  = {
+  'input_syslog' => 'config/input_syslog.conf.erb',
+  'output_stdout' => 'config/output_stdout.conf.erb',
+  'output_elasticsearch' => 'config/output_elasticsearch.conf.erb'
+}
+
 logstash_config name do
+  templates my_templates
   action [:create]
   variables(
     elasticsearch_ip: es_ip,
