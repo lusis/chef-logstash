@@ -1,23 +1,19 @@
 #!/bin/sh
 
-cd /<%= node['logstash']['agent']['home'] %>
+cd /<%= @options[:home] %>
 exec 2>&1
 # Need to set LOGSTASH_HOME and HOME so sincedb will work
-LOGSTASH_HOME="<%= node['logstash']['agent']['home'] %>"
+LOGSTASH_HOME="<%= @options[:home] %>"
 GC_OPTS="-XX:+UseParallelOldGC"
-JAVA_OPTS="-server -Xms<%= node['logstash']['agent']['xms'] %> -Xmx<%= node['logstash']['agent']['xmx'] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/"
-LOGSTASH_OPTS="agent -f <%= node['logstash']['agent']['config_dir'] %>"
-<% if node['logstash']['agent']['debug'] -%>
+JAVA_OPTS="-server -Xms<%= @options[:min_heap] %> -Xmx<%= @options[:max_heap] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/"
+LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/conf.d"
+<% if @options[:debug] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
 <% end -%>
-<% if node['logstash']['agent']['log_file'] -%>
-LOGSTASH_OPTS="$LOGSTASH_OPTS -l <%= node['logstash']['agent']['log_file'] %>"
-<% end -%>
-<% if node['logstash']['agent']['workers'] %>
-export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= node['logstash']['agent']['workers'] %>"
-<% end %>
-<% if node['logstash']['supervisor_gid'] -%>
-HOME=$LOGSTASH_HOME exec chpst -u <%= node["logstash"]["user"] %>:<%= node["logstash"]["supervisor_gid"] %> java $JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
+LOGSTASH_OPTS="$LOGSTASH_OPTS -l $LOGSTASH_HOME/log/<%= @options[:log_file] %>"
+export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= @options[:workers] %>"
+<% if @options[:supervisor_gid] -%>
+HOME=$LOGSTASH_HOME exec chpst -u <%= @options[:user] %>:<%= @options[:supervisor_gid] %> java $JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
 <% else -%>
-HOME=$LOGSTASH_HOME exec chpst -u <%= node["logstash"]["user"] %> java $JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
+HOME=$LOGSTASH_HOME exec chpst -u <%= @options[:user] %> java $JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS
 <% end -%>
