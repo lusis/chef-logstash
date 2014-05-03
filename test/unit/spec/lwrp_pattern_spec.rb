@@ -8,6 +8,7 @@ describe 'logstash::server' do
     let(:node) { runner.node }
     let(:chef_run) do
       runner.node.merge(::UBUNTU_OPTS)
+      runner.node.set['memory']['total'] = '1024000kb'
       runner.node.set['logstash']['instance']['server']['pattern_templates'] = {
         'default' => 'patterns/custom_patterns.erb'
       }

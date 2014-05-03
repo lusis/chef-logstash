@@ -18,9 +18,10 @@ setgid <%= @supervisor_gid %>
 <% end -%>
 
 script
+  export LS_HEAP_SIZE="<%= @max_heap %>"
   export LOGSTASH_HOME="<%= @home %>"
   export HOME=$LOGSTASH_HOME
-  export LOGSTASH_OPTS="<%= @args %>"
+  export LOGSTASH_OPTS="<%= @args.join(' ') %>"
 
   <% if @upstart_with_sudo -%>
   exec sudo -u <%= @user %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS

@@ -11,6 +11,7 @@ describe 'logstash::server' do
     let(:runner) { ChefSpec::Runner.new(::LWRP) }
     let(:node) { runner.node }
     let(:chef_run) do
+      runner.node.set['memory']['total'] = '1024000kb'
       runner.node.set['logstash']['instance']['server']['config_templates'] = {
         output_stdout: 'config/output_stdout.conf.erb'
       }
@@ -19,7 +20,7 @@ describe 'logstash::server' do
       runner.node.set['logstash']['instance']['server']['group'] = 'logstash'
       runner.node.set['logstash']['instance']['server']['config_templates_cookbook'] = 'logstash'
       runner.node.set['logstash']['instance']['server']['elasticsearch_ip'] = '127.0.0.1'
-      runner.node.set['logstash']['instance']['server']['elasticsearch_embedded'] = true
+      runner.node.set['logstash']['instance']['server']['enable_embedded_es'] = true
       runner.converge(described_recipe)
     end
     include_context 'stubs-common'

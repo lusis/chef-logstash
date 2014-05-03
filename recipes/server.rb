@@ -26,17 +26,23 @@ logstash_service name do
   action      [:enable]
 end
 
-#es_ip = service_ip(name, 'elasticsearch')
+embedded_es = node['logstash']['instance'][name]['enable_embedded_es'] || node['logstash']['instance']['default']['enable_embedded_es']
+
+my_templates  = {
+  'input_syslog' => 'config/input_syslog.conf.erb',
+  'output_stdout' => 'config/output_stdout.conf.erb',
+  'output_elasticsearch' => 'config/output_elasticsearch.conf.erb'
+}
 
 logstash_config name do
+  templates my_templates
   action [:create]
   variables(
     elasticsearch_ip: ::Logstash.service_ip(node, name, 'elasticsearch'),
-    elasticsearch_embedded: true
+    elasticsearch_embedded: embedded_es
   )
 end
 # ^ see `.kitchen.yml` for example attributes to configure templates.
-
 
 logstash_plugins 'contrib' do
   instance name

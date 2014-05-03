@@ -11,6 +11,7 @@ require 'chef/application'
   version:    '6.4',
   log_level:  ::LOG_LEVEL
 }
+
 ::UBUNTU_OPTS = {
   platform:  'ubuntu',
   version:   '12.04',

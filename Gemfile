@@ -11,6 +11,7 @@ gem 'test-kitchen', '~> 1.1'
 gem 'kitchen-vagrant'
 gem 'serverspec', '~> 0.14'
 gem 'rake'
+gem 'strainer', '~> 3.3'
 
 group :chef_gems do
   gem 'pleaserun'

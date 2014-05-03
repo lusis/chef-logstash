@@ -30,7 +30,7 @@ end
 
 action :create do
   pattern = pattern_vars
-  # Chef::Log.info("config vars: #{conf.inspect}")
+  # Chef::Log.info("config vars: #{pattern.inspect}")
   pattern[:templates].each do |template, file|
     tp = template "#{pattern[:path]}/#{::File.basename(file).chomp(::File.extname(file))}" do
       source      file

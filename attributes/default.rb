@@ -2,9 +2,9 @@
 
 # roles/flags for various search/discovery
 default['logstash']['instance']['default']['graphite_role'] = 'graphite_server'
-default['logstash']['instance']['default']['graphite_query'] = "roles:#{node['logstash']['graphite_role']} AND chef_environment:#{node.chef_environment}"
+default['logstash']['instance']['default']['graphite_query'] = "roles:#{node['logstash']['instance']['default']['graphite_role']} AND chef_environment:#{node.chef_environment}"
 default['logstash']['instance']['default']['elasticsearch_role'] = 'elasticsearch_server'
-default['logstash']['instance']['default']['elasticsearch_query'] = "roles:#{node['logstash']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}"
+default['logstash']['instance']['default']['elasticsearch_query'] = "roles:#{node['logstash']['instance']['default']['elasticsearch_role']} AND chef_environment:#{node.chef_environment}"
 default['logstash']['instance']['default']['elasticsearch_cluster'] = 'logstash'
 default['logstash']['instance']['default']['elasticsearch_ip'] = ''
 default['logstash']['instance']['default']['elasticsearch_port'] = ''
@@ -15,7 +15,7 @@ default['logstash']['instance']['default']['basedir'] = '/opt/logstash'
 default['logstash']['instance']['default']['user'] = 'logstash'
 default['logstash']['instance']['default']['group'] = 'logstash'
 default['logstash']['instance']['default']['user_opts'] = { homedir: '/var/lib/logstash', uid: nil, gid: nil }
-default['logstash']['instance']['default']['supervisor_gid'] = node['logstash']['group']
+default['logstash']['instance']['default']['supervisor_gid'] = node['logstash']['instance']['default']['group']
 default['logstash']['instance']['default']['pid_dir'] = '/var/run/logstash'
 default['logstash']['instance']['default']['create_account'] = true
 default['logstash']['instance']['default']['join_groups'] = []
@@ -35,7 +35,7 @@ default['logstash']['instance']['default']['plugins_check_if_installed']  = 'lib
 
 default['logstash']['instance']['default']['log_file']       = 'logstash.log'
 default['logstash']['instance']['default']['xms']        = '1024M'
-default['logstash']['instance']['default']['xmx']        = '1024M'
+default['logstash']['instance']['default']['xmx']        = "#{(node.memory.total.to_i * 0.6).floor / 1024}M"
 default['logstash']['instance']['default']['java_opts']  = ''
 default['logstash']['instance']['default']['gc_opts']    = '-XX:+UseParallelOldGC'
 default['logstash']['instance']['default']['ipv4_only']  = false
@@ -58,6 +58,8 @@ default['logstash']['instance']['default']['config_templates_variables'] = {}
 default['logstash']['instance']['default']['upstart_with_sudo'] = false
 
 default['logstash']['instance']['default']['init_method'] = 'native' # pleaserun or native or runit
+default['logstash']['instance']['default']['service_templates_cookbook']  = 'logstash'
+
 # roles/flags for various autoconfig/discovery components
 default['logstash']['instance']['default']['enable_embedded_es'] = false
 

@@ -10,7 +10,7 @@ actions :create
 default_action :create if defined?(default_action)
 
 attribute :instance,    kind_of: String, name_attribute: true
-attribute :templates,   kind_of: Array
+attribute :templates,   kind_of: Hash
 attribute :variables,   kind_of: Hash
 attribute :path,        kind_of: String
 attribute :owner,       kind_of: String

@@ -20,6 +20,7 @@ def load_current_resource
   end
 
   @basedir = attributes['basedir'] || defaults['basedir']
+  @templates_cookbook = new_resource.templates_cookbook  || attributes['service_templates_cookbook'] || defaults['service_templates_cookbook']
   @service_name = new_resource.service_name || "logstash_#{@instance}"
   @home = "#{@basedir}/#{@instance}"
   @method = new_resource.method || attributes['init_method'] || defaults['init_method']
@@ -29,6 +30,9 @@ def load_current_resource
   @log_file = attributes['log_file'] || defaults['log_file']
   @max_heap = attributes['xmx'] || defaults['xmx']
   @min_heap = attributes['xms'] || defaults['xms']
+  @gc_opts = attributes['gc_opts'] || defaults['gc_opts']
+  @ipv4_only = attributes['ipv4_only'] || defaults['ipv4_only']
+  @java_opts = attributes['java_opts'] || defaults['java_opts']
   @description = new_resource.description || @service_name
   @chdir = @home
   @workers =  attributes['workers'] || defaults['workers']
@@ -105,7 +109,25 @@ action :enable do
     new_resource.updated_by_last_action(pr.updated_by_last_action?)
   when 'runit'
     @run_context.include_recipe 'runit::default'
-    ri = runit_service(svc[:service_name])
+    ri = runit_service svc[:service_name] do
+      options(
+                name: svc[:name],
+                home: svc[:home],
+                max_heap: svc[:max_heap],
+                min_heap: svc[:min_heap],
+                gc_opts: svc[:gc_opts],
+                java_opts: svc[:java_opts],
+                ipv4_only: svc[:ipv4_only],
+                debug: svc[:debug],
+                log_file: svc[:log_file],
+                workers: svc[:workers],
+                install_type: svc[:install_type],
+                supervisor_gid: svc[:supervisor_gid],
+                user: svc[:user],
+                web_address: svc[:web_address],
+                web_port: svc[:web_port]
+      )
+    end
     new_resource.updated_by_last_action(ri.updated_by_last_action?)
   when 'native'
     if platform_family? 'debian'
@@ -119,6 +141,7 @@ action :enable do
         tp = template "/etc/init/#{svc[:service_name]}.conf" do
           mode      '0644'
           source    tp_source
+          cookbook  svc[:templates_cookbook]
           variables(
                       home: svc[:home],
                       name: svc[:name],
@@ -127,6 +150,14 @@ action :enable do
                       user: svc[:user],
                       group: svc[:group],
                       description: svc[:description],
+                      max_heap: svc[:max_heap],
+                      min_heap: svc[:min_heap],
+                      gc_opts: svc[:gc_opts],
+                      java_opts: svc[:java_opts],
+                      ipv4_only: svc[:ipv4_only],
+                      debug: svc[:debug],
+                      log_file: svc[:log_file],
+                      workers: svc[:workers],
                       supervisor_gid: svc[:supervisor_gid]
                     )
         end
@@ -148,6 +179,7 @@ action :enable do
       new_resource.updated_by_last_action(ex.updated_by_last_action?)
       template '/etc/systemd/system/logstash_server.service' do
         tp = source 'logstash_server.service.erb'
+        cookbook  svc[:templates_cookbook]
         owner 'root'
         group 'root'
         mode '0755'
@@ -166,6 +198,7 @@ action :enable do
     elsif platform_family? 'rhel', 'fedora'
       tp = template "/etc/init.d/#{svc[:service_name]}" do
         source "init.#{svc[:service_name]}.erb"
+        cookbook  svc[:templates_cookbook]
         owner 'root'
         group 'root'
         mode '0774'
@@ -219,7 +252,8 @@ def svc_vars
     workers: @workers,
     debug: @debug,
     install_type: @install_type,
-    supervisor_gid: @supervisor_gid
+    supervisor_gid: @supervisor_gid,
+    templates_cookbook: @templates_cookbook
   }
   svc
 end

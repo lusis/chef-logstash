@@ -10,6 +10,7 @@ actions :create
 default_action :create if defined?(default_action)
 
 attribute :instance,    kind_of: String, name_attribute: true
+attribute :service_name, kind_of: String
 attribute :templates,   kind_of: Hash
 attribute :variables,   kind_of: Hash
 attribute :owner,       kind_of: String

@@ -7,12 +7,17 @@ describe 'logstash::index_cleaner' do
     let(:node) { runner.node }
     let(:chef_run) do
       # runner.node.set['logstash'] ...
+      runner.node.automatic['memory']['total'] = '1024kB'
       runner.converge(described_recipe)
     end
     include_context 'stubs-common'
 
-    it 'writes some chefspec code' do
-      pending 'todo'
+    it 'installs elasticsearch_curator' do
+      expect(chef_run).to install_python_pip('elasticsearch-curator')
+    end
+
+    it 'creates a cronjob' do
+      expect(chef_run).to create_cron('logstash_index_cleaner')
     end
 
   end
