@@ -122,8 +122,8 @@ action :create do
     end
 
     rfr = remote_file "#{ls[:instance_dir]}/lib/logstash-#{ls[:version]}.jar" do
-      owner 'root'
-      group 'root'
+      owner ls[:user]
+      group ls[:group]
       mode '0755'
       source ls[:source_url]
       checksum ls[:checksum]

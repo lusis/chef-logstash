@@ -13,6 +13,7 @@ provisioner:
 
 platforms:
   - name: ubuntu-12.04
+  - name: centos-6.5
 
 suites:
   - name: server
@@ -24,6 +25,8 @@ suites:
       logstash:
         instance:
           server:
+            xms: '256M'
+            xmx: '256M'
             config_templates:
               input_syslog: 'config/input_syslog.conf.erb'
               output_stdout: 'config/output_stdout.conf.erb'

@@ -46,7 +46,7 @@ action :restart do
   case svc[:method]
   when 'native'
     sv = service svc[:service_name] do
-      provider Chef::Provider::Service::Upstart
+    #  provider Chef::Provider::Service::Upstart
       action [:restart]
     end
     new_resource.updated_by_last_action(sv.updated_by_last_action?)
@@ -58,7 +58,7 @@ action :start do
   case svc[:method]
   when 'native'
     sv = service svc[:service_name] do
-      provider Chef::Provider::Service::Upstart
+    #  provider Chef::Provider::Service::Upstart
       action [:start]
     end
     new_resource.updated_by_last_action(sv.updated_by_last_action?)
@@ -70,7 +70,7 @@ action :stop do
   case svc[:method]
   when 'native'
     sv = service svc[:service_name] do
-      provider Chef::Provider::Service::Upstart
+    #  provider Chef::Provider::Service::Upstart
       action [:stop]
     end
     new_resource.updated_by_last_action(sv.updated_by_last_action?)
@@ -82,7 +82,7 @@ action :reload do
   case svc[:method]
   when 'native'
     sv = service svc[:service_name] do
-      provider Chef::Provider::Service::Upstart
+    #  provider Chef::Provider::Service::Upstart
       action [:reload]
     end
     new_resource.updated_by_last_action(sv.updated_by_last_action?)
@@ -132,15 +132,10 @@ action :enable do
   when 'native'
     if platform_family? 'debian'
       if node['platform_version'] >= '12.04'
-        if svc[:install_type] == 'tarball'
-          tp_source = 'init/binary_upstart.erb'
-        else
-          tp_source = 'init/java_upstart.erb'
-        end
         args = default_args
         tp = template "/etc/init/#{svc[:service_name]}.conf" do
           mode      '0644'
-          source    tp_source
+          source    "init/#{svc[:install_type]}_upstart.erb"
           cookbook  svc[:templates_cookbook]
           variables(
                       home: svc[:home],
@@ -196,19 +191,32 @@ action :enable do
       new_resource.updated_by_last_action(sv.updated_by_last_action?)
 
     elsif platform_family? 'rhel', 'fedora'
+      args = default_args
       tp = template "/etc/init.d/#{svc[:service_name]}" do
-        source "init.#{svc[:service_name]}.erb"
+        source "init/#{svc[:install_type]}_init.logstash.erb"
         cookbook  svc[:templates_cookbook]
         owner 'root'
         group 'root'
         mode '0774'
         variables(
-                  config_file: "#{svc[:home]}/etc/conf.d",
-                  home:     svc[:home],
-                  name:     svc[:name],
-                  log_file: svc[:log_file],
+                  home: svc[:home],
+                  name: svc[:name],
+                  command: svc[:command],
+                  args: args,
+                  user: svc[:user],
+                  group: svc[:group],
+                  description: svc[:description],
                   max_heap: svc[:max_heap],
-                  min_heap: svc[:min_heap]
+                  min_heap: svc[:min_heap],
+                  gc_opts: svc[:gc_opts],
+                  java_opts: svc[:java_opts],
+                  ipv4_only: svc[:ipv4_only],
+                  debug: svc[:debug],
+                  log_file: svc[:log_file],
+                  workers: svc[:workers],
+                  supervisor_gid: svc[:supervisor_gid],
+                  config_file: "#{svc[:home]}/etc/conf.d",
+                  group: svc[:group]
                   )
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
