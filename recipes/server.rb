@@ -26,15 +26,17 @@ logstash_service name do
   action      [:enable]
 end
 
-es_ip = service_ip(name, 'elasticsearch')
+#es_ip = service_ip(name, 'elasticsearch')
 
 logstash_config name do
   action [:create]
   variables(
-    elasticsearch_ip: es_ip,
+    elasticsearch_ip: ::Logstash.service_ip(node, name, 'elasticsearch'),
     elasticsearch_embedded: true
   )
 end
+# ^ see `.kitchen.yml` for example attributes to configure templates.
+
 
 logstash_plugins 'contrib' do
   instance name
