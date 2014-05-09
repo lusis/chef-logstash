@@ -23,7 +23,6 @@ def load_current_resource
   @version = new_resource.version || attributes['version'] || defaults['version']
   @checksum = new_resource.checksum || attributes['checksum'] || defaults['checksum']
   @source_url = new_resource.source_url || attributes['source_url'] || defaults['source_url']
-  @enable_logrotate = new_resource.enable_logrotate || attributes['enable_logrotate'] || defaults['enable_logrotate']
   @repo = new_resource.repo
   @sha = new_resource.sha
   @java_home = new_resource.java_home
@@ -33,7 +32,7 @@ def load_current_resource
   @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
   @logrotate_size = attributes['logrotate_max_size'] || defaults['logrotate_max_size']
   @logrotate_use_filesize = attributes['logrotate_use_filesize'] || defaults['logrotate_use_filesize']
-  @logrotate_rotate_frequency = attributes['logrotate_rotate_frequency'] || defaults['logrotate_rotate_frequency']
+  @logrotate_frequency = attributes['logrotate_frequency'] || defaults['logrotate_frequency']
   @logrotate_max_backup = attributes['logrotate_max_backup'] || defaults['logrotate_max_backup']
   @logrotate_options = attributes['logrotate_options'] || defaults['logrotate_options']
   @logrotate_enable = attributes['logrotate_enable'] || defaults['logrotate_enable']
@@ -213,7 +212,7 @@ def logrotate(ls)
   logrotate_app "logstash_#{name}" do
     path "#{ls[:homedir]}/log/*.log"
     size ls[:logrotate_size] if ls[:logrotate_use_filesize]
-    frequency ls[:logrotate_rotate_frequency]
+    frequency ls[:logrotate_frequency]
     rotate ls[:logrotate_max_backup]
     options ls[:logrotate_options]
     create "664 #{ls[:user]} #{ls[:group]}"
@@ -236,7 +235,7 @@ def ls_vars
     enable_logrotate: @enable_logrotate,
     logrotate_size: @logrotate_size,
     logrotate_use_filesize: @logrotate_use_filesize,
-    logrotate_rotate_frequency: @logrotate_rotate_frequency,
+    logrotate_frequency: @logrotate_frequency,
     logrotate_max_backup: @logrotate_max_backup,
     logrotate_options: @logrotate_options,
     logrotate_enable: @logrotate_enable
