@@ -23,7 +23,6 @@ def load_current_resource
   @version = new_resource.version || attributes['version'] || defaults['version']
   @checksum = new_resource.checksum || attributes['checksum'] || defaults['checksum']
   @source_url = new_resource.source_url || attributes['source_url'] || defaults['source_url']
-  @enable_logrotate = new_resource.enable_logrotate || attributes['enable_logrotate'] || defaults['enable_logrotate']
   @repo = new_resource.repo
   @sha = new_resource.sha
   @java_home = new_resource.java_home
@@ -233,7 +232,6 @@ def ls_vars
     group: @group,
     name: @name,
     instance_dir: @instance_dir,
-    enable_logrotate: @enable_logrotate,
     logrotate_size: @logrotate_size,
     logrotate_use_filesize: @logrotate_use_filesize,
     logrotate_rotate_frequency: @logrotate_rotate_frequency,
