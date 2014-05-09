@@ -23,7 +23,7 @@ def load_current_resource
   @variables = new_resource.variables || attributes['pattern_templates_variables'] || defaults['pattern_templates_variables']
   @owner     = new_resource.owner || attributes['user'] || defaults['user']
   @group     = new_resource.group || attributes['group'] || defaults['group']
-  @templates_cookbook = new_resource.templates_cookbook || defaults['pattern_templates_cookbook'] || defaults['pattern_templates_cookbook']
+  @templates_cookbook = new_resource.templates_cookbook || attributes['pattern_templates_cookbook'] || defaults['pattern_templates_cookbook']
   @mode      = new_resource.mode || '0644'
   @path      = new_resource.path || "#{@basedir}/#{@instance}/patterns"
 end
