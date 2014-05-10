@@ -25,7 +25,7 @@ describe 'logstash::server' do
     end
     include_context 'stubs-common'
 
-    it 'installs the config template' do
+    it 'installs the output_stdout template' do
       expect(chef_run).to create_template('/opt/logstash/server/etc/conf.d/output_stdout.conf').with(
         source:   'config/output_stdout.conf.erb',
         cookbook: 'logstash',
@@ -36,6 +36,22 @@ describe 'logstash::server' do
           elasticsearch_ip: '127.0.0.1',
           elasticsearch_embedded: true
         },
+        action:   [:create]
+      )
+    end
+
+    it 'installs the input_syslog template' do
+      expect(chef_run).to create_template('/opt/logstash/server/etc/conf.d/input_syslog.conf').with(
+        source:   'config/input_syslog.conf.erb',
+        cookbook: 'logstash',
+        action:   [:create]
+      )
+    end
+
+    it 'installs the output_elasticsearch template' do
+      expect(chef_run).to create_template('/opt/logstash/server/etc/conf.d/output_elasticsearch.conf').with(
+        source:   'config/output_elasticsearch.conf.erb',
+        cookbook: 'logstash',
         action:   [:create]
       )
     end

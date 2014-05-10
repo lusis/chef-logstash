@@ -56,3 +56,7 @@ end
 logstash_service name do
   action      [:start]
 end
+
+logstash_curator 'server' do
+  action [:create]
+end

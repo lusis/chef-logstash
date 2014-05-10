@@ -7,8 +7,13 @@ describe 'logstash::server' do
     let(:node) { runner.node }
     let(:chef_run) do
       # runner.node.set['logstash'] ...
-      runner.node.set['logstash']['instance']['server']['enable_embedded_es'] = true
       runner.node.automatic['memory']['total'] = '1024kB'
+      runner.node.set['logstash']['instance']['server']['basedir'] = '/opt/logstash'
+      runner.node.set['logstash']['instance']['server']['user'] = 'logstash'
+      runner.node.set['logstash']['instance']['server']['group'] = 'logstash'
+      runner.node.set['logstash']['instance']['server']['config_templates_cookbook'] = 'logstash'
+      runner.node.set['logstash']['instance']['server']['elasticsearch_ip'] = '127.0.0.1'
+      runner.node.set['logstash']['instance']['server']['enable_embedded_es'] = true      
       runner.converge(described_recipe)
     end
     include_context 'stubs-common'
@@ -32,6 +37,10 @@ describe 'logstash::server' do
 
     it 'calls the logstash_plugins LWRP' do
       expect(chef_run).to create_logstash_plugins('contrib')
+    end
+
+    it 'calls the logstash_curator LWRP' do
+      expect(chef_run).to create_logstash_curator('server')
     end
 
   end

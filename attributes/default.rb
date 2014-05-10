@@ -35,7 +35,7 @@ default['logstash']['instance']['default']['plugins_check_if_installed']  = 'lib
 
 default['logstash']['instance']['default']['log_file']       = 'logstash.log'
 default['logstash']['instance']['default']['xms']        = '1024M'
-default['logstash']['instance']['default']['xmx']        = "#{(node.memory.total.to_i * 0.6).floor / 1024}M"
+default['logstash']['instance']['default']['xmx']        = "#{(node['memory']['total'].to_i * 0.6).floor / 1024}M"
 default['logstash']['instance']['default']['java_opts']  = ''
 default['logstash']['instance']['default']['gc_opts']    = '-XX:+UseParallelOldGC'
 default['logstash']['instance']['default']['ipv4_only']  = false
@@ -78,3 +78,9 @@ default['logstash']['instance']['default']['logrotate_frequency'] = 'daily'
 default['logstash']['instance']['default']['logrotate_max_backup'] = 10
 default['logstash']['instance']['default']['logrotate_max_size'] = '10M'
 default['logstash']['instance']['default']['logrotate_use_filesize'] = false
+
+# Curator
+default['logstash']['instance']['default']['curator_days_to_keep'] = 31
+default['logstash']['instance']['default']['curator_cron_minute'] = '0'
+default['logstash']['instance']['default']['curator_cron_hour'] = '*'
+default['logstash']['instance']['default']['curator_cron_log_file'] = '/dev/null'

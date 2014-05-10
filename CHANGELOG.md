@@ -2,7 +2,12 @@
 
 This file is used to list changes made in each version of chef-logstash.
 
-## 0.8.0:
+
+## 0.9.1:
+
+* curator LWRP
+
+## 0.9.0:
 
 _this will almost certainly break backwards compatibility_
 

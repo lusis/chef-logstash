@@ -47,4 +47,8 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:logstash_service, :stop, name)
   end
 
+  def create_logstash_curator(name)
+    ChefSpec::Matchers::ResourceMatcher.new(:logstash_curator, :create, name)
+  end
+
 end
