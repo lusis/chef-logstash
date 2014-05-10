@@ -28,7 +28,7 @@ pid_file = "#{node['logstash']['pid_dir']}/logstash_beaver.pid"
 logstash_server_ip = nil
 if Chef::Config[:solo]
   logstash_server_ip = node['logstash']['beaver']['server_ipaddress'] if node['logstash']['beaver']['server_ipaddress']
-elsif !node['logstash']['beaver']['server_ipaddress'].nil?
+elsif node['logstash']['beaver']['server_ipaddress']
   logstash_server_ip = node['logstash']['beaver']['server_ipaddress']
 elsif node['logstash']['beaver']['server_role']
   logstash_server_results = search(:node, "roles:#{node['logstash']['beaver']['server_role']}")
@@ -51,7 +51,7 @@ end
     owner node['logstash']['user']
     group node['logstash']['group']
     recursive true
-    not_if { ::File.exists?(dir) }
+    not_if { ::File.exist?(dir) }
   end
 end
 

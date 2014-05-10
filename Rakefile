@@ -25,16 +25,16 @@ end
 
 require 'rspec/core/rake_task'
 desc 'Run ChefSpec unit tests'
-RSpec::Core::RakeTask.new(:spec) do |t, args|
+RSpec::Core::RakeTask.new(:spec) do |t, _args|
   t.rspec_opts = 'test/unit/spec'
 end
 
 # The default rake task should just run it all
 task default: %w(style spec integration)
 
-begin
-  require 'kitchen/rake_tasks'
-  Kitchen::RakeTasks.new
-rescue LoadError
-  puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
-end
+# begin
+  # require 'kitchen/rake_tasks'
+  # Kitchen::RakeTasks.new
+# rescue LoadError
+  # puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
+# end

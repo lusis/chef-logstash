@@ -1,7 +1,6 @@
 language: ruby
-gemfile:
 rvm:
   - 1.9.3
-install: bundle install
-script: bundle exec berks install
-script: bundle exec rake style spec
+install: bundle install --path vendor --binstubs
+script: bin/berks install
+script: bin/rake style spec

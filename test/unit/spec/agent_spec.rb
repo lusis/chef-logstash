@@ -13,7 +13,7 @@ describe 'logstash::agent' do
       runner.node.set['logstash']['instance']['agent']['group'] = 'logstash'
       runner.node.set['logstash']['instance']['agent']['config_templates_cookbook'] = 'logstash'
       runner.node.set['logstash']['instance']['agent']['elasticsearch_ip'] = '127.0.0.1'
-      runner.node.set['logstash']['instance']['agent']['enable_embedded_es'] = false      
+      runner.node.set['logstash']['instance']['agent']['enable_embedded_es'] = false
       runner.converge(described_recipe)
     end
     include_context 'stubs-common'

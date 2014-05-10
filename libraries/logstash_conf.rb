@@ -4,8 +4,6 @@ require 'rubygems'
 
 # Evaluate objects for logstash config file.
 class Erubis::RubyEvaluator::LogstashConf
-  private
-
   def self.key_to_str(k)
     case k.class.to_s
     when 'String'
@@ -39,7 +37,7 @@ class Erubis::RubyEvaluator::LogstashConf
     when String, Symbol, Fixnum, Float
       "\"#{v}\""
     when Array
-      "[#{v.map { |e| value_to_str(e, indent) }.join(", ")}]"
+      "[#{v.map { |e| value_to_str(e, indent) }.join(', ')}]"
     when Hash, Mash
       hash_to_str(v, indent) + "\n" + indent(indent + 4) + '}'
     when TrueClass, FalseClass
@@ -50,11 +48,11 @@ class Erubis::RubyEvaluator::LogstashConf
   end
 
   def self.key_value_to_str(k, v, indent = 0)
-    if !v.nil?
+    if v.nil?
+      key_to_str(k)
+    else
       # k.inspect + " => " + v.inspect
       key_to_str(k) + ' => ' + value_to_str(v, indent)
-    else
-      key_to_str(k)
     end
   end
 
@@ -65,7 +63,7 @@ class Erubis::RubyEvaluator::LogstashConf
 #      result << "  if [type] == \"#{hash['type']}\" {" if hash.has_key?('type') and type_to_condition
       indent += 4
       result << indent(indent) + name.to_s + ' {'
-      result << indent(indent) + key_value_to_str('patterns_dir', patterns_dir, indent) if patterns_dir_plugins.include?(name.to_s) && !patterns_dir.nil? && !hash.key?('patterns_dir')
+      result << indent(indent) + key_value_to_str('patterns_dir', patterns_dir, indent) if patterns_dir_plugins.include?(name.to_s) && patterns_dir && !hash.key?('patterns_dir')
       hash.sort.each do |k, v|
 #        next if k == 'type' and type_to_condition
         indent += 4
@@ -78,8 +76,6 @@ class Erubis::RubyEvaluator::LogstashConf
     end
     return result.join("\n")
   end
-
-  public
 
   def self.section_to_str(section, version = nil, patterns_dir = nil, indent = 0)
     result = []

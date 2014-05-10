@@ -21,7 +21,6 @@ suites:
       - recipe[apt::default]
       - recipe[java::default]
       - recipe[logstash::server]
-      - recipe[logstash::index_cleaner]
     attributes:
       logstash:
         instance:

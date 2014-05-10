@@ -32,8 +32,8 @@ end
 action :create do
   conf = conf_vars
   # Chef::Log.info("config vars: #{conf.inspect}")
-  conf[:templates].each do |template, file|
-    tp = template"#{conf[:path]}/#{::File.basename(file).chomp(::File.extname(file))}" do
+  conf[:templates].each do |_template, file|
+    tp = template "#{conf[:path]}/#{::File.basename(file).chomp(::File.extname(file))}" do
       source      file
       cookbook    conf[:templates_cookbook]
       owner       conf[:owner]

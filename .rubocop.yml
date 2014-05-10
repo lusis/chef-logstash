@@ -1,12 +1,13 @@
 AllCops:
   Exclude:
-    - vendor
-    - test/support/**
+    - 'vendor/**/*'
+    - 'test/support/**'
+    - 'bin/**/*'
   Include:
-    - Rakefile
-    - Gemfile
-    - Vagrantfile
-    - Berksfile  
+    - '**/Rakefile'
+    - '**/Gemfile'
+    - '**/Vagrantfile'
+    - '**/Berksfile'
 CyclomaticComplexity:
   Enabled: false
 
@@ -35,3 +36,6 @@ Documentation:
 
 MethodLength:
   Max: 50
+
+SingleSpaceBeforeFirstArg:
+  Enabled: false

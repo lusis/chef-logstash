@@ -51,7 +51,7 @@ action :create do
       cwd     ls_instance_dir
       notifies    :restart, "logstash_service[#{ls_instance}]"
       # this is a temp workaround to make the plugin command idempotent.
-      not_if { ::File.exists?("#{ls_instance_dir}/#{ls_install_check}") }
+      not_if { ::File.exist?("#{ls_instance_dir}/#{ls_install_check}") }
     end
     new_resource.updated_by_last_action(ex.updated_by_last_action?)
   when 'tarball'
@@ -68,7 +68,7 @@ action :create do
       action    [:put]
       notifies    :restart, "logstash_service[#{ls_instance}]"
       # this is a temp workaround to ensure idempotent.
-      not_if { ::File.exists?("#{ls_instance_dir}/#{ls_install_check}") }
+      not_if { ::File.exist?("#{ls_instance_dir}/#{ls_install_check}") }
     end
     new_resource.updated_by_last_action(arkit.updated_by_last_action?)
   else

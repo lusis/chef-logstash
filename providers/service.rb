@@ -104,7 +104,7 @@ action :enable do
       user        svc[:user]
       group       svc[:group]
       action      :create
-      not_if { ::File.exists?("/etc/init.d/#{svc[:service_name]}") }
+      not_if { ::File.exist?("/etc/init.d/#{svc[:service_name]}") }
     end
     new_resource.updated_by_last_action(pr.updated_by_last_action?)
   when 'runit'

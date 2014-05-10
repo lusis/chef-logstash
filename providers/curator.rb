@@ -25,14 +25,13 @@ def load_current_resource
   @user = new_resource.user || attributes['user'] || defaults['user']
 end
 
-
 action :create do
-  ls_instance = @instance
-  ls_days_to_keep = @days_to_keep
-  ls_log_file = @log_file
-  ls_hour = @hour
-  ls_minute = @minute
-  ls_user = @user
+  cur_instance = @instance
+  cur_days_to_keep = @days_to_keep
+  cur_log_file = @log_file
+  cur_hour = @hour
+  cur_minute = @minute
+  cur_user = @user
 
   @run_context.include_recipe 'python::pip'
 
@@ -41,14 +40,37 @@ action :create do
   end
   new_resource.updated_by_last_action(pi.updated_by_last_action?)
 
-  cr = cron 'logstash_index_cleaner' do
-    command "curator --host #{::Logstash.service_ip(node, ls_instance, 'elasticsearch')} -d #{ls_days_to_keep} &> #{ls_log_file}"
-    user    ls_user
-    minute  ls_minute
-    hour    ls_hour
+  cr = cron "curator-#{cur_instance}" do
+    command "curator --host #{::Logstash.service_ip(node, cur_instance, 'elasticsearch')} -d #{cur_days_to_keep} &> #{cur_log_file}"
+    user    cur_user
+    minute  cur_minute
+    hour    cur_hour
+    action  [:create]
   end
   new_resource.updated_by_last_action(cr.updated_by_last_action?)
 end
 
+action :delete do
+  cur_instance = @instance
+  cur_days_to_keep = @days_to_keep
+  cur_log_file = @log_file
+  cur_hour = @hour
+  cur_minute = @minute
+  cur_user = @user
 
+  @run_context.include_recipe 'python::pip'
 
+  pi = python_pip 'elasticsearch-curator' do
+    action :install
+  end
+  new_resource.updated_by_last_action(pi.updated_by_last_action?)
+
+  cr = cron "curator-#{cur_instance}" do
+    command "curator --host #{::Logstash.service_ip(node, cur_instance, 'elasticsearch')} -d #{cur_days_to_keep} &> #{cur_log_file}"
+    user    cur_user
+    minute  cur_minute
+    hour    cur_hour
+    action  [:delete]
+  end
+  new_resource.updated_by_last_action(cr.updated_by_last_action?)
+end
