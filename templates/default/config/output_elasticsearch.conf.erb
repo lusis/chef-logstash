@@ -2,8 +2,8 @@ output {
   elasticsearch {
 <% if @elasticsearch_ip -%>
     host => "<%= @elasticsearch_ip %>"
-<% end -%>
-<% if @elasticsearch_embedded -%>
+    cluster => "<%= @elasticsearch_cluster %>"
+<% elsif @elasticsearch_embedded -%>
     embedded => true
 <% end -%>
   }

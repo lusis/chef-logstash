@@ -27,6 +27,7 @@ logstash_service name do
 end
 
 embedded_es = node['logstash']['instance'][name]['enable_embedded_es'] || node['logstash']['instance']['default']['enable_embedded_es']
+es_cluster = node['logstash']['instance'][name]['elasticsearch_cluster'] || node['logstash']['instance']['default']['elasticsearch_cluster']
 
 my_templates  = {
   'input_syslog' => 'config/input_syslog.conf.erb',
@@ -39,6 +40,7 @@ logstash_config name do
   action [:create]
   variables(
     elasticsearch_ip: ::Logstash.service_ip(node, name, 'elasticsearch'),
+    elasticsearch_cluster: es_cluster,
     elasticsearch_embedded: embedded_es
   )
 end
