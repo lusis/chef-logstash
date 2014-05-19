@@ -10,6 +10,10 @@ python_pip 'pyes' do
   action :install
 end
 
+python_pip "argparse" do
+  action :install
+end
+
 directory base_dir do
   action :create
   mode '0755'
