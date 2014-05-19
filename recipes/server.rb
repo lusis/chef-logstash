@@ -238,4 +238,7 @@ logrotate_app 'logstash_server' do
   rotate node['logstash']['logging']['maxBackup']
   options node['logstash']['server']['logrotate']['options']
   create "664 #{node['logstash']['user']} #{node['logstash']['group']}"
+  postrotate <<-SCRIPT
+    kill -s 1 `ps -eo pid,cmd | grep -E 'java .*logstash.jar' | grep -v grep | awk '{ print $1 }'` || true
+  SCRIPT
 end
