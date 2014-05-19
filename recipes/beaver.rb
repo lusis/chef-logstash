@@ -148,6 +148,15 @@ end
 # use upstart when supported to get nice things like automatic respawns
 use_upstart = false
 supports_setuid = false
+ensure_supplemental_groups = false
+
+# Addresses https://bugs.launchpad.net/upstart/+bug/812870
+# It *should* be possible to use setuid with supplemental groups in distros using
+# versions of Upstart that incorporate the fix, e.g. Ubuntu >= 13.04
+if node['logstash']['join_groups'] && node['logstash']['join_groups'].length > 1
+  ensure_supplemental_groups = true
+end
+
 case node['platform_family']
 when 'rhel'
   use_upstart = true if node['platform_version'].to_i >= 6
@@ -167,7 +176,8 @@ if use_upstart
               :group => node['logstash']['supervisor_gid'],
               :user => node['logstash']['user'],
               :log => log_file,
-              :supports_setuid => supports_setuid
+              :supports_setuid => supports_setuid,
+              :ensure_supplemental_groups => ensure_supplemental_groups
               )
     notifies :restart, 'service[logstash_beaver]'
   end
