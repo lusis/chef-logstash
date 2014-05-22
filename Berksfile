@@ -5,9 +5,10 @@ source 'https://api.berkshelf.com' if Gem::Version.new(Berkshelf::VERSION) > Gem
 metadata
 
 cookbook 'java'
-cookbook 'pleaserun', git: 'https://github.com/paulczar/chef-pleaserun.git'
 cookbook 'curl'
 cookbook 'ark'
+
+cookbook 'pleaserun', git: 'https://github.com/paulczar/chef-pleaserun.git'
 
 group :test do
   cookbook 'minitest-handler', git: 'git://github.com/btm/minitest-handler-cookbook.git'

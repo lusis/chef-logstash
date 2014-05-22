@@ -11,7 +11,7 @@ version          '0.9.1'
   supports os
 end
 
-%w(build-essential runit git ant java logrotate yum python ark pleaserun).each do |ckbk|
+%w(build-essential runit git ant java logrotate yum python ark).each do |ckbk|
   depends ckbk
 end
 

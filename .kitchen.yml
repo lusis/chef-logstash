@@ -22,6 +22,11 @@ suites:
       - recipe[java::default]
       - recipe[logstash::server]
     attributes:
+      java:
+        install_flavor: "oracle"
+        jdk_version: "7"
+        oracle:
+          accept_oracle_download_terms: true
       logstash:
         instance:
           server:

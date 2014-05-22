@@ -28,14 +28,14 @@ def load_current_resource
   @java_home = new_resource.java_home
   @user = new_resource.user || attributes['user'] || defaults['user']
   @group = new_resource.group || attributes['group'] || defaults['group']
-  @useropts = attributes['user_opts'] || defaults['user_opts']
+  @useropts = new_resource.user_opts || attributes['user_opts'] || defaults['user_opts']
   @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
-  @logrotate_size = attributes['logrotate_max_size'] || defaults['logrotate_max_size']
-  @logrotate_use_filesize = attributes['logrotate_use_filesize'] || defaults['logrotate_use_filesize']
-  @logrotate_frequency = attributes['logrotate_frequency'] || defaults['logrotate_frequency']
-  @logrotate_max_backup = attributes['logrotate_max_backup'] || defaults['logrotate_max_backup']
-  @logrotate_options = attributes['logrotate_options'] || defaults['logrotate_options']
-  @logrotate_enable = attributes['logrotate_enable'] || defaults['logrotate_enable']
+  @logrotate_size = new_resource.user_opts || attributes['logrotate_max_size'] || defaults['logrotate_max_size']
+  @logrotate_use_filesize = new_resource.logrotate_use_filesize || attributes['logrotate_use_filesize'] || defaults['logrotate_use_filesize']
+  @logrotate_frequency = new_resource.logrotate_frequency || attributes['logrotate_frequency'] || defaults['logrotate_frequency']
+  @logrotate_max_backup = new_resource.logrotate_max_backup || attributes['logrotate_max_backup'] || defaults['logrotate_max_backup']
+  @logrotate_options = new_resource.logrotate_options || attributes['logrotate_options'] || defaults['logrotate_options']
+  @logrotate_enable = new_resource.logrotate_enable || attributes['logrotate_enable'] || defaults['logrotate_enable']
 end
 
 action :delete do

@@ -23,4 +23,10 @@ attribute :repo, kind_of: String, default: 'git://github.com/logstash/logstash.g
 attribute :java_home, kind_of: String, default: '/usr/lib/jvm/java-6-openjdk' # openjdk6 on ubuntu
 attribute :user, kind_of: String
 attribute :group, kind_of: String
-attribute :enable_logrotate, kind_of: [TrueClass, FalseClass]
+attribute :logrotate_enable, kind_of: [TrueClass, FalseClass]
+attribute :user_opts, kind_of: [Hash]
+attribute :logrotate_size, kind_of: [String]
+attribute :logrotate_use_filesize, kind_of: [TrueClass, FalseClass]
+attribute :logrotate_frequency, kind_of: [String]
+attribute :logrotate_max_backup, kind_of: [Integer]
+attribute :logrotate_options, kind_of: [String]
