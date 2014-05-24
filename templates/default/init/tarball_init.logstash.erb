@@ -8,7 +8,7 @@
 
 
 PIDDIR="/var/run/logstash"
-export PIDFILE="/var/run/logstash-<%= @name %>.pid"
+export PIDFILE="$PIDDIR/logstash-<%= @name %>.pid"
 export LS_HOME="<%= @home %>"
 export LS_HEAP_SIZE="<%= @max_heap %>"
 export LOGSTASH_OPTS="<%= @args.join(' ') %>"
