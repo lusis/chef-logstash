@@ -9,5 +9,8 @@ output {
 <% if @bind_host -%>
     bind_host => "<%= @bind_host %>"
 <% end -%>
+<% if @index -%>
+    index => "<%= @index %>"
+<% end -%>
   }
 }
