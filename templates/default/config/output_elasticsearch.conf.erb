@@ -6,5 +6,8 @@ output {
 <% elsif @elasticsearch_embedded -%>
     embedded => true
 <% end -%>
+<% if @bind_host -%>
+    bind_host => "<%= @bind_host %>"
+<% end -%>
   }
 }
