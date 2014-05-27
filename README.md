@@ -521,8 +521,8 @@ filters.
 
 ## Requirements
 * Vagrant 1.2.1+
-* Vagrant Berkshelf Plugin `vagrant plugin install vagrant-berkshelf`
 * Vagrant Omnibus Plugin   `vagrant plugin install vagrant-omnibus`
+* Vagrant Berkshelf Plugin (2.0.1) `vagrant plugin install vagrant-berkshelf --plugin-version=2.0.1`
 
 Uses the Box Name to determine the run list ( based on whether its Debian or RHEL based ).
 
