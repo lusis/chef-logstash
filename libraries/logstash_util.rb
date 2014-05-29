@@ -16,7 +16,7 @@ module Logstash
       service_query = attributes["#{service}_query"] || defaults["#{service}_query"]
       Chef::Search::Query.new.search(:node, service_query) { |o| results << o }
       if !results.empty?
-        service_ip = get_ip_from_results(results[0], interface)
+        service_ip = get_ip_for_node(results[0], interface)
       else
         service_ip = attributes["#{service}_ip"] || defaults["#{service}_ip"]
       end
