@@ -63,7 +63,7 @@ default['logstash']['instance']['default']['service_templates_cookbook']  = 'log
 # roles/flags for various autoconfig/discovery components
 default['logstash']['instance']['default']['enable_embedded_es'] = false
 default['logstash']['instance']['default']['bind_host_interface'] = ''
-default['logstash']['instance']['default']['index'] = nil
+default['logstash']['instance']['default']['es_index'] = nil
 
 default['logstash']['instance']['default']['inputs'] = []
 default['logstash']['instance']['default']['filters'] = []
