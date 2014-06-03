@@ -1,7 +1,7 @@
 # Encoding: utf-8
 require 'spec_helper'
 
-# Java 1.6 
+# Java 1.6
 describe package('openjdk-6-jre') do
   it { should be_installed }
 end
@@ -36,7 +36,6 @@ end
 describe port(5959) do
   it { should be_listening }
 end
-
 
 # Logstash Curator
 describe cron do
