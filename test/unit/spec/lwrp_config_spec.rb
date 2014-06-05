@@ -32,11 +32,7 @@ describe 'logstash::server' do
         owner:     'logstash',
         group:    'logstash',
         mode:     '0644',
-        variables: {
-          elasticsearch_ip: '127.0.0.1',
-          elasticsearch_embedded: true
-        },
-        action:   [:create]
+        action: [:create]
       )
     end
 
@@ -44,7 +40,10 @@ describe 'logstash::server' do
       expect(chef_run).to create_template('/opt/logstash/server/etc/conf.d/input_syslog.conf').with(
         source:   'config/input_syslog.conf.erb',
         cookbook: 'logstash',
-        action:   [:create]
+        owner:     'logstash',
+        group:    'logstash',
+        mode:     '0644',
+        action: [:create]
       )
     end
 
@@ -52,7 +51,17 @@ describe 'logstash::server' do
       expect(chef_run).to create_template('/opt/logstash/server/etc/conf.d/output_elasticsearch.conf').with(
         source:   'config/output_elasticsearch.conf.erb',
         cookbook: 'logstash',
-        action:   [:create]
+        owner:     'logstash',
+        group:    'logstash',
+        mode:     '0644',
+        variables: {
+          elasticsearch_ip: '127.0.0.1',
+          bind_host: nil,
+          elasticsearch_cluster: 'logstash',
+          elasticsearch_embedded: true,
+          es_index: nil
+        },
+        action: [:create]
       )
     end
 

@@ -30,9 +30,8 @@ embedded_es = node['logstash']['instance'][name]['enable_embedded_es'] || node['
 es_cluster = node['logstash']['instance'][name]['elasticsearch_cluster'] || node['logstash']['instance']['default']['elasticsearch_cluster']
 es_index = node['logstash']['instance'][name]['es_index'] || node['logstash']['instance']['default']['es_index']
 
-
 bind_host_if = node['logstash']['instance'][name]['bind_host_interface'] || node['logstash']['instance']['default']['bind_host_interface']
-if (!bind_host_if.empty? )
+if !bind_host_if.empty?
   bind_host = ::Logstash.get_ip_for_node(node, bind_host_if)
 else
   bind_host = nil
