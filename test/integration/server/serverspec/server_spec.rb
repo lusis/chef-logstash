@@ -2,8 +2,8 @@
 require 'spec_helper'
 
 # Java 1.6
-describe package('openjdk-6-jre') do
-  it { should be_installed }
+describe command('java -version') do
+  it { should return_stdout /java version "1.7.\d+_\d+"/ }
 end
 
 # Logstash Instance
