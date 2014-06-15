@@ -26,11 +26,10 @@ default['logstash']['instance']['default']['source_url']     = 'https://download
 default['logstash']['instance']['default']['checksum']       = 'a1db8eda3d8bf441430066c384578386601ae308ccabf5d723df33cee27304b4'
 default['logstash']['instance']['default']['install_type']   = 'tarball'
 
-default['logstash']['instance']['default']['plugins_install_type']   = 'native' # native|tarball
 default['logstash']['instance']['default']['plugins_version']        = '1.4.1'
 default['logstash']['instance']['default']['plugins_source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-contrib-1.4.1.tar.gz'
 default['logstash']['instance']['default']['plugins_checksum']       = 'beb0927351a3c298cd346225950c8d4fbda984ba54252d8a2f244329207c31e2'
-default['logstash']['instance']['default']['plugins_install_type']   = 'tarball'
+default['logstash']['instance']['default']['plugins_install_type']   = 'tarball' # native|tarball
 default['logstash']['instance']['default']['plugins_check_if_installed']  = 'lib/logstash/filters/translate.rb'
 
 default['logstash']['instance']['default']['log_file']       = 'logstash.log'
