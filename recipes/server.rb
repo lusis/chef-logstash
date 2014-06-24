@@ -28,9 +28,10 @@ end
 
 embedded_es = node['logstash']['instance'][name]['enable_embedded_es'] || node['logstash']['instance']['default']['enable_embedded_es']
 es_cluster = node['logstash']['instance'][name]['elasticsearch_cluster'] || node['logstash']['instance']['default']['elasticsearch_cluster']
+es_index = node['logstash']['instance'][name]['es_index'] || node['logstash']['instance']['default']['es_index']
 
 bind_host_if = node['logstash']['instance'][name]['bind_host_interface'] || node['logstash']['instance']['default']['bind_host_interface']
-if (!bind_host_if.empty? )
+if !bind_host_if.empty?
   bind_host = ::Logstash.get_ip_for_node(node, bind_host_if)
 else
   bind_host = nil
@@ -49,7 +50,8 @@ logstash_config name do
     elasticsearch_ip: ::Logstash.service_ip(node, name, 'elasticsearch'),
     bind_host: bind_host,
     elasticsearch_cluster: es_cluster,
-    elasticsearch_embedded: embedded_es
+    elasticsearch_embedded: embedded_es,
+    es_index: es_index
   )
 end
 # ^ see `.kitchen.yml` for example attributes to configure templates.

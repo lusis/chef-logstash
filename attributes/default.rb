@@ -26,11 +26,10 @@ default['logstash']['instance']['default']['source_url']     = 'https://download
 default['logstash']['instance']['default']['checksum']       = 'a1db8eda3d8bf441430066c384578386601ae308ccabf5d723df33cee27304b4'
 default['logstash']['instance']['default']['install_type']   = 'tarball'
 
-default['logstash']['instance']['default']['plugins_install_type']   = 'native' # native|tarball
 default['logstash']['instance']['default']['plugins_version']        = '1.4.1'
 default['logstash']['instance']['default']['plugins_source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-contrib-1.4.1.tar.gz'
 default['logstash']['instance']['default']['plugins_checksum']       = 'beb0927351a3c298cd346225950c8d4fbda984ba54252d8a2f244329207c31e2'
-default['logstash']['instance']['default']['plugins_install_type']   = 'tarball'
+default['logstash']['instance']['default']['plugins_install_type']   = 'tarball' # native|tarball
 default['logstash']['instance']['default']['plugins_check_if_installed']  = 'lib/logstash/filters/translate.rb'
 
 default['logstash']['instance']['default']['log_file']       = 'logstash.log'
@@ -63,6 +62,7 @@ default['logstash']['instance']['default']['service_templates_cookbook']  = 'log
 # roles/flags for various autoconfig/discovery components
 default['logstash']['instance']['default']['enable_embedded_es'] = false
 default['logstash']['instance']['default']['bind_host_interface'] = ''
+default['logstash']['instance']['default']['es_index'] = nil
 
 default['logstash']['instance']['default']['inputs'] = []
 default['logstash']['instance']['default']['filters'] = []

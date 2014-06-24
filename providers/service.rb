@@ -127,6 +127,7 @@ action :enable do
                 web_address: svc[:web_address],
                 web_port: svc[:web_port]
       )
+      cookbook  svc[:templates_cookbook]
     end
     new_resource.updated_by_last_action(ri.updated_by_last_action?)
   when 'native'

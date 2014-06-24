@@ -21,6 +21,9 @@ chef_json = {
     webserver_listen: '0.0.0.0',
     webserver: 'nginx',
     install_type: 'file'
+  },
+  logstash: {
+    instance: { server: {} }
   }
 }
 
