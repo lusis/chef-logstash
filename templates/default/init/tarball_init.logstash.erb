@@ -15,7 +15,7 @@ export LOGSTASH_OPTS="<%= @args.join(' ') %>"
 LS_USER="<%= @user %>"
 LS_LOG="<%= @log_file %>"
 LOGDIR="<%= ::File.dirname @log_file %>"
-export JAVA_OPTS="-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=$LS_HOME/tmp/"
+export JAVA_OPTS="-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=$LS_HOME/tmp/ <%= @java_opts %> <%= '-Djava.net.preferIPv4Stack=true' if @ipv4_only %>"
 BIN_SCRIPT="/usr/bin/env $LS_HOME/bin/logstash $LOGSTASH_OPTS > $LS_LOG 2>&1 &  echo \$! > $PIDFILE"
 
 if [ -f /etc/init.d/functions ] ; then
