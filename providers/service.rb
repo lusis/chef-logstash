@@ -258,6 +258,8 @@ def svc_vars
     log_file: @log_file,
     max_heap: @max_heap,
     min_heap: @min_heap,
+    java_opts: @java_opts,
+    ipv4_only: @ipv4_only,
     workers: @workers,
     debug: @debug,
     install_type: @install_type,
