@@ -29,6 +29,7 @@ end
 embedded_es = node['logstash']['instance'][name]['enable_embedded_es'] || node['logstash']['instance']['default']['enable_embedded_es']
 es_cluster = node['logstash']['instance'][name]['elasticsearch_cluster'] || node['logstash']['instance']['default']['elasticsearch_cluster']
 es_index = node['logstash']['instance'][name]['es_index'] || node['logstash']['instance']['default']['es_index']
+config_templates = node['logstash']['instance'][name]['config_templates'] || node['logstash']['instance']['default']['config_templates']
 
 bind_host_if = node['logstash']['instance'][name]['bind_host_interface'] || node['logstash']['instance']['default']['bind_host_interface']
 if !bind_host_if.empty?
@@ -37,14 +38,8 @@ else
   bind_host = nil
 end
 
-my_templates  = {
-  'input_syslog' => 'config/input_syslog.conf.erb',
-  'output_stdout' => 'config/output_stdout.conf.erb',
-  'output_elasticsearch' => 'config/output_elasticsearch.conf.erb'
-}
-
 logstash_config name do
-  templates my_templates
+  templates config_templates
   action [:create]
   variables(
     elasticsearch_ip: ::Logstash.service_ip(node, name, 'elasticsearch'),

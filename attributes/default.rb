@@ -49,7 +49,11 @@ default['logstash']['instance']['default']['base_config_cookbook']       = 'logs
 default['logstash']['instance']['default']['base_config']    = '' # set if want data driven
 
 default['logstash']['instance']['default']['config_file']                = ''
-default['logstash']['instance']['default']['config_templates']           = {}
+default['logstash']['instance']['default']['config_templates']           = {
+            'input_syslog' => 'config/input_syslog.conf.erb',
+            'output_stdout' => 'config/output_stdout.conf.erb',
+            'output_elasticsearch' => 'config/output_elasticsearch.conf.erb'
+        }
 default['logstash']['instance']['default']['config_templates_cookbook']  = 'logstash'
 default['logstash']['instance']['default']['config_templates_variables'] = {}
 
@@ -85,3 +89,6 @@ default['logstash']['instance']['default']['curator_days_to_keep'] = 31
 default['logstash']['instance']['default']['curator_cron_minute'] = '0'
 default['logstash']['instance']['default']['curator_cron_hour'] = '*'
 default['logstash']['instance']['default']['curator_cron_log_file'] = '/dev/null'
+
+
+
