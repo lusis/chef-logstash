@@ -4,7 +4,7 @@ require 'bundler/setup'
 namespace :style do
   require 'rubocop/rake_task'
   desc 'Run Ruby style checks'
-  Rubocop::RakeTask.new(:ruby)
+  RuboCop::RakeTask.new(:ruby)
 
   require 'foodcritic'
   desc 'Run Chef style checks'
@@ -32,9 +32,9 @@ end
 # The default rake task should just run it all
 task default: %w(style spec integration)
 
-# begin
-  # require 'kitchen/rake_tasks'
-  # Kitchen::RakeTasks.new
-# rescue LoadError
-  # puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
-# end
+begin
+  require 'kitchen/rake_tasks'
+  Kitchen::RakeTasks.new
+rescue LoadError
+  puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
+end

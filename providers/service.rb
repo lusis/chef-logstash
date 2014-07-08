@@ -46,7 +46,7 @@ action :restart do
   case svc[:method]
   when 'native'
     sv = service svc[:service_name] do
-    #  provider Chef::Provider::Service::Upstart
+      # provider Chef::Provider::Service::Upstart
       action [:restart]
     end
     new_resource.updated_by_last_action(sv.updated_by_last_action?)
@@ -58,7 +58,7 @@ action :start do
   case svc[:method]
   when 'native'
     sv = service svc[:service_name] do
-    #  provider Chef::Provider::Service::Upstart
+      # provider Chef::Provider::Service::Upstart
       action [:start]
     end
     new_resource.updated_by_last_action(sv.updated_by_last_action?)
@@ -70,7 +70,7 @@ action :stop do
   case svc[:method]
   when 'native'
     sv = service svc[:service_name] do
-    #  provider Chef::Provider::Service::Upstart
+      # provider Chef::Provider::Service::Upstart
       action [:stop]
     end
     new_resource.updated_by_last_action(sv.updated_by_last_action?)
@@ -82,7 +82,7 @@ action :reload do
   case svc[:method]
   when 'native'
     sv = service svc[:service_name] do
-    #  provider Chef::Provider::Service::Upstart
+      # provider Chef::Provider::Service::Upstart
       action [:reload]
     end
     new_resource.updated_by_last_action(sv.updated_by_last_action?)

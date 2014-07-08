@@ -1,7 +1,8 @@
 # Encoding: utf-8
+require 'rspec/expectations'
 require 'chefspec'
 require 'chefspec/berkshelf'
-# require 'chefspec/server'
+require 'chefspec/server'
 require 'chef/application'
 
 ::LOG_LEVEL = :fatal
@@ -28,9 +29,9 @@ shared_context 'stubs-common' do
 end
 
 shared_examples 'example' do
-#  it 'does not include example recipe by default' do
-#    expect(chef_run).not_to include_recipe('example::default')
-#  end
+  #  it 'does not include example recipe by default' do
+  #    expect(chef_run).not_to include_recipe('example::default')
+  #  end
 end
 
 at_exit { ChefSpec::Coverage.report! }

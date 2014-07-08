@@ -59,20 +59,16 @@ class Erubis::RubyEvaluator::LogstashConf
   def self.plugin_to_arr(plugin, patterns_dir_plugins = nil, patterns_dir = nil, indent = 0) # , type_to_condition)
     result = []
     plugin.each do |name, hash|
-#      result << ''
-#      result << "  if [type] == \"#{hash['type']}\" {" if hash.has_key?('type') and type_to_condition
       indent += 4
       result << indent(indent) + name.to_s + ' {'
       result << indent(indent) + key_value_to_str('patterns_dir', patterns_dir, indent) if patterns_dir_plugins.include?(name.to_s) && patterns_dir && !hash.key?('patterns_dir')
       hash.sort.each do |k, v|
-#        next if k == 'type' and type_to_condition
         indent += 4
         result << indent(indent) + key_value_to_str(k, v, indent)
         indent -= 4
       end
       result << indent(indent) + '}'
       indent -= 4
-#      result << '  }' if hash.has_key?('type') and type_to_condition
     end
     return result.join("\n")
   end
@@ -81,7 +77,6 @@ class Erubis::RubyEvaluator::LogstashConf
     result = []
     patterns_dir_plugins = ['grok']
     patterns_dir_plugins << 'multiline' if Gem::Version.new(version) >= Gem::Version.new('1.1.2') unless version.nil?
-#    type_to_condition = Gem::Version.new(version) >= Gem::Version.new('1.2.0')
     section.each do |segment|
       result << ''
       if segment.key?('condition') || segment.key?('block')

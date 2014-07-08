@@ -12,7 +12,7 @@ describe 'logstash::default' do
     include_context 'stubs-common'
 
     it 'writes some chefspec code' do
-      pending 'todo'
+      skip 'todo'
     end
 
   end

@@ -1,29 +1,27 @@
-# Encoding: utf-8
-
 source 'https://rubygems.org'
 
-gem 'chefspec', '~> 3.2'
-gem 'foodcritic', '~> 3.0'
-gem 'rubocop', '~> 0.18'
-gem 'chef', '~> 11.8'
-gem 'berkshelf', '~> 2.0'
-gem 'test-kitchen', '~> 1.1'
+gem 'berkshelf', '> 3'
+
+# Uncomment these lines if you want to live on the Edge:
+#
+# group :development do
+#   gem "berkshelf", github: "berkshelf/berkshelf"
+#   gem "vagrant", github: "mitchellh/vagrant", tag: "v1.5.2"
+# end
+#
+# group :plugins do
+#   gem "vagrant-berkshelf", github: "berkshelf/vagrant-berkshelf"
+#   gem "vagrant-omnibus", github: "schisamo/vagrant-omnibus"
+# end
+
+gem 'chef', '>= 11.8'
+gem 'rake', '>= 10.2'
+gem 'rubocop', '= 0.23'
+gem 'foodcritic', '< 4.0'
+gem 'chefspec', '>= 3.4'
+gem 'serverspec', '>= 1.6'
+gem 'test-kitchen'
 gem 'kitchen-vagrant'
-gem 'serverspec', '~> 0.14'
-gem 'rake'
-gem 'strainer', '~> 3.3'
-
-group :chef_gems do
-  gem 'pleaserun'
-end
-
-group :development do
-  gem 'guard', '~> 1.8'
-  gem 'guard-rubocop', '~> 0.2'
-  gem 'guard-foodcritic'
-end
-
-group :infinite_loop_solver do
-  gem 'celluloid', '~> 0.14'
-  gem 'celluloid-io', '~> 0.14'
-end
+gem 'guard', '>= 2.6'
+gem 'guard-rubocop', '>= 1.1'
+gem 'guard-foodcritic', '>= 1.0.2'

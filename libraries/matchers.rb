@@ -21,7 +21,7 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:logstash_pattern, :create, name)
   end
 
-    # LWRP - Plugins
+  # LWRP - Plugins
   def create_logstash_plugins(name)
     ChefSpec::Matchers::ResourceMatcher.new(:logstash_plugins, :create, name)
   end

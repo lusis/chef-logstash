@@ -11,7 +11,7 @@ cookbook 'ark'
 cookbook 'pleaserun', git: 'https://github.com/paulczar/chef-pleaserun.git'
 
 group :test do
-  cookbook 'minitest-handler', git: 'git://github.com/btm/minitest-handler-cookbook.git'
-  cookbook 'elasticsearch', git: 'git://github.com/elasticsearch/cookbook-elasticsearch.git'
-  cookbook 'kibana', git: 'git://github.com/lusis/chef-kibana.git'
+  cookbook 'minitest-handler', git: 'https://github.com/btm/minitest-handler-cookbook.git'
+  cookbook 'elasticsearch', git: 'https://github.com/elasticsearch/cookbook-elasticsearch.git'
+  cookbook 'kibana', git: 'https://github.com/lusis/chef-kibana.git'
 end
