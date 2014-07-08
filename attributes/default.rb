@@ -33,7 +33,11 @@ default['logstash']['instance']['default']['plugins_install_type']   = 'tarball'
 default['logstash']['instance']['default']['plugins_check_if_installed']  = 'lib/logstash/filters/translate.rb'
 
 default['logstash']['instance']['default']['log_file']       = 'logstash.log'
-default['logstash']['instance']['default']['xms']        = '1024M'
+if ((node['memory']['total'].to_i * 0.6).floor / 1024 ) > 1024
+  default['logstash']['instance']['default']['xms']        = '1024M'
+else
+  default['logstash']['instance']['default']['xms']        = "#{(node['memory']['total'].to_i * 0.5).floor / 1024}M"
+end
 default['logstash']['instance']['default']['xmx']        = "#{(node['memory']['total'].to_i * 0.6).floor / 1024}M"
 default['logstash']['instance']['default']['java_opts']  = ''
 default['logstash']['instance']['default']['gc_opts']    = '-XX:+UseParallelOldGC'

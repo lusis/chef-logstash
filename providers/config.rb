@@ -31,15 +31,21 @@ end
 
 action :create do
   conf = conf_vars
-  # Chef::Log.info("config vars: #{conf.inspect}")
+  #Chef::Log.info("config vars: #{conf.inspect}")
   conf[:templates].each do |_template, file|
+    template_variables = conf[:variables]
+    if conf[:variables].has_key?(_template)
+      if conf[:variables][_template].class == Hash or conf[:variables][_template].class == Array
+        template_variables = conf[:variables][_template]
+      end
+    end
     tp = template "#{conf[:path]}/#{::File.basename(file).chomp(::File.extname(file))}" do
       source      file
       cookbook    conf[:templates_cookbook]
       owner       conf[:owner]
       group       conf[:group]
       mode        conf[:mode]
-      variables   conf[:variables]
+      variables   template_variables
       notifies    :restart, "logstash_service[#{conf[:service_name]}]"
       action      :create
     end
