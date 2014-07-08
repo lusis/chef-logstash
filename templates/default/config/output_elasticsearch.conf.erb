@@ -1,0 +1,19 @@
+output {
+  elasticsearch {
+<% if @elasticsearch_ip -%>
+    host => "<%= @elasticsearch_ip %>"
+<% end -%>
+<% if @elasticsearch_cluster -%>
+    cluster => "<%= @elasticsearch_cluster %>"
+<% end -%>
+<% if @elasticsearch_embedded -%>
+    embedded => true
+<% end -%>
+<% if @bind_host -%>
+    bind_host => "<%= @bind_host %>"
+<% end -%>
+<% if @es_index -%>
+    index => "<%= @es_index %>"
+<% end -%>
+  }
+}

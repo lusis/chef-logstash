@@ -5,11 +5,12 @@ Description
 
 This is the semi-official 'all-in-one' Logstash cookbook.
 
-If you are using logstash < 1.2 you might want to use the 0.6.1 branch.  This
-cookbook is best for logstash 1.2 and 1.3.
+This cookbook is in transition from being a regular cookbook to following the Library Cookbook pattern.
+While you can still use the `agent` and `server` recipes,  the power of this cookbook now comes from the
+`LWRPs`.
 
-*Looking for a logstash >= 1.4 cookbook?* See the `logstash_1.4` branch. Now 
-with LWRPs, but still in heavy development, so use with caution.
+If you are using logstash < 1.2 you might want to use the 0.6.x branch.
+If you are using logstash < 1.4 you might want to use the 0.7.x branch.
 
 Requirements
 ============
@@ -27,155 +28,18 @@ see the Berksfile for more details
 * [Heavywater Graphite Cookbook](https://github.com/hw-cookbooks/graphite)   - This is the one I use
 * [Karmi's ElasticSearch Cookbook](https://github.com/elasticsearch/cookbook-elasticsearch)
 * [RiotGames RBENV cookbook](https://github.com/RiotGames/rbenv-cookbook)
-
-
+* [@lusis Kibana cookbook](https://github.com/lusis/chef-kibana)
 
 Attributes
 ==========
 
 ## Default
 
-* `node['logstash']['homedir']` - the home directory of the logstash user
-* `node['logstash']['basedir']` - the base directory for all the
-  Logstash components
-* `node['logstash']['user']` - the owner for all Logstash components
-* `node['logstash']['group']` - the group for all Logstash components
-* `node['logstash']['supervisor_gid']` - set gid to run logstash as in supervisor ( runit, upstart ).
-  Useful for Ubuntu where logstash or beaver needs to run as group `adm` to read syslog
-* `node['logstash']['graphite_role']` - the Chef role to search for
-  discovering your preexisting Graphite server
-* `node['logstash']['graphite_query']` - the search query used for
-  discovering your preexisting Graphite server. Defaults to 
-  node['logstash']['graphite_role'] in the current node environment
-* `node['logstash']['elasticsearch_role']` - the Chef role to search
-  for discovering your preexisting ElasticSearch cluster.
-* `node['logstash']['elasticsearch_query']` - the search query used for
-  discovering your preexisting ElasticSearch cluster. Defaults to 
-  node['logstash']['elasticsearch_role'] in the current node environment
-* `node['logstash']['elasticsearch_cluster']` - the cluster name
-  assigned to your preexisting ElasticSearch cluster. Only applies to
-  external ES clusters.
-* `node['logstash']['elasticsearch_ip']` - the IP address that will be
-  used for your elasticsearch server in case you are using Chef-solo
-* `node['logstash']['graphite_ip']` - the IP address that will be used
-  for your graphite server in case you are using Chef-solo
-* `node['logstash']['join_groups']` - An array of Operating System
-  groups to join. Usefull to gain read privileges on some logfiles.
-* `node['logstash']['patterns']` - A hash with grok patterns to be
-  used on grok and multiline filters.
-* `node['logstash']['create_account']` - create the account info from
-  `user` and `group`; this is `true` by default. Disable it to use an
-  existing account!
-* `node['logstash']['install_zeromq']` - Should this
-  recipe install zeromq packages?
-* `node['logstash']['install_rabbitmq']` - Should this
-  recipe install rabbitmq packages? 
-* `node['logstash']['zeromq_packages']` - zeromq_packages to install
-  if you use zeromq
-
-## Agent
-
-* `node['logstash']['agent']['install_method']` - The method to
-  install logstash - either `jar` or `source`, defaults to `jar`
-* `node['logstash']['agent']['version']` - The version of Logstash to
-  install. Only applies to `jar` install method.
-* `node['logstash']['agent']['source_url']` - The URL of the Logstash
-  jar to download. Only applies to `jar` install method.
-* `node['logstash']['agent']['checksum']` - The checksum of the jar
-  file. Only applies to `jar` install method.
-* `node['logstash']['agent']['base_config']` - The name of the
-  template to use for `logstash.conf` as a base config.
-* `node['logstash']['agent']['base_config_cookbook']` - Where to find
-  the base\_config template.
-* `node['logstash']['agent']['workers']` - Number of workers for filter processing.
-* `node['logstash']['agent']['xms']` - The minimum memory to assign
-  the JVM.
-* `node['logstash']['agent']['xmx']` - The maximum memory to assign
-  the JVM.
-* `node['logstash']['agent']['java_opts']` - Additional params you
-  want to pass to the JVM
-* `node['logstash']['agent']['gc_opts']` - Specify your garbage
-  collection options to pass to the JVM
-* `node['logstash']['agent']['ipv4_only']` - Add jvm option
-  preferIPv4Stack?
-* `node['logstash']['agent']['debug']` - Run logstash with `-v`
-  option?
-* `node['logstash']['agent']['server_role']` - The role of the node
-  behaving as a Logstash `server`/`indexer`
-* `node['logstash']['agent']['inputs']` - Array of input plugins
-  configuration.
-* `node['logstash']['agent']['filters']` - Array of filter plugins
-  configuration.
-* `node['logstash']['agent']['outputs']` - Array of output plugins
-  configuration.
-* `node['logstash']['agent']['patterns_dir']` - The patterns directory
-  where pattern files will be generated. Relative to the basedir or
-  absolute.
-* `node['logstash']['agent']['home']` - home dir of logstash agent
-* `node['logstash']['agent']['config_dir']` - location of conf.d style config dir
-* `node['logstash']['agent']['config_file']` - name for base config file ( in conf.d dir )
-* `node['logstash']['agent']['upstart_with_sudo']` - use sudo with upstart
-
-
-## Server
-
-* `node['logstash']['server']['install_method']` - The method to
-  install logstash - either `jar` or `source`
-* `node['logstash']['server']['version']` - The version of Logstash to
-  install. Only applies to `jar` install method.
-* `node['logstash']['server']['source_url']` - The URL of the Logstash
-  jar to download. Only applies to `jar` install method.
-* `node['logstash']['server']['checksum']` - The checksum of the jar
-  file. Only applies to `jar` install method.
-* `node['logstash']['server']['base_config']` - The name of the
-  template to use for `logstash.conf` as a base config.
-* `node['logstash']['server']['base_config_cookbook']` - Where to find
-  the base config template.
-* `node['logstash']['server']['xms']` - The minimum memory to assign
-  the JVM.
-* `node['logstash']['server']['xmx']` - The maximum memory to assign
-  the JVM.
-* `node['logstash']['server']['java_opts']` - Additional params you
-  want to pass to the JVM
-* `node['logstash']['server']['gc_opts']` - Specify your garbage
-  collection options to pass to the JVM
-* `node['logstash']['server']['ipv4_only']` - Add jvm option
-  preferIPv4Stack?
-* `node['logstash']['server']['debug']` - Run logstash with `-v`
-  option?
-* `node['logstash']['server']['enable_embedded_es']` - Should Logstash
-  run with the embedded ElasticSearch server or not?
-* `node['logstash']['server']['inputs']` - Array of input plugins
-  configuration.
-* `node['logstash']['server']['filters']` - Array of filter plugins
-  configuration.
-* `node['logstash']['server']['outputs']` - Array of output plugins
-  configuration.
-* `node['logstash']['server']['patterns_dir']` - The patterns
-  directory where pattern files will be generated. Relative to the
-  basedir or absolute.
-* `node['logstash']['server']['home']` - home dir of logstash agent
-* `node['logstash']['server']['config_dir']` - location of conf.d style config dir
-* `node['logstash']['server']['config_file']` - name for base config file ( in conf.d dir )
-* `node['logstash']['server']['workers']` - Number of workers for filter processing.
-* `node['logstash']['server']['web']['enable']` - true to enable embedded kibana ( may be behind in features )
-* `node['logstash']['server']['web']['address']` - IP Address to listen on
-* `node['logstash']['server']['web']['port']` - port to listen on.
-* `node['logstash']['server']['upstart_with_sudo']` - use sudo with upstart
-
-## Kibana
-
-Kibana can be run from the embedded version in elasticsearch.  
-It is not recommended that you use this outside of basic testing. This is for several reasons:
-
-- Kibana is a fast moving target
-- It violates SRP
-- It's not very secure when run this way
-- There are two solid cookbooks for using Kibana now
-  - Kibana2 (Ruby version): https://github.com/realityforge/chef-kibana
-  - Kibana3 (HTML/JS version): https://github.com/lusis/chef-kibana
+see [attributes/default.rb](attributes/default.rb)
 
 ## Beaver (alternative to Logstash Agent)
+
+_This will be depreciated soon in favor of an external library cookbook._
 
 * `node['logstash']['beaver']['repo']` - URL or repository to install
   beaver from (using pip).
@@ -240,6 +104,57 @@ It is not recommended that you use this outside of basic testing. This is for se
 * `node['logstash']['index_cleaner']['cron']['log_file']` - Path to direct
   the index_cleaner cron job's stdout and stderr
 
+Lightweight Resource Providers
+===================
+
+These now do all the heavy lifting.
+
+## logstash_instance
+
+This will install a logstash instance.   It will take defaults from attributes for most attributes.
+
+see [resources/instance.rb](resources/instance.rb)
+
+## logstash_service
+
+This will create system init scripts for managing logstash instance.   It will take defaults from attributes for most attributes.
+
+see [resources/service.rb](resources/service.rb)
+
+_experimental support for pleaserun has been added.   Only `native` for `Ubuntu 12.04` has been thoroughly tested._
+
+## logstash_config
+
+This will create logstash config files.   It will take defaults from attributes for most attributes.
+
+see [resources/config.rb](resources/config.rb)
+
+## logstash_pattern
+
+This will install custom grok patterns for logstash.   It will take defaults from attributes for most attributes:
+
+see [resources/pattern.rb](resources/pattern.rb)
+
+## logstash_plugns
+
+This will install the logstash community plugins:
+
+see [resources/plugins.rb](resources/plugins.rb)
+
+## attribute precidence in logstash LWRPs
+
+We've done our best to make this intuitive and easy to use.
+
+1. the value directly in the resource call.
+2. the value from the hash node['logstash']['instance'][name]
+3. the value from the hash node['logstash']['instance']['default']
+
+Searching
+======
+
+There is a search helper library `libraries/search.rb` which will help you search for values such as `elasticsearch_ip`.  see the `server` recipe for an example of its usage.
+
+
 Testing
 =======
 
@@ -249,16 +164,10 @@ Testing
 vagrant up precise64
 ```
 
-## Strainer
+## Rubocop, FoodCritic, Rspec, Test-Kitchen
 
 ```
-rake strainer
-```
-
-## Test-Kitchen + ServerSpec
-
-```
-rake kitchen
+bundle exec rake
 ```
 
 Contributing
@@ -273,10 +182,10 @@ Usage
 
 A proper readme is forthcoming but in the interim....
 
-There are 2 recipes you need to concern yourself with:
+These two recipes show how to install and configure logstash instances via the provided `LWRPs`
 
-* server - This would be your indexer node
-* agent - This would be a local host's agent for collection
+* [recipe/server.rb](recipe/server.rb) - This would be your indexer node
+* [recipe/agent.rb](recipe/agent.rb) - This would be a local host's agent for collection
 
 
 Every attempt (and I mean this) was made to ensure that the following
@@ -378,6 +287,11 @@ node['logstash']['agent']['config_templates_variables'] = { apache: { type: 'apa
 
 
 ## Letting data drive your templates
+
+*DEPRECIATED!*
+
+While this may work ...   it is no longer being actively supported by the maintainers of this cookbook.
+We will accept `PRs`.
 
 The current templates for the agent and server are written so that you
 can provide ruby hashes in your roles that map to inputs, filters, and
@@ -634,11 +548,13 @@ Logstash will listen for syslog messages on tcp/5140
 - Author:    Richard Clamp (@richardc)
 - Author:    Juanje Ojeda (@juanje)
 - Author:    @benattar
+- Author:    Paul Czarkowski (@pczarkowski)
 - Copyright: 2012, John E. Vincent
 - Copyright: 2012, Bryan W. Berry
 - Copyright: 2012, Richard Clamp
 - Copyright: 2012, Juanje Ojeda
 - Copyright: 2012, @benattar
+- Copyright: 2014, Paul Czarkowski
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

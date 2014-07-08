@@ -20,7 +20,7 @@ git "#{node['logstash']['basedir']}/shipper" do
   action :sync
 end
 
-%w{pyzmq-static simplejson argparse}.each do |ppkg|
+%w(pyzmq-static simplejson argparse).each do |ppkg|
   python_pip ppkg do
     action :install
   end
