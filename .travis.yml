@@ -1,6 +1,8 @@
 language: ruby
 rvm:
   - 1.9.3
+env:
+  - USE_SYSTEM_GECODE=1
 install: bundle install --path vendor --binstubs
 script: bin/berks install
 script: bin/rake style spec
