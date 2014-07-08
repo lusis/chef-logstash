@@ -4,8 +4,6 @@ require 'rubygems'
 
 # Evaluate objects for logstash config file.
 class Erubis::RubyEvaluator::LogstashConf
-  private
-
   def self.key_to_str(k)
     case k.class.to_s
     when 'String'
@@ -23,7 +21,7 @@ class Erubis::RubyEvaluator::LogstashConf
     h.each do |k, v|
       case v
       when Hash, Mash
-        result << k + " {"
+        result << k + ' {'
         result << hash_to_str(v, indent)
       else
         indent += 4
@@ -39,9 +37,9 @@ class Erubis::RubyEvaluator::LogstashConf
     when String, Symbol, Fixnum, Float
       "\"#{v}\""
     when Array
-      "[#{v.map { |e| value_to_str(e,indent) }.join(", ")}]"
+      "[#{v.map { |e| value_to_str(e, indent) }.join(', ')}]"
     when Hash, Mash
-      hash_to_str(v, indent) + "\n" + indent(indent + 4) + "}"
+      hash_to_str(v, indent) + "\n" + indent(indent + 4) + '}'
     when TrueClass, FalseClass
       v.to_s
     else
@@ -50,42 +48,35 @@ class Erubis::RubyEvaluator::LogstashConf
   end
 
   def self.key_value_to_str(k, v, indent = 0)
-    if !v.nil?
-      #k.inspect + " => " + v.inspect
-      key_to_str(k) + ' => ' + value_to_str(v, indent)
-    else
+    if v.nil?
       key_to_str(k)
+    else
+      # k.inspect + " => " + v.inspect
+      key_to_str(k) + ' => ' + value_to_str(v, indent)
     end
   end
 
   def self.plugin_to_arr(plugin, patterns_dir_plugins = nil, patterns_dir = nil, indent = 0) # , type_to_condition)
     result = []
     plugin.each do |name, hash|
-#      result << ''
-#      result << "  if [type] == \"#{hash['type']}\" {" if hash.has_key?('type') and type_to_condition
       indent += 4
       result << indent(indent) + name.to_s + ' {'
-      result << indent(indent) + key_value_to_str('patterns_dir', patterns_dir, indent) if patterns_dir_plugins.include?(name.to_s) && !patterns_dir.nil? && !hash.key?('patterns_dir')
+      result << indent(indent) + key_value_to_str('patterns_dir', patterns_dir, indent) if patterns_dir_plugins.include?(name.to_s) && patterns_dir && !hash.key?('patterns_dir')
       hash.sort.each do |k, v|
-#        next if k == 'type' and type_to_condition
         indent += 4
         result << indent(indent) + key_value_to_str(k, v, indent)
         indent -= 4
       end
       result << indent(indent) + '}'
       indent -= 4
-#      result << '  }' if hash.has_key?('type') and type_to_condition
     end
     return result.join("\n")
   end
-
-  public
 
   def self.section_to_str(section, version = nil, patterns_dir = nil, indent = 0)
     result = []
     patterns_dir_plugins = ['grok']
     patterns_dir_plugins << 'multiline' if Gem::Version.new(version) >= Gem::Version.new('1.1.2') unless version.nil?
-#    type_to_condition = Gem::Version.new(version) >= Gem::Version.new('1.2.0')
     section.each do |segment|
       result << ''
       if segment.key?('condition') || segment.key?('block')
@@ -105,7 +96,7 @@ class Erubis::RubyEvaluator::LogstashConf
 end
 
 def indent(i)
-  res = String.new
-  i.times { res << " " }
+  res = ''
+  i.times { res << ' ' }
   res
 end

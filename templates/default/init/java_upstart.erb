@@ -1,0 +1,42 @@
+description "Logstash"
+author "Chef"
+
+start on (filesystem and net-device-up)
+stop on runlevel [!2345]
+
+respawn
+respawn limit 5 30
+limit nofile 65550 65550
+
+chdir <%= @home %>
+
+<% unless node['logstash']['instance'][@name]['upstart_with_sudo'] -%>
+setuid <%= @user %>
+  <% unless @supervisor_gid.to_s.empty? -%>
+setgid <%= @supervisor_gid %>
+  <% end -%>
+<% end -%>
+
+script
+  export LOGSTASH_HOME="<%= @home %>"
+  export HOME=$LOGSTASH_HOME
+
+  export GC_OPTS="<%= @gc_opts %>"
+  export JAVA_OPTS="-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= @java_opts %> <%= '-Djava.net.preferIPv4Stack=true' if @ipv4_only %>"
+  export LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/conf.d"
+  export LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath $LOGSTASH_HOME/lib"
+  export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= @workers %>"
+  export LOGSTASH_OPTS="$LOGSTASH_OPTS -l $LOGSTASH_HOME/log/<%= @log_file %>"
+  <% if @debug -%>
+  export LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
+  <% end -%>
+  export OPTS="$JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS"
+
+  <% if node['logstash']['instance'][@name]['upstart_with_sudo'] -%>
+  exec sudo -u <%= @user %> /usr/bin/java $OPTS
+  <% else -%>
+  exec /usr/bin/java $OPTS
+  <% end -%>
+end script
+
+emits logstash-server-running

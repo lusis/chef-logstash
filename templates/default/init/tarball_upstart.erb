@@ -1,0 +1,33 @@
+description "Logstash"
+author "Chef"
+
+start on (filesystem and net-device-up)
+stop on runlevel [!2345]
+
+respawn
+respawn limit 5 30
+limit nofile 65550 65550
+
+chdir <%= @home %>
+
+<% unless @upstart_with_sudo -%>
+setuid <%= @user %>
+  <% unless @supervisor_gid.to_s.empty? -%>
+setgid <%= @supervisor_gid %>
+  <% end -%>
+<% end -%>
+
+script
+  export LS_HEAP_SIZE="<%= @max_heap %>"
+  export LOGSTASH_HOME="<%= @home %>"
+  export HOME=$LOGSTASH_HOME
+  export LOGSTASH_OPTS="<%= @args.join(' ') %>"
+
+  <% if @upstart_with_sudo -%>
+  exec sudo -u <%= @user %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
+  <% else -%>
+  exec $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
+  <% end -%>
+end script
+
+emits logstash-server-running

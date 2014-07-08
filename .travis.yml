@@ -1,7 +1,13 @@
 language: ruby
-gemfile:
-  - test/support/Gemfile
 rvm:
   - 1.9.3
-install: BUNDLE_GEMFILE=$PWD/test/support/Gemfile bundle install
-script: BUNDLE_GEMFILE=$PWD/test/support/Gemfile bundle exec rake strainer
+env:
+  - USE_SYSTEM_GECODE=1
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install libgecode-dev
+install:
+  - bundle install --path vendor --binstubs
+script:
+  - bin/berks install
+  - bin/rake style spec
