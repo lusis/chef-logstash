@@ -55,11 +55,7 @@ describe 'logstash::server' do
         group:    'logstash',
         mode:     '0644',
         variables: {
-          elasticsearch_ip: '127.0.0.1',
-          bind_host: nil,
-          elasticsearch_cluster: 'logstash',
-          elasticsearch_embedded: true,
-          es_index: nil
+          elasticsearch_embedded: true
         },
         action: [:create]
       )
