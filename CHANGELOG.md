@@ -3,6 +3,9 @@
 This file is used to list changes made in each version of chef-logstash.
 
 
+## 0.9.2:
+* fix PAX headers on community site
+
 ## 0.9.1:
 
 * curator LWRP
