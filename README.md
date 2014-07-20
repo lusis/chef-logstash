@@ -151,15 +151,18 @@ We've done our best to make this intuitive and easy to use.
 
 ## logstash_beaver_input
 
-Setup a Beaver input for a particular file: 
+Setup a Beaver input: 
 
+```
   logstash_beaver_input "nginx" do
     path ["/var/log/nginx/*"]
     type "nginx"
     tags %w{nginx access}
     multiline_regex_before "^\s+"
   end
+```
 
+This creates a file called /opt/logstash/beaver/etc/conf.d/nginx.
 
 Searching
 ======
