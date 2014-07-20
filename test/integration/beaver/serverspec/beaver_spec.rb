@@ -3,7 +3,7 @@ require 'spec_helper'
 
 # Logstash Instance
 # Centos won't detect it as a service, since it's using upstart
-describe service('logstash_beaver'), :if => ['Debian', 'Ubuntu'].include?(os[:family]) do
+describe service('logstash_beaver'), if: %w(Debian Ubuntu).include?(os[:family]) do
   it { should be_enabled }
   it { should be_running }
 end
