@@ -13,7 +13,7 @@ setuid <%= @user %>
 setgid <%= @group %>
 <% end -%>
 <% end %>
-chdir <%= node['logstash']['basedir'] %>/beaver
+chdir <%= @basedir %>
 
 console output
 
