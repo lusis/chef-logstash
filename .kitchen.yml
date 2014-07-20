@@ -40,3 +40,12 @@ suites:
               default: 'patterns/custom_patterns.erb'
             elasticsearch_ip: '127.0.0.1'
             enable_embedded_es: true
+  - name: beaver
+    run_list:
+      - recipe[logstash::beaver]
+    attributes:
+      logstash:
+        beaver:
+          outputs:
+            stdout:
+              debug: true

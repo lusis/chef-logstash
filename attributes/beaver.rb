@@ -1,6 +1,6 @@
 # Encoding: utf-8
 default['logstash']['beaver']['log_file'] = '/var/log/logstash/beaver.log'
-default['logstash']['beaver']['pip_package'] = 'beaver==22'
+default['logstash']['beaver']['pip_package'] = 'beaver==31'
 default['logstash']['beaver']['pika']['pip_package'] = 'pika==0.9.8'
 default['logstash']['beaver']['zmq']['pip_package'] = 'pyzmq==2.1.11'
 default['logstash']['beaver']['server_role'] = 'logstash_server'
