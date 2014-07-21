@@ -26,7 +26,7 @@ logstash_service name do
   action      [:enable]
 end
 
-my_templates  = node['logstash']['instance']['default']['config_templates']
+my_templates  = node['logstash']['instance'][name]['config_templates']
 
 if my_templates.empty?
   my_templates = {
