@@ -135,7 +135,7 @@ This will install custom grok patterns for logstash.   It will take defaults fro
 
 see [resources/pattern.rb](resources/pattern.rb)
 
-## logstash_plugns
+## logstash_plugins
 
 This will install the logstash community plugins:
 
