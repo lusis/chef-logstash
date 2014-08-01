@@ -216,8 +216,7 @@ action :enable do
                   log_file: svc[:log_file],
                   workers: svc[:workers],
                   supervisor_gid: svc[:supervisor_gid],
-                  config_file: "#{svc[:home]}/etc/conf.d",
-                  group: svc[:group]
+                  config_file: "#{svc[:home]}/etc/conf.d"
                   )
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
