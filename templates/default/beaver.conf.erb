@@ -13,6 +13,12 @@ tags: <%= file['tags'].join(',') %>
 <% if file.has_key?('add_field') -%>
 add_field: <%= file['add_field'].join(',') %>
 <% end -%>
+<% if file.has_key?('regex_after') %>
+multiline_regex_after: <%= file['regex_after'] %>
+<% end %>
+<% if file.has_key?('regex_before') %>
+multiline_regex_before: <%= file['regex_before'] %>
+<% end %>
 
 <% end -%>
 <% end -%>

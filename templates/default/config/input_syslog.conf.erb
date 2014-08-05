@@ -1,10 +1,17 @@
+input {
+  tcp {
+    port => "5959"
+    type => "syslog"
+  }
+}
+
 filter {
-  if [type] == "<%= @type %>" {
+  if [type] == "syslog" {
     grok {
       overwrite => "message"
       match => [ 
         "message", 
-        "?%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}" 
+        "%{SYSLOGTIMESTAMP:timestamp} %{IPORHOST:host} (?:%{PROG:program}(?:\[%{POSINT:pid}\])?: )?%{GREEDYDATA:message}" 
       ]
     }
     syslog_pri { }

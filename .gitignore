@@ -5,3 +5,4 @@ vendor/
 .kitchen/
 .kitchen.local.yml
 .bundle/
+bin/
