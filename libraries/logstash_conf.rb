@@ -19,15 +19,9 @@ class Erubis::RubyEvaluator::LogstashConf
   def self.hash_to_str(h, indent = 0)
     result = []
     h.each do |k, v|
-      case v
-      when Hash, Mash
-        result << k + ' {'
-        result << hash_to_str(v, indent)
-      else
-        indent += 4
-        result << indent(indent) + key_value_to_str(k, v, indent)
-        indent -= 4
-      end
+      indent += 4
+      result << indent(indent) + key_value_to_str(k, v, indent)
+      indent -= 4
     end
     result.join("\n")
   end
@@ -39,7 +33,7 @@ class Erubis::RubyEvaluator::LogstashConf
     when Array
       "[#{v.map { |e| value_to_str(e, indent) }.join(', ')}]"
     when Hash, Mash
-      hash_to_str(v, indent) + "\n" + indent(indent + 4) + '}'
+      '{\n' + hash_to_str(v, indent) + '\n' + indent(indent) + '}'
     when TrueClass, FalseClass
       v.to_s
     else
