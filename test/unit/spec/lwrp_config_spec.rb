@@ -52,7 +52,13 @@ describe 'logstash::server' do
         group:    'logstash',
         mode:     '0644',
         variables: {
-          elasticsearch_embedded: true
+          elasticsearch_embedded: true,
+          basedir: '/opt/logstash',
+          user: 'logstash',
+          group: 'logstash',
+          config_templates_cookbook: 'logstash',
+          elasticsearch_ip: '127.0.0.1',
+          enable_embedded_es: true
         },
         action: [:create]
       )
