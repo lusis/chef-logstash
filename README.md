@@ -6,8 +6,8 @@ Description
 This is the semi-official 'all-in-one' Logstash cookbook.
 
 This cookbook is in transition from being a regular cookbook to following the Library Cookbook pattern.
-While you can still use the `agent` and `server` recipes,  the power of this cookbook now comes from the
-`LWRPs`.
+While you can still use the `agent` and `server` recipes, they are only used for testing and don't supply attributes
+when they call the LWRPs within. The power of this cookbook now comes from the `LWRPs` being used directly.
 
 If you are using logstash < 1.2 you might want to use the 0.6.x branch.
 If you are using logstash < 1.4 you might want to use the 0.7.x branch.
