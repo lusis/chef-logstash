@@ -141,6 +141,7 @@ status() {
   # NOT RUNNING
   if [[ ! $pid || ! -d "/proc/$pid" ]]; then
     echo "Logstash not running"
+    exit 3
   fi
 
   # STALE PID FOUND
