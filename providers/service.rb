@@ -47,9 +47,8 @@ action :restart do
   when 'native'
     sv = service svc[:service_name] do
       # provider Chef::Provider::Service::Upstart
-      action :nothing
+      action [:restart]
     end
-    sv.run_action(:restart)
     new_resource.updated_by_last_action(sv.updated_by_last_action?)
   end
 end
@@ -60,9 +59,8 @@ action :start do
   when 'native'
     sv = service svc[:service_name] do
       # provider Chef::Provider::Service::Upstart
-      action :nothing
+      action [:start]
     end
-    sv.run_action(:start)
     new_resource.updated_by_last_action(sv.updated_by_last_action?)
   end
 end
