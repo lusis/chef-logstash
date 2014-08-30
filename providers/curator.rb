@@ -66,7 +66,7 @@ action :delete do
   new_resource.updated_by_last_action(pi.updated_by_last_action?)
 
   cr = cron "curator-#{cur_instance}" do
-    command "curator --host #{::Logstash.service_ip(node, cur_instance, 'elasticsearch')} -d #{cur_days_to_keep} &> #{cur_log_file}"
+    command "curator --host #{::Logstash.service_ip(node, cur_instance, 'elasticsearch')} delete --older-than #{cur_days_to_keep} &> #{cur_log_file}"
     user    cur_user
     minute  cur_minute
     hour    cur_hour
