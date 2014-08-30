@@ -13,6 +13,7 @@ export LS_HOME="<%= @home %>"
 export LS_HEAP_SIZE="<%= @max_heap %>"
 export LOGSTASH_OPTS="<%= @args.join(' ') %>"
 LS_USER="<%= @user %>"
+LS_USER="<%= @group %>"
 LS_LOG="<%= @log_file %>"
 LOGDIR="<%= ::File.dirname @log_file %>"
 export JAVA_OPTS="-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=$LS_HOME/tmp/ <%= @java_opts %> <%= '-Djava.net.preferIPv4Stack=true' if @ipv4_only %>"
@@ -26,7 +27,7 @@ start() {
 
   if [ ! -d "$PIDDIR" ] ; then
     mkdir "$PIDDIR"
-    chown $LS_USER:$LS_USER $PIDDIR
+    chown $LS_USER:$LS_GROUP $PIDDIR
   fi
 
   if [ -f $PIDFILE ]; then
