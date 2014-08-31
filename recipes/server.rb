@@ -26,9 +26,9 @@ logstash_service name do
   action      [:enable]
 end
 
-my_templates  = node['logstash']['instance']['default']['config_templates']
+my_templates = node['logstash']['instance'][name]['config_templates']
 
-if my_templates.empty?
+if my_templates.nil?
   my_templates = {
     'input_syslog' => 'config/input_syslog.conf.erb',
     'output_stdout' => 'config/output_stdout.conf.erb',

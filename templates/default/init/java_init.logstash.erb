@@ -12,6 +12,7 @@ export PIDFILE="/var/run/logstash-<%= @name %>.pid"
 export LS_HOME="<%= @home %>"
 export LS_CONFIG="<%= @config_file %>"
 LS_USER="<%= @user %>"
+LS_GROUP="<%= @group %>"
 LS_LOG="<%= @log_file %>"
 LOGDIR="<%= ::File.dirname @log_file %>"
 export JAVA_OPTS="-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=$LS_HOME/tmp/ <%= @java_opts %> <%= '-Djava.net.preferIPv4Stack=true' if @ipv4_only %>"
@@ -25,14 +26,14 @@ start() {
 
   if [ ! -d "$PIDDIR" ] ; then
     mkdir "$PIDDIR"
-    chown -R $LS_USER:$LS_USER $PIDDIR
+    chown -R $LS_USER:$LS_GROUP $PIDDIR
   fi
 
   if [ ! -d "$LOGDIR" ] ; then
     mkdir "$LOGDIR"
   fi
 
-  chown -R $LS_USER:$LS_USER $LOGDIR $PIDDIR
+  chown -R $LS_USER:$LS_GROUP $LOGDIR $PIDDIR
 
 
   if [ -f $PIDFILE ]; then
@@ -140,11 +141,13 @@ status() {
   # NOT RUNNING
   if [[ ! $pid || ! -d "/proc/$pid" ]]; then
     echo "Logstash not running"
+    exit 3
   fi
 
   # STALE PID FOUND
   if [[ ! -d "/proc/$pid" && -f $PIDFILE ]]; then
     echo -e "\033[1;31;40m[!] Stale PID found in $PIDFILE\033[0m"
+    exit 1
   fi
 }
 

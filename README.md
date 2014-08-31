@@ -6,8 +6,8 @@ Description
 This is the semi-official 'all-in-one' Logstash cookbook.
 
 This cookbook is in transition from being a regular cookbook to following the Library Cookbook pattern.
-While you can still use the `agent` and `server` recipes,  the power of this cookbook now comes from the
-`LWRPs`.
+While you can still use the `agent` and `server` recipes, they are only used for testing and don't supply attributes
+when they call the LWRPs within. The power of this cookbook now comes from the `LWRPs` being used directly.
 
 If you are using logstash < 1.2 you might want to use the 0.6.x branch.
 If you are using logstash < 1.4 you might want to use the 0.7.x branch.
@@ -39,7 +39,7 @@ see [attributes/default.rb](attributes/default.rb)
 
 ## Beaver (alternative to Logstash Agent)
 
-_This will be depreciated soon in favor of an external library cookbook._
+_This will be deprecated soon in favor of an external library cookbook._
 
 * `node['logstash']['beaver']['repo']` - URL or repository to install
   beaver from (using pip).
@@ -50,37 +50,40 @@ _This will be depreciated soon in favor of an external library cookbook._
 * `node['logstash']['beaver']['inputs']` - Array of input plugins
   configuration (Supported: file).
   For example:
-  
-        override['logstash']['beaver']['inputs'] =  [
-          { :file =>  
-            {
-              :path => ["/var/log/nginx/*log"], 
-              :type => "nginx", 
-              :tags => ["logstash","nginx"]
-            }
-          },
-          { :file =>  
-            {
-              :path => ["/var/log/syslog"], 
-              :type => "syslog", 
-              :tags => ["logstash","syslog"] 
-            }
-          }
-        ]    
-    
+
+```ruby
+override['logstash']['beaver']['inputs'] =  [
+  { :file =>
+    {
+      :path => ["/var/log/nginx/*log"],
+      :type => "nginx",
+      :tags => ["logstash","nginx"]
+    }
+  },
+  { :file =>
+    {
+      :path => ["/var/log/syslog"],
+      :type => "syslog",
+      :tags => ["logstash","syslog"]
+    }
+  }
+]
+```
 * `node['logstash']['beaver']['outputs']` - Array of output plugins
   configuration (Supported: amq, redis, stdout, zeromq).
   For example:
 
-        override['logstash']['beaver']['outputs'] = [ 
-          { 
-            :amqp => { 
-              :port => "5672",
-              :exchange => "rawlogs",
-              :name => "rawlogs_consumer"
-            } 
-          } 
-        ]
+```ruby
+override['logstash']['beaver']['outputs'] = [
+  {
+    :amqp => {
+      :port => "5672",
+      :exchange => "rawlogs",
+      :name => "rawlogs_consumer"
+    }
+  }
+]
+```
   This example sets up the amqp output and uses the recipe defaults for the host value
 
 ## Source
@@ -135,7 +138,7 @@ This will install custom grok patterns for logstash.   It will take defaults fro
 
 see [resources/pattern.rb](resources/pattern.rb)
 
-## logstash_plugns
+## logstash_plugins
 
 This will install the logstash community plugins:
 
@@ -184,8 +187,8 @@ A proper readme is forthcoming but in the interim....
 
 These two recipes show how to install and configure logstash instances via the provided `LWRPs`
 
-* [recipe/server.rb](recipe/server.rb) - This would be your indexer node
-* [recipe/agent.rb](recipe/agent.rb) - This would be a local host's agent for collection
+* [recipes/server.rb](recipes/server.rb) - This would be your indexer node
+* [recipes/agent.rb](recipes/agent.rb) - This would be a local host's agent for collection
 
 
 Every attempt (and I mean this) was made to ensure that the following
@@ -278,7 +281,7 @@ If you want to use chef templates to drive your configs you'll want to set the f
 
 ```
 node['logstash']['agent']['config_file'] = "" # disable data drive templates ( can be left enabled if want both )
-node['logstash']['agent']['config_templates'] = ["apache"]
+node['logstash']['agent']['config_templates'] = { "apache" => "config/apache.conf.erb }
 node['logstash']['agent']['config_templates_cookbook'] = 'logstash'
 node['logstash']['agent']['config_templates_variables'] = { apache: { type: 'apache' } }
 ```
@@ -288,7 +291,7 @@ node['logstash']['agent']['config_templates_variables'] = { apache: { type: 'apa
 
 ## Letting data drive your templates
 
-*DEPRECIATED!*
+*DEPRECATED!*
 
 While this may work ...   it is no longer being actively supported by the maintainers of this cookbook.
 We will accept `PRs`.
@@ -297,13 +300,13 @@ The current templates for the agent and server are written so that you
 can provide ruby hashes in your roles that map to inputs, filters, and
 outputs. Here is a role for logstash_server.
 
-There are two formats for the hashes for filters and outputs that you should be aware of ...   
+There are two formats for the hashes for filters and outputs that you should be aware of ...
 
 ### Legacy
 
 This is for logstash < 1.2.0 and uses the old pattern of setting 'type' and 'tags' in the plugin to determine if it should be run.
 
-```
+```json
 filters: [
   grok: {
   type: "syslog"
@@ -314,7 +317,7 @@ filters: [
   },
   date: {
   type: "syslog"
-    match: [ 
+    match: [
       "timestamp",
       "MMM  d HH:mm:ss",
       "MMM dd HH:mm:ss",
@@ -326,15 +329,15 @@ filters: [
 
 ### Conditional
 
-This is for logstash >= 1.2.0 and uses the new pattern of conditioansl `if 'type' == "foo" {}`
+This is for logstash >= 1.2.0 and uses the new pattern of conditionals `if 'type' == "foo" {}`
 
 Note:  the condition applies to all plugins in the block hash in the same object.
 
-```
+```json
 filters: [
-  { 
+  {
     condition: 'if [type] == "syslog"',
-    block: {    
+    block: {
       grok: {
         match: [
           "message",
@@ -342,7 +345,7 @@ filters: [
         ]
       },
       date: {
-        match: [ 
+        match: [
           "timestamp",
           "MMM  d HH:mm:ss",
           "MMM dd HH:mm:ss",
