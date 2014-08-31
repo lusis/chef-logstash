@@ -29,6 +29,8 @@ def load_current_resource
   @service_name = new_resource.service_name || @instance
 end
 
+use_inline_resources
+
 action :create do
   conf = conf_vars
   # Chef::Log.info("config vars: #{conf.inspect}")
@@ -40,7 +42,6 @@ action :create do
       group       conf[:group]
       mode        conf[:mode]
       variables   conf[:variables]
-      notifies    :restart, "logstash_service[#{conf[:service_name]}]"
       action      :create
     end
     new_resource.updated_by_last_action(tp.updated_by_last_action?)

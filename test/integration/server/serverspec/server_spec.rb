@@ -39,5 +39,5 @@ end
 
 # Logstash Curator
 describe cron do
-  it { should have_entry('0 * * * * curator --host 127.0.0.1 -d 31 &> /dev/null').with_user('logstash') }
+  it { should have_entry('0 * * * * curator --host 127.0.0.1 delete --older-than 31 &> /dev/null').with_user('logstash') }
 end
