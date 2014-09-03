@@ -30,7 +30,7 @@ script
   export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= node['logstash']['server']['workers'] %>"
   <% end %>
   <% if node['logstash']['server']['log_file'] -%>
-  export LOGSTASH_OPTS="$LOGSTASH_OPTS -l <%= node['logstash']['server']['home'] %>/log/<%= node['logstash']['server']['log_file'] %>"
+  export LOGSTASH_OPTS="$LOGSTASH_OPTS -l <%= node['logstash']['server']['log_file'] %>"
   <% end -%>
   <% if node['logstash']['server']['debug'] -%>
   export LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
