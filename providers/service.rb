@@ -107,6 +107,7 @@ action :enable do
       not_if { ::File.exist?("/etc/init.d/#{svc[:service_name]}") }
     end
     new_resource.updated_by_last_action(pr.updated_by_last_action?)
+
   when 'runit'
     @run_context.include_recipe 'runit::default'
     ri = runit_service svc[:service_name] do
@@ -130,44 +131,44 @@ action :enable do
       cookbook  svc[:templates_cookbook]
     end
     new_resource.updated_by_last_action(ri.updated_by_last_action?)
+
   when 'native'
-    if platform_family? 'debian'
-      if node['platform_version'] >= '12.04'
-        args = default_args
-        tp = template "/etc/init/#{svc[:service_name]}.conf" do
-          mode      '0644'
-          source    "init/#{svc[:install_type]}_upstart.erb"
-          cookbook  svc[:templates_cookbook]
-          variables(
-                      home: svc[:home],
-                      name: svc[:name],
-                      command: svc[:command],
-                      args: args,
-                      user: svc[:user],
-                      group: svc[:group],
-                      description: svc[:description],
-                      max_heap: svc[:max_heap],
-                      min_heap: svc[:min_heap],
-                      gc_opts: svc[:gc_opts],
-                      java_opts: svc[:java_opts],
-                      ipv4_only: svc[:ipv4_only],
-                      debug: svc[:debug],
-                      log_file: svc[:log_file],
-                      workers: svc[:workers],
-                      supervisor_gid: svc[:supervisor_gid]
-                    )
-        end
-        new_resource.updated_by_last_action(tp.updated_by_last_action?)
-        sv = service svc[:service_name] do
-          provider Chef::Provider::Service::Upstart
-          supports restart: true, reload: true, start: true, stop: true
-          action [:enable]
-        end
-        new_resource.updated_by_last_action(sv.updated_by_last_action?)
-      else
-        Chef::Log.fatal("Please set node['logstash']['instance']['server']['init_method'] to 'runit' for #{node['platform_version']}")
+    native_init = ::Logstash.determine_native_init(node)
+
+    if native_init == 'upstart'
+      args = default_args
+      tp = template "/etc/init/#{svc[:service_name]}.conf" do
+        mode      '0644'
+        source    "init/#{svc[:install_type]}_upstart.erb"
+        cookbook  svc[:templates_cookbook]
+        variables(
+                    home: svc[:home],
+                    name: svc[:name],
+                    command: svc[:command],
+                    args: args,
+                    user: svc[:user],
+                    group: svc[:group],
+                    description: svc[:description],
+                    max_heap: svc[:max_heap],
+                    min_heap: svc[:min_heap],
+                    gc_opts: svc[:gc_opts],
+                    java_opts: svc[:java_opts],
+                    ipv4_only: svc[:ipv4_only],
+                    debug: svc[:debug],
+                    log_file: svc[:log_file],
+                    workers: svc[:workers],
+                    supervisor_gid: svc[:supervisor_gid]
+                  )
       end
-    elsif (platform_family? 'fedora') && (node['platform_version'] >= '15')
+      new_resource.updated_by_last_action(tp.updated_by_last_action?)
+      sv = service svc[:service_name] do
+        provider Chef::Provider::Service::Upstart
+        supports restart: true, reload: true, start: true, stop: true
+        action [:enable]
+      end
+      new_resource.updated_by_last_action(sv.updated_by_last_action?)
+
+    elsif native_init == 'systemd'
       ex = execute 'reload-systemd' do
         command 'systemctl --system daemon-reload'
         action :nothing
@@ -183,7 +184,6 @@ action :enable do
         notifies :restart, 'service[logstash_server]', :delayed
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
-
       sv = service 'logstash_server' do
         service_name 'logstash_server.service'
         provider Chef::Provider::Service::Systemd
@@ -191,7 +191,7 @@ action :enable do
       end
       new_resource.updated_by_last_action(sv.updated_by_last_action?)
 
-    elsif platform_family? 'rhel', 'fedora'
+    elsif native_init == 'sysvinit'
       args = default_args
       tp = template "/etc/init.d/#{svc[:service_name]}" do
         source "init/#{svc[:install_type]}_init.logstash.erb"
@@ -220,13 +220,13 @@ action :enable do
                   )
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
-
       sv = service svc[:service_name] do
         supports restart: true, reload: true, status: true
         action [:enable, :start]
       end
       new_resource.updated_by_last_action(sv.updated_by_last_action?)
     end
+
   else
     Chef::Log.fatal("Unsupported init method: #{@svc[:method]}")
   end
