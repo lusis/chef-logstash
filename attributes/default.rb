@@ -32,7 +32,7 @@ default['logstash']['instance']['default']['plugins_checksum']       = 'beb09273
 default['logstash']['instance']['default']['plugins_install_type']   = 'tarball' # native|tarball
 default['logstash']['instance']['default']['plugins_check_if_installed']  = 'lib/logstash/filters/translate.rb'
 
-default['logstash']['instance']['default']['log_file']       = 'logstash.log'
+default['logstash']['instance']['default']['log_file']       = '/opt/logstash/server/log/logstash.log'
 default['logstash']['instance']['default']['xms']        = "#{(node['memory']['total'].to_i * 0.2).floor / 1024}M"
 default['logstash']['instance']['default']['xmx']        = "#{(node['memory']['total'].to_i * 0.6).floor / 1024}M"
 default['logstash']['instance']['default']['java_opts']  = ''
