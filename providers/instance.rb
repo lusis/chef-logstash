@@ -26,6 +26,7 @@ def load_current_resource
   @repo = new_resource.repo
   @sha = new_resource.sha
   @java_home = new_resource.java_home
+  @create_account = new_resource.create_account || attributes['create_account'] || defaults['create_account']
   @user = new_resource.user || attributes['user'] || defaults['user']
   @group = new_resource.group || attributes['group'] || defaults['group']
   @useropts = new_resource.user_opts || attributes['user_opts'] || defaults['user_opts']
@@ -51,23 +52,25 @@ end
 action :create do
   ls = ls_vars
 
-  ur = user ls[:user] do
-    home ls[:homedir]
-    system true
-    action :create
-    manage_home true
-    uid ls[:uid]
-  end
-  new_resource.updated_by_last_action(ur.updated_by_last_action?)
+  if  ls[:create_account]
+    ur = user ls[:user] do
+      home ls[:homedir]
+      system true
+      action :create
+      manage_home true
+      uid ls[:uid]
+    end
+    new_resource.updated_by_last_action(ur.updated_by_last_action?)
 
-  gr = group ls[:group] do
-    gid ls[:gid]
-    members ls[:user]
-    append true
-    system true
+    gr = group ls[:group] do
+      gid ls[:gid]
+      members ls[:user]
+      append true
+      system true
+    end
+    new_resource.updated_by_last_action(gr.updated_by_last_action?)
   end
-  new_resource.updated_by_last_action(gr.updated_by_last_action?)
-
+  
   case @install_type
   when 'tarball'
     @run_context.include_recipe 'ark::default'
@@ -228,6 +231,7 @@ def ls_vars
     version: @version,
     checksum: @checksum,
     basedir: @base_directory,
+    create_account: @create_account,
     user: @user,
     group: @group,
     name: @name,
