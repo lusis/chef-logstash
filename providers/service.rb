@@ -97,9 +97,9 @@ action :enable do
 
   when 'native'
     native_init = ::Logstash.determine_native_init(node)
+    args = default_args
 
     if native_init == 'upstart'
-      args = default_args
       tp = template "/etc/init/#{svc[:service_name]}.conf" do
         mode      '0644'
         source    "init/upstart/#{svc[:install_type]}.erb"
@@ -137,25 +137,29 @@ action :enable do
         action :nothing
       end
       new_resource.updated_by_last_action(ex.updated_by_last_action?)
-      template '/etc/systemd/system/logstash_server.service' do
-        tp = source 'logstash_server.service.erb'
+      tp = template "/etc/systemd/system/#{svc[:service_name]}.service" do
+        tp = source "init/systemd/#{svc[:install_type]}.erb"
         cookbook  svc[:templates_cookbook]
         owner 'root'
         group 'root'
         mode '0755'
+        variables(
+                   home: svc[:home],
+                   user: svc[:user],
+                   supervisor_gid: svc[:supervisor_gid],
+                   args: args,
+                  )
         notifies :run, 'execute[reload-systemd]', :immediately
-        notifies :restart, 'service[logstash_server]', :delayed
+        notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
-      sv = service 'logstash_server' do
-        service_name 'logstash_server.service'
+      sv = service svc[:service_name] do
         provider Chef::Provider::Service::Systemd
         action [:enable, :start]
       end
       new_resource.updated_by_last_action(sv.updated_by_last_action?)
 
     elsif native_init == 'sysvinit'
-      args = default_args
       tp = template "/etc/init.d/#{svc[:service_name]}" do
         source "init/sysvinit/#{svc[:install_type]}.erb"
         cookbook  svc[:templates_cookbook]
