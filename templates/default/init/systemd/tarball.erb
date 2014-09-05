@@ -1,0 +1,17 @@
+[Unit]
+Description=logstash
+After=network.target
+
+[Service]
+User=<%= @user %>
+Group=<%= @supervisor_gid %>
+WorkingDirectory=<%= @home %>
+Environment="LOGSTASH_HOME=<%= @home %>
+Environment="HOME=<%= @home %>
+ExecStart=<%= "#{@home}/bin/logstash #{@args.join(' ')}" %>
+Restart=on-failure
+RestartSec=30
+SyslogIdentifier=logstash_agent
+
+[Install]
+WantedBy=multi-user.target
