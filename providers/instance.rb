@@ -70,7 +70,7 @@ action :create do
     end
     new_resource.updated_by_last_action(gr.updated_by_last_action?)
   end
-  
+
   case @install_type
   when 'tarball'
     @run_context.include_recipe 'ark::default'
