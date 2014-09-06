@@ -11,10 +11,10 @@ version          '0.9.2'
   supports os
 end
 
-%w(build-essential runit git ant java logrotate yum python ark).each do |ckbk|
+%w(build-essential runit git ant java logrotate python ark).each do |ckbk|
   depends ckbk
 end
 
-%w(yum apt).each do |ckbk|
+%w(apt).each do |ckbk|
   recommends ckbk
 end
