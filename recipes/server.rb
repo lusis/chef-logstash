@@ -42,6 +42,7 @@ logstash_config name do
   variables(
     elasticsearch_embedded: true
   )
+  notifies :restart, "logstash_service[#{name}]"
 end
 # ^ see `.kitchen.yml` for example attributes to configure templates.
 
@@ -52,10 +53,6 @@ end
 
 logstash_pattern name do
   action [:create]
-end
-
-logstash_service name do
-  action      [:start]
 end
 
 logstash_curator 'server' do
