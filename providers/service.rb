@@ -102,7 +102,7 @@ action :enable do
       args = default_args
       tp = template "/etc/init/#{svc[:service_name]}.conf" do
         mode      '0644'
-        source    "init/#{svc[:install_type]}_upstart.erb"
+        source    "init/upstart/#{svc[:install_type]}.erb"
         cookbook  svc[:templates_cookbook]
         variables(
                     home: svc[:home],
@@ -157,7 +157,7 @@ action :enable do
     elsif native_init == 'sysvinit'
       args = default_args
       tp = template "/etc/init.d/#{svc[:service_name]}" do
-        source "init/#{svc[:install_type]}_init.logstash.erb"
+        source "init/sysvinit/#{svc[:install_type]}.erb"
         cookbook  svc[:templates_cookbook]
         owner 'root'
         group 'root'
