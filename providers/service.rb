@@ -39,6 +39,7 @@ def load_current_resource
   @debug =  attributes['debug'] || defaults['debug']
   @install_type = attributes['install_type'] || defaults['install_type']
   @supervisor_gid = attributes['supervisor_gid'] || defaults['supervisor_gid']
+  @upstart_with_sudo = new_resource.upstart_with_sudo || attributes['upstart_with_sudo'] || defaults['upstart_with_sudo']
 end
 
 use_inline_resources
@@ -124,7 +125,8 @@ action :enable do
                       debug: svc[:debug],
                       log_file: svc[:log_file],
                       workers: svc[:workers],
-                      supervisor_gid: svc[:supervisor_gid]
+                      supervisor_gid: svc[:supervisor_gid],
+                      upstart_with_sudo: svc[:upstart_with_sudo]
                     )
         end
         new_resource.updated_by_last_action(tp.updated_by_last_action?)
@@ -269,6 +271,7 @@ def svc_vars
     debug: @debug,
     install_type: @install_type,
     supervisor_gid: @supervisor_gid,
+    upstart_with_sudo: @upstart_with_sudo,
     templates_cookbook: @templates_cookbook
   }
   svc
