@@ -213,7 +213,7 @@ def logrotate(ls)
   @run_context.include_recipe 'logrotate::default'
 
   logrotate_app "logstash_#{name}" do
-    path "#{ls[:homedir]}/log/*.log"
+    path "#{ls[:instance_dir]}/log/*.log"
     size ls[:logrotate_size] if ls[:logrotate_use_filesize]
     frequency ls[:logrotate_frequency]
     rotate ls[:logrotate_max_backup]
