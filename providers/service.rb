@@ -224,7 +224,7 @@ def service_action(action)
   case svc[:method]
   when 'native'
     sv = service svc[:service_name]
-    case pick_provider
+    case ::Logstash.determine_native_init(node)
     when 'systemd'
       sv.provider(Chef::Provider::Service::Systemd)
     when 'upstart'
@@ -234,24 +234,6 @@ def service_action(action)
     end
     sv.run_action(action)
     new_resource.updated_by_last_action(sv.updated_by_last_action?)
-  end
-end
-
-def pick_provider
-  if platform_family? 'fedora'
-    if  node['platform_version'] >= '15'
-      return 'systemd'
-    else
-      return 'default'
-    end
-  elsif platform_family? 'debian'
-    if node['platform_version'] >= '12.04'
-      return 'upstart'
-    else
-      return 'default'
-    end
-  else
-    return 'default'
   end
 end
 
