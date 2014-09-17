@@ -40,7 +40,7 @@ module Logstash
   # https://github.com/sethvargo/chef-sugar/blob/master/lib/chef/sugar/node.rb
   def self.deep_fetch(node, *keys)
     keys.map!(&:to_s)
-    keys.inject(node.attributes.to_hash) do |hash, key|
+    keys.reduce(node.attributes.to_hash) do |hash, key|
       hash[key]
     end
   rescue NoMethodError
