@@ -12,33 +12,26 @@ include Chef::Mixin::ShellOut
 
 def load_current_resource
   @instance = new_resource.instance
-  if node['logstash']['instance'].key?(@instance)
-    attributes = node['logstash']['instance'][@instance]
-    defaults = node['logstash']['instance']['default']
-  else
-    attributes = node['logstash']['instance']['default']
-  end
-
-  @basedir = attributes['basedir'] || defaults['basedir']
-  @templates_cookbook = new_resource.templates_cookbook  || attributes['service_templates_cookbook'] || defaults['service_templates_cookbook']
+  @basedir = Logstash.get_attribute_or_default(node, @instance, 'basedir')
+  @templates_cookbook = new_resource.templates_cookbook || Logstash.get_attribute_or_default(node, @instance, 'service_templates_cookbook')
   @service_name = new_resource.service_name || "logstash_#{@instance}"
   @home = "#{@basedir}/#{@instance}"
-  @method = new_resource.method || attributes['init_method'] || defaults['init_method']
+  @method = new_resource.method || Logstash.get_attribute_or_default(node, @instance, 'init_method')
   @command = new_resource.command || "#{@home}/bin/logstash"
-  @user = new_resource.user || attributes['user'] || defaults['user']
-  @group = new_resource.group || attributes['group'] || defaults['group']
-  @log_file = attributes['log_file'] || defaults['log_file']
-  @max_heap = attributes['xmx'] || defaults['xmx']
-  @min_heap = attributes['xms'] || defaults['xms']
-  @gc_opts = attributes['gc_opts'] || defaults['gc_opts']
-  @ipv4_only = attributes['ipv4_only'] || defaults['ipv4_only']
-  @java_opts = attributes['java_opts'] || defaults['java_opts']
+  @user = new_resource.user || Logstash.get_attribute_or_default(node, @instance, 'user')
+  @group = new_resource.group || Logstash.get_attribute_or_default(node, @instance, 'group')
+  @log_file = Logstash.get_attribute_or_default(node, @instance, 'log_file')
+  @max_heap = Logstash.get_attribute_or_default(node, @instance, 'xmx')
+  @min_heap = Logstash.get_attribute_or_default(node, @instance, 'xms')
+  @gc_opts = Logstash.get_attribute_or_default(node, @instance, 'gc_opts')
+  @ipv4_only = Logstash.get_attribute_or_default(node, @instance, 'ipv4_only')
+  @java_opts = Logstash.get_attribute_or_default(node, @instance, 'java_opts')
   @description = new_resource.description || @service_name
   @chdir = @home
-  @workers =  attributes['workers'] || defaults['workers']
-  @debug =  attributes['debug'] || defaults['debug']
-  @install_type = attributes['install_type'] || defaults['install_type']
-  @supervisor_gid = attributes['supervisor_gid'] || defaults['supervisor_gid']
+  @workers =  Logstash.get_attribute_or_default(node, @instance, 'workers')
+  @debug =  Logstash.get_attribute_or_default(node, @instance, 'debug')
+  @install_type = Logstash.get_attribute_or_default(node, @instance, 'install_type')
+  @supervisor_gid = Logstash.get_attribute_or_default(node, @instance, 'supervisor_gid')
 end
 
 use_inline_resources

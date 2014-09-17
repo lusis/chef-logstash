@@ -150,7 +150,7 @@ We've done our best to make this intuitive and easy to use.
 
 1. the value directly in the resource call.
 2. the value from the hash node['logstash']['instance'][name]
-3. the value from the hash node['logstash']['instance']['default']
+3. the value from the hash node['logstash']['instance_default']
 
 Searching
 ======
