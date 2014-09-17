@@ -19,7 +19,7 @@ def load_current_resource
   # merge user overrides into defaults for configuration variables
   attributes = Logstash.get_attribute_or_default(node, @instance, 'config_templates_variables')
   defaults = node['logstash']['instance_default']['config_templates_variables']
-  @variables = new_resource.variables.merge(defaults || {}).merge(attributes || {})
+  @variables = ({}).merge(new_resource.variables || {}).merge(defaults || {}).merge(attributes || {})
 
   @owner     = new_resource.owner || Logstash.get_attribute_or_default(node, @instance, 'user')
   @group     = new_resource.group || Logstash.get_attribute_or_default(node, @instance, 'group')
