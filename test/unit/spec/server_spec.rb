@@ -32,7 +32,6 @@ describe 'logstash::server' do
 
     it 'calls the logstash_service LWRP' do
       expect(chef_run).to enable_logstash_service('server')
-      expect(chef_run).to start_logstash_service('server')
     end
 
     it 'calls the logstash_plugins LWRP' do

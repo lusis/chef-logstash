@@ -41,52 +41,22 @@ def load_current_resource
   @supervisor_gid = attributes['supervisor_gid'] || defaults['supervisor_gid']
 end
 
+use_inline_resources
+
 action :restart do
-  svc = svc_vars
-  case svc[:method]
-  when 'native'
-    sv = service svc[:service_name] do
-      # provider Chef::Provider::Service::Upstart
-      action [:restart]
-    end
-    new_resource.updated_by_last_action(sv.updated_by_last_action?)
-  end
+  service_action(:restart)
 end
 
 action :start do
-  svc = svc_vars
-  case svc[:method]
-  when 'native'
-    sv = service svc[:service_name] do
-      # provider Chef::Provider::Service::Upstart
-      action [:start]
-    end
-    new_resource.updated_by_last_action(sv.updated_by_last_action?)
-  end
+  service_action(:start)
 end
 
 action :stop do
-  svc = svc_vars
-  case svc[:method]
-  when 'native'
-    sv = service svc[:service_name] do
-      # provider Chef::Provider::Service::Upstart
-      action [:stop]
-    end
-    new_resource.updated_by_last_action(sv.updated_by_last_action?)
-  end
+  service_action(:stop)
 end
 
 action :reload do
-  svc = svc_vars
-  case svc[:method]
-  when 'native'
-    sv = service svc[:service_name] do
-      # provider Chef::Provider::Service::Upstart
-      action [:reload]
-    end
-    new_resource.updated_by_last_action(sv.updated_by_last_action?)
-  end
+  service_action(:reload)
 end
 
 action :enable do
@@ -247,6 +217,42 @@ def default_args
   args.concat ['-l', "#{svc[:home]}/log/#{svc[:log_file]}"] if svc[:log_file]
   args.concat ['-w', svc[:workers].to_s] if svc[:workers]
   args
+end
+
+def service_action(action)
+  svc = svc_vars
+  case svc[:method]
+  when 'native'
+    sv = service svc[:service_name]
+    case pick_provider
+    when 'systemd'
+      sv.provider(Chef::Provider::Service::Systemd)
+    when 'upstart'
+      sv.provider(Chef::Provider::Service::Upstart)
+    else
+      sv.provider(Chef::Provider::Service::Init)
+    end
+    sv.run_action(action)
+    new_resource.updated_by_last_action(sv.updated_by_last_action?)
+  end
+end
+
+def pick_provider
+  if platform_family? 'fedora'
+    if  node['platform_version'] >= '15'
+      return 'systemd'
+    else
+      return 'default'
+    end
+  elsif platform_family? 'debian'
+    if node['platform_version'] >= '12.04'
+      return 'upstart'
+    else
+      return 'default'
+    end
+  else
+    return 'default'
+  end
 end
 
 def svc_vars
