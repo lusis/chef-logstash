@@ -122,6 +122,7 @@ action :enable do
                     workers: svc[:workers],
                     supervisor_gid: svc[:supervisor_gid]
                   )
+        notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
       sv = service svc[:service_name] do
@@ -185,6 +186,7 @@ action :enable do
                   supervisor_gid: svc[:supervisor_gid],
                   config_file: "#{svc[:home]}/etc/conf.d"
                   )
+        notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
       sv = service svc[:service_name] do
