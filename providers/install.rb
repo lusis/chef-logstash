@@ -26,23 +26,16 @@ def load_current_resource
   @repo = new_resource.repo
   @sha = new_resource.sha
   @java_home = new_resource.java_home
-  @create_account = new_resource.create_account || attributes['create_account'] || defaults['create_account']
   @user = new_resource.user || attributes['user'] || defaults['user']
   @group = new_resource.group || attributes['group'] || defaults['group']
   @useropts = new_resource.user_opts || attributes['user_opts'] || defaults['user_opts']
-  @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
-  @logrotate_size = new_resource.user_opts || attributes['logrotate_max_size'] || defaults['logrotate_max_size']
-  @logrotate_use_filesize = new_resource.logrotate_use_filesize || attributes['logrotate_use_filesize'] || defaults['logrotate_use_filesize']
-  @logrotate_frequency = new_resource.logrotate_frequency || attributes['logrotate_frequency'] || defaults['logrotate_frequency']
-  @logrotate_max_backup = new_resource.logrotate_max_backup || attributes['logrotate_max_backup'] || defaults['logrotate_max_backup']
-  @logrotate_options = new_resource.logrotate_options || attributes['logrotate_options'] || defaults['logrotate_options']
-  @logrotate_enable = new_resource.logrotate_enable || attributes['logrotate_enable'] || defaults['logrotate_enable']
+  @install_dir = "#{@base_directory}/application/logstash-#{@version}".clone
 end
 
 action :delete do
   ls = ls_vars
 
-  idr = directory ls[:instance_dir] do
+  idr = directory ls[:install_dir] do
     recursive   true
     action      :delete
   end
@@ -52,24 +45,22 @@ end
 action :create do
   ls = ls_vars
 
-  if  ls[:create_account]
-    ur = user ls[:user] do
-      home ls[:homedir]
-      system true
-      action :create
-      manage_home true
-      uid ls[:uid]
-    end
-    new_resource.updated_by_last_action(ur.updated_by_last_action?)
-
-    gr = group ls[:group] do
-      gid ls[:gid]
-      members ls[:user]
-      append true
-      system true
-    end
-    new_resource.updated_by_last_action(gr.updated_by_last_action?)
+  ur = user ls[:user] do
+    home ls[:homedir]
+    system true
+    action :create
+    manage_home true
+    uid ls[:uid]
   end
+  new_resource.updated_by_last_action(ur.updated_by_last_action?)
+
+  gr = group ls[:group] do
+    gid ls[:gid]
+    members ls[:user]
+    append true
+    system true
+  end
+  new_resource.updated_by_last_action(gr.updated_by_last_action?)
 
   case @install_type
   when 'tarball'
@@ -213,7 +204,7 @@ def logrotate(ls)
   @run_context.include_recipe 'logrotate::default'
 
   logrotate_app "logstash_#{name}" do
-    path "#{ls[:instance_dir]}/log/*.log"
+    path "#{ls[:homedir]}/log/*.log"
     size ls[:logrotate_size] if ls[:logrotate_use_filesize]
     frequency ls[:logrotate_frequency]
     rotate ls[:logrotate_max_backup]
@@ -231,7 +222,6 @@ def ls_vars
     version: @version,
     checksum: @checksum,
     basedir: @base_directory,
-    create_account: @create_account,
     user: @user,
     group: @group,
     name: @name,

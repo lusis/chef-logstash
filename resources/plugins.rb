@@ -17,5 +17,5 @@ attribute :source_url, kind_of: String
 attribute :user, kind_of: String
 attribute :group, kind_of: String
 attribute :base_directory, kind_of: String
-attribute :install_type, kind_of: String, default: 'native'
+attribute :install_type, kind_of: String
 attribute :install_check, kind_of: String

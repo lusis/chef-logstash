@@ -21,13 +21,15 @@ def load_current_resource
   @basedir = attributes['basedir'] || defaults['basedir']
   @templates = new_resource.templates || attributes['config_templates'] || defaults['config_templates']
   @templates_cookbook = new_resource.templates_cookbook  || attributes['config_templates_cookbook'] || defaults['config_templates_cookbook']
-  @variables = new_resource.variables || attributes['config_templates_variables'] || defaults['config_templates_variables']
+  @variables = new_resource.variables.merge(defaults['config_templates_variables'] || {}).merge(attributes['config_templates_variables'] || {})
   @owner     = new_resource.owner || attributes['user'] || defaults['user']
   @group     = new_resource.group || attributes['group'] || defaults['group']
   @mode      = new_resource.mode || '0644'
   @path      = new_resource.path || "#{@basedir}/#{@instance}/etc/conf.d"
   @service_name = new_resource.service_name || @instance
 end
+
+use_inline_resources
 
 action :create do
   conf = conf_vars
@@ -40,7 +42,6 @@ action :create do
       group       conf[:group]
       mode        conf[:mode]
       variables   conf[:variables]
-      notifies    :restart, "logstash_service[#{conf[:service_name]}]"
       action      :create
     end
     new_resource.updated_by_last_action(tp.updated_by_last_action?)

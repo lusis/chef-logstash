@@ -6,3 +6,4 @@ vendor/
 .kitchen.local.yml
 .bundle/
 bin/
+Gemfile.lock
