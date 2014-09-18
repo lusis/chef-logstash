@@ -14,7 +14,7 @@ def load_current_resource
   @instance  = new_resource.instance
   @basedir = Logstash.get_attribute_or_default(node, @instance, 'basedir')
   @templates = new_resource.templates || Logstash.get_attribute_or_default(node, @instance, 'config_templates')
-  @templates_cookbook = new_resource.templates_cookbook  Logstash.get_attribute_or_default(node, @instance, 'config_templates_cookbook')
+  @templates_cookbook = new_resource.templates_cookbook || Logstash.get_attribute_or_default(node, @instance, 'config_templates_cookbook')
 
   # merge user overrides into defaults for configuration variables
   attributes = Logstash.get_attribute_or_default(node, @instance, 'config_templates_variables')
