@@ -33,7 +33,7 @@ class Erubis::RubyEvaluator::LogstashConf
     when Array
       "[#{v.map { |e| value_to_str(e, indent) }.join(', ')}]"
     when Hash, Mash
-      '{\n' + hash_to_str(v, indent) + '\n' + indent(indent) + '}'
+      "{\n" + hash_to_str(v, indent) + "\n" + indent(indent) + '}'
     when TrueClass, FalseClass
       v.to_s
     else
