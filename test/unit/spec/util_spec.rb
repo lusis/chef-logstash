@@ -1,3 +1,4 @@
+# Encoding: utf-8
 require_relative '../../../libraries/logstash_util.rb'
 
 describe '::determine_platform_major_version' do

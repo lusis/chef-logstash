@@ -155,7 +155,7 @@ action :enable do
                    home: svc[:home],
                    user: svc[:user],
                    supervisor_gid: svc[:supervisor_gid],
-                   args: args,
+                   args: args
                   )
         notifies :run, 'execute[reload-systemd]', :immediately
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
