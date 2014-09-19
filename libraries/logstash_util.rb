@@ -70,7 +70,7 @@ module Logstash
   end
 
   def self.determine_platform_major_version(node)
-    if node['platform'] == 'ubuntu' or node['platform'] == 'amazon'
+    if node['platform'] == 'ubuntu' || node['platform'] == 'amazon'
       node['platform_version'].to_f
     else
       node['platform_version'].split('.').first.to_i
