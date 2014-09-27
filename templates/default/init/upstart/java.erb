@@ -10,7 +10,7 @@ limit nofile 65550 65550
 
 chdir <%= @home %>
 
-<% unless node['logstash']['instance'][@name]['upstart_with_sudo'] -%>
+<% if @user_supported -%>
 setuid <%= @user %>
   <% unless @supervisor_gid.to_s.empty? -%>
 setgid <%= @supervisor_gid %>
@@ -32,10 +32,10 @@ script
   <% end -%>
   export OPTS="$JAVA_OPTS $GC_OPTS -jar $LOGSTASH_HOME/lib/logstash.jar $LOGSTASH_OPTS"
 
-  <% if node['logstash']['instance'][@name]['upstart_with_sudo'] -%>
-  exec sudo -u <%= @user %> /usr/bin/java $OPTS
-  <% else -%>
+  <% if @user_supported -%>
   exec /usr/bin/java $OPTS
+  <% else -%>
+  exec sudo -u <%= @user %> /usr/bin/java $OPTS
   <% end -%>
 end script
 

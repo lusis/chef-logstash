@@ -69,6 +69,22 @@ module Logstash
     end
   end
 
+  def self.upstart_supports_user?(node)
+    platform_major_version = determine_platform_major_version(node)
+    case node['platform']
+    when 'ubuntu'
+      if platform_major_version < 12.04
+        false
+      else
+        true
+      end
+    when 'redhat', 'centos', 'scientific', 'amazon'
+      false
+    else
+      Chef::Log.fatal("#{node['platform']} does not use upstart")
+    end
+  end
+
   def self.determine_platform_major_version(node)
     if node['platform'] == 'ubuntu' || node['platform'] == 'amazon'
       node['platform_version'].to_f

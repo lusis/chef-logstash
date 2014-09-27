@@ -105,6 +105,7 @@ action :enable do
         source    "init/upstart/#{svc[:install_type]}.erb"
         cookbook  svc[:templates_cookbook]
         variables(
+                    user_supported: ::Logstash.upstart_supports_user?(node),
                     home: svc[:home],
                     name: svc[:name],
                     command: svc[:command],
