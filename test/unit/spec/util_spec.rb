@@ -24,6 +24,30 @@ describe '::determine_platform_major_version' do
   end
 end
 
+describe '::upstart_supports_user?' do
+  context 'with ubuntu' do
+    context 'before user' do
+      let(:node) { { 'platform' => 'ubuntu', 'platform_version' => '10.04' } }
+      it 'returns false' do
+        expect(Logstash.upstart_supports_user?(node)).to eql(false)
+      end
+    end
+    context 'after user' do
+      let(:node) { { 'platform' => 'ubuntu', 'platform_version' => '12.04' } }
+      it 'returns true' do
+        expect(Logstash.upstart_supports_user?(node)).to eql(true)
+      end
+    end
+  end
+
+  context 'with el' do
+    let(:node) { { 'platform' => 'centos', 'platform_version' => '6' } }
+    it 'returns false' do
+      expect(Logstash.upstart_supports_user?(node)).to eql(false)
+    end
+  end
+end
+
 describe '::determine_native_init' do
   context 'with ubuntu' do
     context 'before upstart' do
