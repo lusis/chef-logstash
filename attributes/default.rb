@@ -53,9 +53,6 @@ default['logstash']['instance']['default']['config_templates']           = {}
 default['logstash']['instance']['default']['config_templates_cookbook']  = 'logstash'
 default['logstash']['instance']['default']['config_templates_variables'] = {}
 
-# allow control over the upstart config
-default['logstash']['instance']['default']['upstart_with_sudo'] = false
-
 default['logstash']['instance']['default']['init_method'] = 'native' # pleaserun or native or runit
 default['logstash']['instance']['default']['service_templates_cookbook']  = 'logstash'
 

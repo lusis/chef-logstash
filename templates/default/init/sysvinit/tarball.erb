@@ -7,16 +7,17 @@
 # processname: logstash
 
 
-PIDDIR="<%= node['logstash']['pid_dir'] %>"
-export PIDFILE="$PIDDIR/<%= @name %>.pid"
+PIDDIR="/var/run/logstash"
+export PIDFILE="$PIDDIR/logstash-<%= @name %>.pid"
 export LS_HOME="<%= @home %>"
-export LS_CONFIG="<%= @config_file %>"
-LS_USER="<%= node['logstash']['user'] %>"
-LS_GROUP="<%= node['logstash']['group'] %>"
+export LS_HEAP_SIZE="<%= @max_heap %>"
+export LOGSTASH_OPTS="<%= @args.join(' ') %>"
+LS_USER="<%= @user %>"
+LS_GROUP="<%= @group %>"
 LS_LOG="<%= @log_file %>"
 LOGDIR="<%= ::File.dirname @log_file %>"
-export JAVA_OPTS="-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=$LS_HOME/tmp/"
-BIN_SCRIPT="/usr/bin/env java $JAVA_OPTS -jar $LS_HOME/lib/logstash.jar agent -f $LS_CONFIG > $LS_LOG 2>&1 &  echo \$! > $PIDFILE"
+export JAVA_OPTS="-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=$LS_HOME/tmp/ <%= @java_opts %> <%= '-Djava.net.preferIPv4Stack=true' if @ipv4_only %>"
+BIN_SCRIPT="/usr/bin/env $LS_HOME/bin/logstash $LOGSTASH_OPTS > $LS_LOG 2>&1 &  echo \$! > $PIDFILE"
 
 if [ -f /etc/init.d/functions ] ; then
   . /etc/init.d/functions
@@ -26,15 +27,8 @@ start() {
 
   if [ ! -d "$PIDDIR" ] ; then
     mkdir "$PIDDIR"
-    chown -R $LS_USER:$LS_GROUP $PIDDIR
+    chown $LS_USER:$LS_GROUP $PIDDIR
   fi
-
-  if [ ! -d "$LOGDIR" ] ; then
-    mkdir "$LOGDIR"
-  fi
-
-  chown -R $LS_USER:$LS_GROUP $LOGDIR $PIDDIR
-
 
   if [ -f $PIDFILE ]; then
     echo -e "\033[31;1mPID file found in $PIDFILE, already running?\033[0m"
@@ -147,6 +141,7 @@ status() {
   # STALE PID FOUND
   if [[ ! -d "/proc/$pid" && -f $PIDFILE ]]; then
     echo -e "\033[1;31;40m[!] Stale PID found in $PIDFILE\033[0m"
+    exit 1
   fi
 }
 

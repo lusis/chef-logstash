@@ -10,7 +10,7 @@ limit nofile 65550 65550
 
 chdir <%= @home %>
 
-<% unless @upstart_with_sudo -%>
+<% if @user_supported -%>
 setuid <%= @user %>
   <% unless @supervisor_gid.to_s.empty? -%>
 setgid <%= @supervisor_gid %>
@@ -23,10 +23,10 @@ script
   export HOME=$LOGSTASH_HOME
   export LOGSTASH_OPTS="<%= @args.join(' ') %>"
 
-  <% if @upstart_with_sudo -%>
-  exec sudo -u <%= @user %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
-  <% else -%>
+  <% if @user_supported -%>
   exec $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
+  <% else -%>
+  exec sudo -u <%= @user %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
   <% end -%>
 end script
 
