@@ -12,17 +12,11 @@ include Chef::Mixin::ShellOut
 
 def load_current_resource
   @instance = new_resource.instance || 'default'
-  if node['logstash']['instance'].key?(@instance)
-    attributes = node['logstash']['instance'][@instance]
-    defaults = node['logstash']['instance']['default']
-  else
-    attributes = node['logstash']['instance']['default']
-  end
-  @days_to_keep = new_resource.days_to_keep || attributes['curator_days_to_keep'] || defaults['curator_days_to_keep']
-  @minute = new_resource.minute || attributes['curator_cron_minute'] || defaults['curator_cron_minute']
-  @hour = new_resource.hour || attributes['curator_cron_hour'] || defaults['curator_cron_hour']
-  @log_file = new_resource.log_file || attributes['curator_cron_log_file'] || defaults['curator_cron_log_file']
-  @user = new_resource.user || attributes['user'] || defaults['user']
+  @days_to_keep = new_resource.days_to_keep || Logstash.get_attribute_or_default(node, @instance, 'curator_days_to_keep')
+  @minute = new_resource.minute || Logstash.get_attribute_or_default(node, @instance, 'curator_cron_minute')
+  @hour = new_resource.hour || Logstash.get_attribute_or_default(node, @instance, 'curator_cron_hour')
+  @log_file = new_resource.log_file || Logstash.get_attribute_or_default(node, @instance, 'curator_cron_log_file')
+  @user = new_resource.user || Logstash.get_attribute_or_default(node, @instance, 'user')
 end
 
 action :create do
@@ -40,8 +34,9 @@ action :create do
   end
   new_resource.updated_by_last_action(pi.updated_by_last_action?)
 
+  server_ip = ::Logstash.service_ip(node, cur_instance, 'elasticsearch')
   cr = cron "curator-#{cur_instance}" do
-    command "curator --host #{::Logstash.service_ip(node, cur_instance, 'elasticsearch')} delete --older-than #{cur_days_to_keep} &> #{cur_log_file}"
+    command "curator --host #{server_ip} delete --older-than #{cur_days_to_keep} &> #{cur_log_file}"
     user    cur_user
     minute  cur_minute
     hour    cur_hour

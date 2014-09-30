@@ -20,7 +20,7 @@ attribute :source_url, kind_of: String
 # sha/repo/java_home used by `source` install_type
 attribute :sha, kind_of: String, default: 'HEAD'
 attribute :repo, kind_of: String, default: 'git://github.com/logstash/logstash.git'
-attribute :java_home, kind_of: String, default: '/usr/lib/jvm/java-6-openjdk' # openjdk6 on ubuntu
+attribute :java_home, kind_of: String
 attribute :user, kind_of: String
 attribute :group, kind_of: String
 attribute :create_account, kind_of: [TrueClass, FalseClass]

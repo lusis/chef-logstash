@@ -12,18 +12,17 @@ include Chef::Mixin::ShellOut
 
 def load_current_resource
   @instance  = new_resource.instance
-  if node['logstash']['instance'].key?(@instance)
-    attributes = node['logstash']['instance'][@instance]
-    defaults   = node['logstash']['instance']['default']
-  else
-    attributes = node['logstash']['instance']['default']
-  end
-  @basedir = attributes['basedir'] || defaults['basedir']
-  @templates = new_resource.templates || attributes['config_templates'] || defaults['config_templates']
-  @templates_cookbook = new_resource.templates_cookbook  || attributes['config_templates_cookbook'] || defaults['config_templates_cookbook']
-  @variables = new_resource.variables.merge(defaults['config_templates_variables'] || {}).merge(attributes['config_templates_variables'] || {})
-  @owner     = new_resource.owner || attributes['user'] || defaults['user']
-  @group     = new_resource.group || attributes['group'] || defaults['group']
+  @basedir = Logstash.get_attribute_or_default(node, @instance, 'basedir')
+  @templates = new_resource.templates || Logstash.get_attribute_or_default(node, @instance, 'config_templates')
+  @templates_cookbook = new_resource.templates_cookbook || Logstash.get_attribute_or_default(node, @instance, 'config_templates_cookbook')
+
+  # merge user overrides into defaults for configuration variables
+  attributes = Logstash.get_attribute_or_default(node, @instance, 'config_templates_variables')
+  defaults = node['logstash']['instance_default']['config_templates_variables']
+  @variables = ({}).merge(new_resource.variables || {}).merge(defaults || {}).merge(attributes || {})
+
+  @owner     = new_resource.owner || Logstash.get_attribute_or_default(node, @instance, 'user')
+  @group     = new_resource.group || Logstash.get_attribute_or_default(node, @instance, 'group')
   @mode      = new_resource.mode || '0644'
   @path      = new_resource.path || "#{@basedir}/#{@instance}/etc/conf.d"
   @service_name = new_resource.service_name || @instance

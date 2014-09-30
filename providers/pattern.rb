@@ -12,18 +12,12 @@ include Chef::Mixin::ShellOut
 
 def load_current_resource
   @instance  = new_resource.instance
-  if node['logstash']['instance'].key?(@instance)
-    attributes = node['logstash']['instance'][@instance]
-    defaults = node['logstash']['instance']['default']
-  else
-    attributes = node['logstash']['instance']['default']
-  end
-  @basedir = attributes['basedir'] || defaults['basedir']
-  @templates = new_resource.templates || attributes['pattern_templates'] || defaults['pattern_templates']
-  @variables = new_resource.variables || attributes['pattern_templates_variables'] || defaults['pattern_templates_variables']
-  @owner     = new_resource.owner || attributes['user'] || defaults['user']
-  @group     = new_resource.group || attributes['group'] || defaults['group']
-  @templates_cookbook = new_resource.templates_cookbook || attributes['pattern_templates_cookbook'] || defaults['pattern_templates_cookbook']
+  @basedir   = Logstash.get_attribute_or_default(node, @instance, 'basedir')
+  @templates = new_resource.templates || Logstash.get_attribute_or_default(node, @instance, 'pattern_templates')
+  @variables = new_resource.variables || Logstash.get_attribute_or_default(node, @instance, 'pattern_templates_variables')
+  @owner     = new_resource.owner || Logstash.get_attribute_or_default(node, @instance, 'user')
+  @group     = new_resource.group || Logstash.get_attribute_or_default(node, @instance, 'group')
+  @templates_cookbook = new_resource.templates_cookbook || Logstash.get_attribute_or_default(node, @instance, 'pattern_templates_cookbook')
   @mode      = new_resource.mode || '0644'
   @path      = new_resource.path || "#{@basedir}/#{@instance}/patterns"
 end
