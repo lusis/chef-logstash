@@ -33,6 +33,50 @@ module Logstash
     instance_attr || default_attr
   end
 
+  def self.determine_native_init(node)
+    platform_major_version = determine_platform_major_version(node)
+    case node['platform']
+    when 'ubuntu'
+      if platform_major_version >= 6.10
+        'upstart'
+      else
+        'sysvinit'
+      end
+    when 'debian'
+      'sysvinit'
+    when 'redhat', 'centos', 'scientific'
+      if platform_major_version <= 5
+        'sysvinit'
+      elsif platform_major_version == 6
+        'upstart'
+      else
+        'systemd'
+      end
+    when 'amazon'
+      if platform_major_version < 2011.02
+        'sysvinit'
+      else
+        'upstart'
+      end
+    when 'fedora'
+      if platform_major_version < 15
+        'sysvinit'
+      else
+        'systemd'
+      end
+    else
+      Chef::Log.fatal("We cannot determine your distribution's native init system")
+    end
+  end
+
+  def self.determine_platform_major_version(node)
+    if node['platform'] == 'ubuntu' or node['platform'] == 'amazon'
+      node['platform_version'].to_f
+    else
+      node['platform_version'].split('.').first.to_i
+    end
+  end
+
   private
 
   # Adapted from @sathvargo's chef-sugar project, as there's no way to install
@@ -46,4 +90,5 @@ module Logstash
   rescue NoMethodError
     nil
   end
+
 end
