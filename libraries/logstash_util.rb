@@ -45,10 +45,8 @@ module Logstash
     when 'debian'
       'sysvinit'
     when 'redhat', 'centos', 'scientific'
-      if platform_major_version <= 5
+      if platform_major_version <= 6
         'sysvinit'
-      elsif platform_major_version == 6
-        'upstart'
       else
         'systemd'
       end
