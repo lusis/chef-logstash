@@ -12,17 +12,17 @@ include Chef::Mixin::ShellOut
 
 def load_current_resource
   @name = new_resource.name || 'default'
-  @base_directory = new_resource.base_directory || Logstash.get_attribute_or_default(node, @instance, 'basedir')
-  @install_type = new_resource.install_type || Logstash.get_attribute_or_default(node, @instance, 'install_type')
-  @version = new_resource.version || Logstash.get_attribute_or_default(node, @instance, 'version')
-  @checksum = new_resource.checksum || Logstash.get_attribute_or_default(node, @instance, 'checksum')
-  @source_url = new_resource.source_url || Logstash.get_attribute_or_default(node, @instance, 'source_url')
+  @base_directory = new_resource.base_directory || Logstash.get_attribute_or_default(node, @name, 'basedir')
+  @install_type = new_resource.install_type || Logstash.get_attribute_or_default(node, @name, 'install_type')
+  @version = new_resource.version || Logstash.get_attribute_or_default(node, @name, 'version')
+  @checksum = new_resource.checksum || Logstash.get_attribute_or_default(node, @name, 'checksum')
+  @source_url = new_resource.source_url || Logstash.get_attribute_or_default(node, @name, 'source_url')
   @repo = new_resource.repo
   @sha = new_resource.sha
   @java_home = new_resource.java_home
-  @user = new_resource.user || Logstash.get_attribute_or_default(node, @instance, 'user')
-  @group = new_resource.group || Logstash.get_attribute_or_default(node, @instance, 'group')
-  @useropts = new_resource.user_opts || Logstash.get_attribute_or_default(node, @instance, 'user_opts')
+  @user = new_resource.user || Logstash.get_attribute_or_default(node, @name, 'user')
+  @group = new_resource.group || Logstash.get_attribute_or_default(node, @name, 'group')
+  @useropts = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'user_opts')
   @install_dir = "#{@base_directory}/application/logstash-#{@version}".clone
 end
 

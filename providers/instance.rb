@@ -12,25 +12,25 @@ include Chef::Mixin::ShellOut
 
 def load_current_resource
   @name = new_resource.name || 'default'
-  @base_directory = new_resource.base_directory || Logstash.get_attribute_or_default(node, @instance, 'basedir')
-  @install_type = new_resource.install_type || Logstash.get_attribute_or_default(node, @instance, 'install_type')
-  @version = new_resource.version || Logstash.get_attribute_or_default(node, @instance, 'version')
-  @checksum = new_resource.checksum || Logstash.get_attribute_or_default(node, @instance, 'checksum')
-  @source_url = new_resource.source_url || Logstash.get_attribute_or_default(node, @instance, 'source_url')
+  @base_directory = new_resource.base_directory || Logstash.get_attribute_or_default(node, @name, 'basedir')
+  @install_type = new_resource.install_type || Logstash.get_attribute_or_default(node, @name, 'install_type')
+  @version = new_resource.version || Logstash.get_attribute_or_default(node, @name, 'version')
+  @checksum = new_resource.checksum || Logstash.get_attribute_or_default(node, @name, 'checksum')
+  @source_url = new_resource.source_url || Logstash.get_attribute_or_default(node, @name, 'source_url')
   @repo = new_resource.repo
   @sha = new_resource.sha
-  @java_home = new_resource.java_home || Logstash.get_attribute_or_default(node, @instance, 'java_home')
-  @create_account = new_resource.create_account || Logstash.get_attribute_or_default(node, @instance, 'create_account')
-  @user = new_resource.user || Logstash.get_attribute_or_default(node, @instance, 'user')
-  @group = new_resource.group || Logstash.get_attribute_or_default(node, @instance, 'group')
-  @useropts = new_resource.user_opts || Logstash.get_attribute_or_default(node, @instance, 'user_opts')
+  @java_home = new_resource.java_home || Logstash.get_attribute_or_default(node, @name, 'java_home')
+  @create_account = new_resource.create_account || Logstash.get_attribute_or_default(node, @name, 'create_account')
+  @user = new_resource.user || Logstash.get_attribute_or_default(node, @name, 'user')
+  @group = new_resource.group || Logstash.get_attribute_or_default(node, @name, 'group')
+  @useropts = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'user_opts')
   @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
-  @logrotate_size = new_resource.user_opts || Logstash.get_attribute_or_default(node, @instance, 'logrotate_max_size')
-  @logrotate_use_filesize = new_resource.logrotate_use_filesize || Logstash.get_attribute_or_default(node, @instance, 'logrotate_use_filesize')
-  @logrotate_frequency = new_resource.logrotate_frequency || Logstash.get_attribute_or_default(node, @instance, 'logrotate_frequency')
-  @logrotate_max_backup = new_resource.logrotate_max_backup || Logstash.get_attribute_or_default(node, @instance, 'logrotate_max_backup')
-  @logrotate_options = new_resource.logrotate_options || Logstash.get_attribute_or_default(node, @instance, 'logrotate_options')
-  @logrotate_enable = new_resource.logrotate_enable || Logstash.get_attribute_or_default(node, @instance, 'logrotate_enable')
+  @logrotate_size = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_size')
+  @logrotate_use_filesize = new_resource.logrotate_use_filesize || Logstash.get_attribute_or_default(node, @name, 'logrotate_use_filesize')
+  @logrotate_frequency = new_resource.logrotate_frequency || Logstash.get_attribute_or_default(node, @name, 'logrotate_frequency')
+  @logrotate_max_backup = new_resource.logrotate_max_backup || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_backup')
+  @logrotate_options = new_resource.logrotate_options || Logstash.get_attribute_or_default(node, @name, 'logrotate_options')
+  @logrotate_enable = new_resource.logrotate_enable || Logstash.get_attribute_or_default(node, @name, 'logrotate_enable')
 end
 
 action :delete do
