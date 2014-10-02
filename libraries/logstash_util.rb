@@ -106,5 +106,4 @@ module Logstash
   rescue NoMethodError
     nil
   end
-
 end
