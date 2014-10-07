@@ -97,7 +97,6 @@ action :enable do
     new_resource.updated_by_last_action(ri.updated_by_last_action?)
 
   when 'native'
-<<<<<<< HEAD
     native_init = ::Logstash.determine_native_init(node)
     args = default_args
 
@@ -123,47 +122,11 @@ action :enable do
                     debug: svc[:debug],
                     log_file: svc[:log_file],
                     workers: svc[:workers],
-                    supervisor_gid: svc[:supervisor_gid]
+                    supervisor_gid: svc[:supervisor_gid],
+                    upstart_with_sudo: svc[:upstart_with_sudo]
                   )
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
-=======
-    if platform_family? 'debian'
-      if node['platform_version'] >= '12.04'
-        args = default_args
-        tp = template "/etc/init/#{svc[:service_name]}.conf" do
-          mode      '0644'
-          source    "init/#{svc[:install_type]}_upstart.erb"
-          cookbook  svc[:templates_cookbook]
-          variables(
-                      home: svc[:home],
-                      name: svc[:name],
-                      command: svc[:command],
-                      args: args,
-                      user: svc[:user],
-                      group: svc[:group],
-                      description: svc[:description],
-                      max_heap: svc[:max_heap],
-                      min_heap: svc[:min_heap],
-                      gc_opts: svc[:gc_opts],
-                      java_opts: svc[:java_opts],
-                      ipv4_only: svc[:ipv4_only],
-                      debug: svc[:debug],
-                      log_file: svc[:log_file],
-                      workers: svc[:workers],
-                      supervisor_gid: svc[:supervisor_gid],
-                      upstart_with_sudo: svc[:upstart_with_sudo]
-                    )
-        end
-        new_resource.updated_by_last_action(tp.updated_by_last_action?)
-        sv = service svc[:service_name] do
-          provider Chef::Provider::Service::Upstart
-          supports restart: true, reload: true, start: true, stop: true
-          action [:enable]
-        end
-        new_resource.updated_by_last_action(sv.updated_by_last_action?)
-      else
-        Chef::Log.fatal("Please set node['logstash']['instance']['server']['init_method'] to 'runit' for #{node['platform_version']}")
->>>>>>> dd391d5
+
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
       sv = service svc[:service_name] do
