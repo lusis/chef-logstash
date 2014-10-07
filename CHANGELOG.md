@@ -1,5 +1,10 @@
 # CHANGELOG for chef-logstash
 
+## 0.10.0:
+* major rework of service LWRP
+* rework of attribute precidence
+* node[logstash][default] changed to node[logstash][instance_default]
+
 This file is used to list changes made in each version of chef-logstash.
 
 
