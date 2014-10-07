@@ -61,7 +61,7 @@ action :create do
     @run_context.include_recipe 'ark::default'
     arkit = ark ls[:name] do
       url       ls[:source_url]
-      checksum  ls[:checksum]
+      checksum  ls[:checksum] unless ls[:checksum].nil?
       owner     ls[:user]
       group     ls[:group]
       mode      0755
@@ -113,7 +113,7 @@ action :create do
       group ls[:group]
       mode '0755'
       source ls[:source_url]
-      checksum ls[:checksum]
+      checksum ls[:checksum] unless ls[:checksum].nil?
     end
     new_resource.updated_by_last_action(rfr.updated_by_last_action?)
 

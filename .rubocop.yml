@@ -39,3 +39,9 @@ MethodLength:
 
 SingleSpaceBeforeFirstArg:
   Enabled: false
+
+Style/WordArray:
+  MinSize: 5
+
+Style/RedundantBegin:
+  Enabled: false

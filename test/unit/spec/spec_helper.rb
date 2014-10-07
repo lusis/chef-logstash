@@ -5,6 +5,8 @@ require 'chefspec/berkshelf'
 require 'chefspec/server'
 require 'chef/application'
 
+require_relative 'support/matchers'
+
 ::LOG_LEVEL = :fatal
 
 ::REDHAT_OPTS = {

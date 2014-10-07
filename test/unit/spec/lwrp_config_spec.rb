@@ -51,9 +51,7 @@ describe 'logstash::server' do
         owner:     'logstash',
         group:    'logstash',
         mode:     '0644',
-        variables: {
-          elasticsearch_embedded: true
-        },
+        variables: {},
         action: [:create]
       )
     end

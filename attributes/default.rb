@@ -8,6 +8,7 @@ default['logstash']['instance_default']['elasticsearch_query'] = "roles:#{node['
 default['logstash']['instance_default']['elasticsearch_cluster'] = 'logstash'
 default['logstash']['instance_default']['elasticsearch_ip'] = ''
 default['logstash']['instance_default']['elasticsearch_port'] = ''
+default['logstash']['instance_default']['elasticsearch_embedded'] = true
 default['logstash']['instance_default']['graphite_ip'] = ''
 
 # Default logstash instance variables

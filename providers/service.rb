@@ -121,7 +121,8 @@ action :enable do
                     debug: svc[:debug],
                     log_file: svc[:log_file],
                     workers: svc[:workers],
-                    supervisor_gid: svc[:supervisor_gid]
+                    supervisor_gid: svc[:supervisor_gid],
+                    upstart_with_sudo: svc[:upstart_with_sudo]
                   )
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
