@@ -3,11 +3,15 @@ rvm:
   - 1.9.3
 env:
   - USE_SYSTEM_GECODE=1
+  - PATH=/opt/chefdk/bin:/opt/chefdk/embedded/bin:~/.chefdk/gem/ruby/2.1.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 before_install:
   - sudo apt-get update
   - sudo apt-get install libgecode-dev
+  - sudo gem install rake
+  - sudo rake chefdk
+  - sudo chown -R $USER /opt/chefdk
 install:
-  - bundle install --path vendor --binstubs
+  - chef exec rake bundle
 script:
-  - bin/berks install
-  - bin/rake style spec
+  - chef exec rake berks
+  - chef exec rake style spec

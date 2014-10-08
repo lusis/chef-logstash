@@ -15,14 +15,14 @@ namespace :prepare do
 
   task :bundle do
     if ENV['CI']
-      sh %(chef exec bundle install --path=.bundle --jobs 1 --retry 3 --verbose)
+      sh %(chef exec bundle install --jobs 1 --retry 3 --verbose)
     else
-      sh %(chef exec bundle install --path .bundle)
+      sh %(chef exec bundle install)
     end
   end
 
   task :berks do
-    sh %(chef exec berks install)
+    sh "#{run_cmd} berks install"
   end
 
 end
@@ -45,7 +45,7 @@ task style: ['style:foodcritic', 'style:rubocop']
 
 namespace :integration do
   task :kitchen do
-    sh %(chef exec kitchen test)
+    sh "#{run_cmd} kitchen test"
   end
 end
 
@@ -53,7 +53,7 @@ task integration: ['integration:kitchen']
 
 namespace :unit do
   task :chefspec do
-    sh %(chef exec rspec test/unit/spec)
+    sh "#{run_cmd} rspec test/unit/spec"
   end
 end
 
