@@ -6,9 +6,8 @@ env:
 before_install:
   - sudo apt-get update
   - sudo apt-get install libgecode-dev
-  - bundle install --path=.bundle --jobs 1 --retry 3 --verbose
 install:
-  - bundle exec rake bundle
+  - bundle install --path=.bundle --jobs 1 --retry 3 --verbose
 script:
   - bundle exec rake berks
   - bundle exec rake style spec

@@ -15,9 +15,9 @@ namespace :prepare do
 
   task :bundle do
     if ENV['CI']
-      sh %(chef exec bundle install --jobs 1 --retry 3 --verbose)
+      sh "#{run_cmd} bundle install --jobs 1 --retry 3 --verbose"
     else
-      sh %(chef exec bundle install)
+      sh "#{run_cmd} bundle install"
     end
   end
 
