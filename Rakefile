@@ -1,35 +1,5 @@
 # Encoding: utf-8
 
-namespace :prepare do
-
-  desc 'Install ChefDK'
-  task :chefdk do
-    begin
-      gem 'chef-dk', '0.3.0'
-    rescue Gem::LoadError
-      puts 'ChefDK not found.  Installing it for you...'
-      sh %(wget -O /tmp/chefdk.deb https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/12.04/x86_64/chefdk_0.2.1-1_amd64.deb)
-      sh %(sudo dpkg -i /tmp/chefdk.deb)
-    end
-  end
-
-  task :bundle do
-    if ENV['CI']
-      sh "#{run_cmd} bundle install --jobs 1 --retry 3 --verbose"
-    else
-      sh "#{run_cmd} bundle install"
-    end
-  end
-
-  task :berks do
-    sh "#{run_cmd} berks install"
-  end
-
-end
-
-desc 'Install required Gems and Cookbooks'
-task prepare: ['prepare:bundle', 'prepare:berks']
-
 namespace :style do
   task :rubocop do
     sh "#{run_cmd} rubocop"
@@ -59,15 +29,15 @@ end
 
 desc 'Run all unit tests'
 task unit: ['unit:chefspec']
-task spec: ['unit']
+task spec: ['unit:chefspec']
 
 # Run all tests
 desc 'Run all tests'
 task test: ['style', 'unit', 'integration']
 
-# The default rake task should just run it all
+# The default rake task should run style and unit tests
 desc 'Install required Gems and Cookbook then run all tests'
-task default: ['prepare', 'test']
+task default: ['style', 'unit']
 
 begin
   require 'kitchen/rake_tasks'
@@ -79,14 +49,5 @@ end
 private
 
 def run_cmd
-  begin
-    require 'chef-dk/version'
-    if Gem::Version.new(ChefDK::VERSION) > Gem::Version.new('0.2.0')
-      exec = 'chef exec'
-    else
-      exec = 'bundle exec'
-    end
-  rescue LoadError
-    exec = 'bundle exec'
-  end
+  puts 'bundle exec'
 end
