@@ -280,10 +280,10 @@ If you want to use chef templates to drive your configs you'll want to set the f
 
 
 ```
-node['logstash']['agent']['config_file'] = "" # disable data drive templates ( can be left enabled if want both )
-node['logstash']['agent']['config_templates'] = { "apache" => "config/apache.conf.erb }
-node['logstash']['agent']['config_templates_cookbook'] = 'logstash'
-node['logstash']['agent']['config_templates_variables'] = { apache: { type: 'apache' } }
+node.set['logstash']['agent']['config_file'] = "" # disable data drive templates ( can be left enabled if want both )
+node.set['logstash']['agent']['config_templates'] = { "apache" => "apache.conf.erb" }
+node.set['logstash']['agent']['config_templates_cookbook'] = 'logstash'
+node.set['logstash']['agent']['config_templates_variables'] = { apache: { type: 'apache' } }
 ```
 
 
