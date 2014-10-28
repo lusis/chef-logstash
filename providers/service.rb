@@ -14,6 +14,8 @@ def load_current_resource
   @instance = new_resource.instance
   @basedir = Logstash.get_attribute_or_default(node, @instance, 'basedir')
   @templates_cookbook = new_resource.templates_cookbook || Logstash.get_attribute_or_default(node, @instance, 'service_templates_cookbook')
+  @runit_run_template = new_resource.runit_run_template || Logstash.get_attribute_or_default(node, @instance, 'service_runit_run_template')
+  @runit_log_template = new_resource.runit_log_template || Logstash.get_attribute_or_default(node, @instance, 'service_runit_log_template')
   @service_name = new_resource.service_name || "logstash_#{@instance}"
   @home = "#{@basedir}/#{@instance}"
   @method = new_resource.method || Logstash.get_attribute_or_default(node, @instance, 'init_method')
@@ -92,6 +94,8 @@ action :enable do
                 web_port: svc[:web_port]
       )
       cookbook  svc[:templates_cookbook]
+      run_template_name svc[:runit_run_template]
+      log_template_name svc[:runit_log_template]
     end
     new_resource.updated_by_last_action(ri.updated_by_last_action?)
 
@@ -251,7 +255,9 @@ def svc_vars
     debug: @debug,
     install_type: @install_type,
     supervisor_gid: @supervisor_gid,
-    templates_cookbook: @templates_cookbook
+    templates_cookbook: @templates_cookbook,
+    runit_run_template: @runit_run_template,
+    runit_log_template: @runit_log_template
   }
   svc
 end
