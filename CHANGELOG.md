@@ -24,7 +24,7 @@ _this will almost certainly break backwards compatibility_
   * instance LWRP
   * service LWRP
   * pattern LWP
-  * config LWP  
+  * config LWP
 
 ## 0.7.7:
 

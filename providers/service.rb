@@ -56,21 +56,6 @@ action :enable do
   svc = svc_vars
   Chef::Log.info("Using init method #{svc[:method]} for #{svc[:service_name]}")
   case svc[:method]
-  when 'pleaserun'
-    @run_context.include_recipe 'pleaserun::default'
-    pr = pleaserun svc[:service_name] do
-      name        svc[:service_name]
-      program     svc[:command]
-      args        default_args
-      description svc[:description]
-      chdir       svc[:chdir]
-      user        svc[:user]
-      group       svc[:group]
-      action      :create
-      not_if { ::File.exist?("/etc/init.d/#{svc[:service_name]}") }
-    end
-    new_resource.updated_by_last_action(pr.updated_by_last_action?)
-
   when 'runit'
     @run_context.include_recipe 'runit::default'
     ri = runit_service svc[:service_name] do
@@ -96,6 +81,9 @@ action :enable do
     new_resource.updated_by_last_action(ri.updated_by_last_action?)
 
   when 'native'
+    Chef::Log.info("native mode is being depreciated due to complexity of supporting
+                    a large number of init systems, please consider using the default
+                    of runit.")
     native_init = ::Logstash.determine_native_init(node)
     args = default_args
 

@@ -55,7 +55,7 @@ default['logstash']['instance_default']['config_templates']           = {}
 default['logstash']['instance_default']['config_templates_cookbook']  = 'logstash'
 default['logstash']['instance_default']['config_templates_variables'] = {}
 
-default['logstash']['instance_default']['init_method'] = 'native' # pleaserun or native or runit
+default['logstash']['instance_default']['init_method'] = 'runit' # runit or native
 default['logstash']['instance_default']['service_templates_cookbook']  = 'logstash'
 
 # roles/flags for various autoconfig/discovery components
