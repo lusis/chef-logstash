@@ -1,6 +1,6 @@
 # CHANGELOG for chef-logstash
 
-## DEVELOPMENT BRANCH
+## 0.11.0
 * MAJOR - depreciate non runit service types.
 * MINOR - fix bug where node['logstash'][instance_name] must exist.
 * MAJOR - remove pyshipper in favor of beaver community cookbook.
