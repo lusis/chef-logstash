@@ -14,30 +14,15 @@
 
 name = 'server'
 
-Chef::Application.fatal!("attribute hash node['logstash']['instance']['#{name}'] must exist.") if node['logstash']['instance'][name].nil?
-
-# these should all default correctly.  listing out for example.
 logstash_instance name do
   action            :create
 end
 
-# services are hard! Let's go LWRP'ing.   FIREBALL! FIREBALL! FIREBALL!
 logstash_service name do
-  action      [:enable]
-end
-
-my_templates = node['logstash']['instance'][name]['config_templates']
-
-if my_templates.nil?
-  my_templates = {
-    'input_syslog' => 'config/input_syslog.conf.erb',
-    'output_stdout' => 'config/output_stdout.conf.erb',
-    'output_elasticsearch' => 'config/output_elasticsearch.conf.erb'
-  }
+  action      [:enable, :start]
 end
 
 logstash_config name do
-  templates my_templates
   action [:create]
   notifies :restart, "logstash_service[#{name}]"
 end

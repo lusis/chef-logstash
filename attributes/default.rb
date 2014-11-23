@@ -55,7 +55,7 @@ default['logstash']['instance_default']['config_templates']           = {}
 default['logstash']['instance_default']['config_templates_cookbook']  = 'logstash'
 default['logstash']['instance_default']['config_templates_variables'] = {}
 
-default['logstash']['instance_default']['init_method'] = 'native' # pleaserun or native or runit
+default['logstash']['instance_default']['init_method'] = 'runit'
 default['logstash']['instance_default']['service_templates_cookbook']  = 'logstash'
 
 # roles/flags for various autoconfig/discovery components
@@ -84,3 +84,6 @@ default['logstash']['instance_default']['curator_days_to_keep'] = 31
 default['logstash']['instance_default']['curator_cron_minute'] = '0'
 default['logstash']['instance_default']['curator_cron_hour'] = '*'
 default['logstash']['instance_default']['curator_cron_log_file'] = '/dev/null'
+
+# Make sure instance key exists
+default['logstash']['instance']

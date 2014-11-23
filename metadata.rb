@@ -11,10 +11,10 @@ version          '0.10.0'
   supports os
 end
 
-%w(build-essential runit git ant java logrotate python ark).each do |ckbk|
+%w(build-essential runit git ant java logrotate python ark curl).each do |ckbk|
   depends ckbk
 end
 
-%w(apt).each do |ckbk|
+%w(apt elasticsearch beaver).each do |ckbk|
   recommends ckbk
 end
