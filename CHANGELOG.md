@@ -1,5 +1,12 @@
 # CHANGELOG for chef-logstash
 
+## DEVELOPMENT BRANCH
+* MAJOR - depreciate non runit service types.
+* MINOR - fix bug where node['logstash'][instance_name] must exist.
+* MAJOR - remove pyshipper in favor of beaver community cookbook.
+* MAJOR - remove beaver in favor of community cookbook.
+* MAJOR - assumes ChefDK for Development/Testing
+
 ## 0.10.0:
 * major rework of service LWRP
 * rework of attribute precidence
@@ -24,7 +31,7 @@ _this will almost certainly break backwards compatibility_
   * instance LWRP
   * service LWRP
   * pattern LWP
-  * config LWP  
+  * config LWP
 
 ## 0.7.7:
 
