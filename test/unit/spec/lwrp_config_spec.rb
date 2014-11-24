@@ -26,7 +26,7 @@ describe 'logstash::server' do
     include_context 'stubs-common'
 
     it 'installs the output_stdout template' do
-      expect(chef_run).to create_template('/opt/logstash/server/etc/conf.d/output_stdout.conf').with(
+      expect(chef_run).to create_template('/opt/logstash/server/etc/conf.d/output_stdout').with(
         source:   'config/output_stdout.conf.erb',
         cookbook: 'logstash',
         owner:     'logstash',
