@@ -6,6 +6,7 @@
 * MAJOR - remove pyshipper in favor of beaver community cookbook.
 * MAJOR - remove beaver in favor of community cookbook.
 * MAJOR - assumes ChefDK for Development/Testing
+* MAJOR - use keys from config_template hash to make templates reusable.
 
 ## 0.10.0:
 * major rework of service LWRP
