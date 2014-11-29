@@ -32,9 +32,9 @@ def load_current_resource
   @debug =  Logstash.get_attribute_or_default(node, @instance, 'debug')
   @install_type = Logstash.get_attribute_or_default(node, @instance, 'install_type')
   @supervisor_gid = Logstash.get_attribute_or_default(node, @instance, 'supervisor_gid')
+  @runit_run_template_name = Logstash.get_attribute_or_default(node, @instance, 'runit_run_template_name')
+  @runit_log_template_name = Logstash.get_attribute_or_default(node, @instance, 'runit_log_template_name')
 end
-
-use_inline_resources
 
 action :restart do
   service_action(:restart)
@@ -77,6 +77,8 @@ action :enable do
                 web_port: svc[:web_port]
       )
       cookbook  svc[:templates_cookbook]
+      run_template_name svc[:runit_run_template_name]
+      log_template_name svc[:runit_log_template_name]
     end
     new_resource.updated_by_last_action(ri.updated_by_last_action?)
 
@@ -217,6 +219,11 @@ def service_action(action)
     end
     sv.run_action(action)
     new_resource.updated_by_last_action(sv.updated_by_last_action?)
+  when 'runit'
+    @run_context.include_recipe 'runit::default'
+    sv = runit_service svc[:service_name]
+    sv.run_action(action)
+    new_resource.updated_by_last_action(sv.updated_by_last_action?)
   end
 end
 
@@ -240,7 +247,9 @@ def svc_vars
     debug: @debug,
     install_type: @install_type,
     supervisor_gid: @supervisor_gid,
-    templates_cookbook: @templates_cookbook
+    templates_cookbook: @templates_cookbook,
+    runit_run_template_name: @runit_run_template_name,
+    runit_log_template_name: @runit_log_template_name
   }
   svc
 end
