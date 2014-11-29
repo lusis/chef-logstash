@@ -37,19 +37,19 @@ def load_current_resource
 end
 
 action :restart do
-  service_action(:restart)
+  new_resource.updated_by_last_action(service_action(:restart))
 end
 
 action :start do
-  service_action(:start)
+  new_resource.updated_by_last_action(service_action(:start))
 end
 
 action :stop do
-  service_action(:stop)
+  new_resource.updated_by_last_action(service_action(:stop))
 end
 
 action :reload do
-  service_action(:reload)
+  new_resource.updated_by_last_action(service_action(:reload))
 end
 
 action :enable do
@@ -217,14 +217,12 @@ def service_action(action)
     else
       sv.provider(Chef::Provider::Service::Init)
     end
-    sv.run_action(action)
-    new_resource.updated_by_last_action(sv.updated_by_last_action?)
   when 'runit'
     @run_context.include_recipe 'runit::default'
     sv = runit_service svc[:service_name]
-    sv.run_action(action)
-    new_resource.updated_by_last_action(sv.updated_by_last_action?)
   end
+  sv.run_action(action)
+  sv.updated_by_last_action?
 end
 
 def svc_vars
