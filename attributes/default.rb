@@ -25,7 +25,7 @@ default['logstash']['instance_default']['homedir'] = '/var/lib/logstash'
 default['logstash']['instance_default']['version']        = '1.4.1'
 default['logstash']['instance_default']['source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.4.1.tar.gz'
 default['logstash']['instance_default']['checksum']       = 'a1db8eda3d8bf441430066c384578386601ae308ccabf5d723df33cee27304b4'
-default['logstash']['instance_default']['install_type']   = 'tarball'
+default['logstash']['instance_default']['install_type']   = 'tarball' # support for java was depreciated.
 
 default['logstash']['instance_default']['plugins_version']        = '1.4.1'
 default['logstash']['instance_default']['plugins_source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-contrib-1.4.1.tar.gz'
@@ -57,6 +57,10 @@ default['logstash']['instance_default']['config_templates_variables'] = {}
 
 default['logstash']['instance_default']['init_method'] = 'runit'
 default['logstash']['instance_default']['service_templates_cookbook']  = 'logstash'
+
+# default locations for runit templates
+default['logstash']['instance_default']['runit_run_template_name'] = 'logstash'
+default['logstash']['instance_default']['runit_log_template_name'] = 'logstash'
 
 # roles/flags for various autoconfig/discovery components
 default['logstash']['instance_default']['enable_embedded_es'] = false
