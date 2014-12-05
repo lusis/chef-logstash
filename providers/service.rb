@@ -32,6 +32,8 @@ def load_current_resource
   @debug =  Logstash.get_attribute_or_default(node, @instance, 'debug')
   @install_type = Logstash.get_attribute_or_default(node, @instance, 'install_type')
   @supervisor_gid = Logstash.get_attribute_or_default(node, @instance, 'supervisor_gid')
+  @nofile_soft = Logstash.get_attribute_or_default(node, @instance, 'limit_nofile_soft')
+  @nofile_hard = Logstash.get_attribute_or_default(node, @instance, 'limit_nofile_hard')
 end
 
 use_inline_resources
@@ -121,7 +123,9 @@ action :enable do
                     debug: svc[:debug],
                     log_file: svc[:log_file],
                     workers: svc[:workers],
-                    supervisor_gid: svc[:supervisor_gid]
+                    supervisor_gid: svc[:supervisor_gid],
+                    nofile_soft: svc[:nofile_soft],
+                    nofile_hard: svc[:nofile_hard]
                   )
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
@@ -251,7 +255,9 @@ def svc_vars
     debug: @debug,
     install_type: @install_type,
     supervisor_gid: @supervisor_gid,
-    templates_cookbook: @templates_cookbook
+    templates_cookbook: @templates_cookbook,
+    nofile_soft: @nofile_soft,
+    nofile_hard: @nofile_hard
   }
   svc
 end
