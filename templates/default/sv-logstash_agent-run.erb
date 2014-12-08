@@ -4,9 +4,10 @@ cd /<%= @options[:home] %>
 exec 2>&1
 # Need to set LOGSTASH_HOME and HOME so sincedb will work
 LOGSTASH_HOME="<%= @options[:home] %>"
-GC_OPTS="-XX:+UseParallelOldGC"
-JAVA_OPTS="-server -Xms<%= @options[:min_heap] %> -Xmx<%= @options[:max_heap] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/"
+GC_OPTS="<%= @options[:gc_opts] %>"
+JAVA_OPTS="-server -Xms<%= @options[:min_heap] %> -Xmx<%= @options[:max_heap] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= @options[:java_opts] %> <%= '-Djava.net.preferIPv4Stack=true' if @options[:ipv4_only] %>"
 LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/conf.d"
+LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath $LOGSTASH_HOME/lib"
 <% if @options[:debug] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
 <% end -%>
