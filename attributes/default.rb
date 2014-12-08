@@ -21,14 +21,14 @@ default['logstash']['instance_default']['create_account'] = true
 default['logstash']['instance_default']['join_groups'] = []
 default['logstash']['instance_default']['homedir'] = '/var/lib/logstash'
 
-default['logstash']['instance_default']['version']        = '1.4.1'
-default['logstash']['instance_default']['source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.4.1.tar.gz'
-default['logstash']['instance_default']['checksum']       = 'a1db8eda3d8bf441430066c384578386601ae308ccabf5d723df33cee27304b4'
+default['logstash']['instance_default']['version']        = '1.4.2'
+default['logstash']['instance_default']['source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.4.2.tar.gz'
+default['logstash']['instance_default']['checksum']       = 'd5be171af8d4ca966a0c731fc34f5deeee9d7631319e3660d1df99e43c5f8069'
 default['logstash']['instance_default']['install_type']   = 'tarball'
 
-default['logstash']['instance_default']['plugins_version']        = '1.4.1'
-default['logstash']['instance_default']['plugins_source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-contrib-1.4.1.tar.gz'
-default['logstash']['instance_default']['plugins_checksum']       = 'beb0927351a3c298cd346225950c8d4fbda984ba54252d8a2f244329207c31e2'
+default['logstash']['instance_default']['plugins_version']        = '1.4.2'
+default['logstash']['instance_default']['plugins_source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-contrib-1.4.2.tar.gz'
+default['logstash']['instance_default']['plugins_checksum']       = '7497ca3614ba9122159692cc6e60ffc968219047e88de97ecc47c2bf117ba4e5'
 default['logstash']['instance_default']['plugins_install_type']   = 'tarball' # native|tarball
 default['logstash']['instance_default']['plugins_check_if_installed']  = 'lib/logstash/filters/translate.rb'
 
