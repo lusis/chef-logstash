@@ -43,7 +43,7 @@ start() {
 
     if [ ! -z "$pid_running" ] ; then
       echo -e "\033[31;1mPID $ls_pid still alive, logstash is already running. Doing nothing\033[0m"
-      return 1
+      return 0
     fi
   fi
 
