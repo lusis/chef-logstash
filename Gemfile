@@ -28,3 +28,5 @@ gem 'vagrant-wrapper'
 gem 'guard', '>= 2.6'
 gem 'guard-rubocop', '>= 1.1'
 gem 'guard-foodcritic', '>= 1.0.2'
+
+gem 'stove'

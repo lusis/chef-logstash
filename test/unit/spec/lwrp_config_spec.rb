@@ -8,7 +8,7 @@ require_relative 'server_spec'
 
 describe 'logstash::server' do
   describe 'ubuntu' do
-    let(:runner) { ChefSpec::Runner.new(::LWRP) }
+    let(:runner) { ChefSpec::SoloRunner.new(::LWRP) }
     let(:node) { runner.node }
     let(:chef_run) do
       runner.node.set['memory']['total'] = '1024000kb'
