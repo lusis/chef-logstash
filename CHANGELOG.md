@@ -2,6 +2,7 @@
 
 ## 0.11.1
 * MINOR - default logstash version 1.4.2
+* MINOR - correct status code for initv scripts
 
 ## 0.11.0
 * MAJOR - depreciate non runit service types.
