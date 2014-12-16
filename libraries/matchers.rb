@@ -2,6 +2,13 @@
 # used by ChefSpec for LWRPs
 
 if defined?(ChefSpec)
+  ChefSpec::Runner.define_runner_method(:logstash_instance)
+  ChefSpec::Runner.define_runner_method(:logstash_config)
+  ChefSpec::Runner.define_runner_method(:logstash_pattern)
+  ChefSpec::Runner.define_runner_method(:logstash_plugins)
+  ChefSpec::Runner.define_runner_method(:logstash_service)
+  ChefSpec::Runner.define_runner_method(:logstash_curator)
+
   # LWRP - Instance
   def create_logstash_instance(name)
     ChefSpec::Matchers::ResourceMatcher.new(:logstash_instance, :create, name)
