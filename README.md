@@ -136,7 +136,7 @@ $ kitchen converge server_ubuntu
 Contributing
 ========
 
-Any and all contributions are welcome.   We do ask that you test your contributions with the testing framework before you send a PR.  All contributions should be made against the development branch.  We will merge in from development to master and do versioning etc then depending on the scope of the changes being pulled in.
+Any and all contributions are welcome.   We do ask that you test your contributions with the testing framework before you send a PR.  All contributions should be made against the master branch.
 
 Please update tests and changelist with your contributions.
 
