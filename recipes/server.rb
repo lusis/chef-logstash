@@ -19,7 +19,7 @@ logstash_instance name do
 end
 
 logstash_service name do
-  action      [:enable, :start]
+  action      [:enable]
 end
 
 logstash_config name do

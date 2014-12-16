@@ -1,9 +1,10 @@
 # CHANGELOG for chef-logstash
 
-## 0.11.1
+## 0.11.2
 * MINOR - default logstash version 1.4.2
 * MINOR - correct status code for initv scripts
 * MINOR - parameterize open file limits for upstart method
+* MINOR - late night bad resource in server recipe.
 
 ## 0.11.0
 * MAJOR - depreciate non runit service types.
