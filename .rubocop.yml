@@ -45,3 +45,8 @@ Style/WordArray:
 
 Style/RedundantBegin:
   Enabled: false
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/NumericLiterals:
+  MinDigits: 6

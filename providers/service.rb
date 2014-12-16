@@ -34,6 +34,8 @@ def load_current_resource
   @supervisor_gid = Logstash.get_attribute_or_default(node, @instance, 'supervisor_gid')
   @runit_run_template_name = Logstash.get_attribute_or_default(node, @instance, 'runit_run_template_name')
   @runit_log_template_name = Logstash.get_attribute_or_default(node, @instance, 'runit_log_template_name')
+  @nofile_soft = Logstash.get_attribute_or_default(node, @instance, 'limit_nofile_soft')
+  @nofile_hard = Logstash.get_attribute_or_default(node, @instance, 'limit_nofile_hard')
 end
 
 action :restart do
@@ -112,7 +114,9 @@ action :enable do
                     log_file: svc[:log_file],
                     workers: svc[:workers],
                     supervisor_gid: svc[:supervisor_gid],
-                    upstart_with_sudo: svc[:upstart_with_sudo]
+                    upstart_with_sudo: svc[:upstart_with_sudo],
+                    nofile_soft: svc[:nofile_soft],
+                    nofile_hard: svc[:nofile_hard]
                   )
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
@@ -247,7 +251,9 @@ def svc_vars
     supervisor_gid: @supervisor_gid,
     templates_cookbook: @templates_cookbook,
     runit_run_template_name: @runit_run_template_name,
-    runit_log_template_name: @runit_log_template_name
+    runit_log_template_name: @runit_log_template_name,
+    nofile_soft: @nofile_soft,
+    nofile_hard: @nofile_hard
   }
   svc
 end
