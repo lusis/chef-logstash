@@ -8,6 +8,7 @@ default['logstash']['instance_default']['elasticsearch_query'] = "roles:#{node['
 default['logstash']['instance_default']['elasticsearch_cluster'] = 'logstash'
 default['logstash']['instance_default']['elasticsearch_ip'] = ''
 default['logstash']['instance_default']['elasticsearch_port'] = ''
+default['logstash']['instance_default']['elasticsearch_embedded'] = true
 default['logstash']['instance_default']['graphite_ip'] = ''
 
 # Default logstash instance variables
@@ -24,7 +25,7 @@ default['logstash']['instance_default']['homedir'] = '/var/lib/logstash'
 default['logstash']['instance_default']['version']        = '1.4.1'
 default['logstash']['instance_default']['source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.4.1.tar.gz'
 default['logstash']['instance_default']['checksum']       = 'a1db8eda3d8bf441430066c384578386601ae308ccabf5d723df33cee27304b4'
-default['logstash']['instance_default']['install_type']   = 'tarball'
+default['logstash']['instance_default']['install_type']   = 'tarball' # support for java was depreciated.
 
 default['logstash']['instance_default']['plugins_version']        = '1.4.1'
 default['logstash']['instance_default']['plugins_source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-contrib-1.4.1.tar.gz'
@@ -54,8 +55,12 @@ default['logstash']['instance_default']['config_templates']           = {}
 default['logstash']['instance_default']['config_templates_cookbook']  = 'logstash'
 default['logstash']['instance_default']['config_templates_variables'] = {}
 
-default['logstash']['instance_default']['init_method'] = 'native' # pleaserun or native or runit
+default['logstash']['instance_default']['init_method'] = 'runit'
 default['logstash']['instance_default']['service_templates_cookbook']  = 'logstash'
+
+# default locations for runit templates
+default['logstash']['instance_default']['runit_run_template_name'] = 'logstash'
+default['logstash']['instance_default']['runit_log_template_name'] = 'logstash'
 
 # roles/flags for various autoconfig/discovery components
 default['logstash']['instance_default']['enable_embedded_es'] = false
@@ -79,7 +84,11 @@ default['logstash']['instance_default']['logrotate_max_size'] = '10M'
 default['logstash']['instance_default']['logrotate_use_filesize'] = false
 
 # Curator
+default['logstash']['instance_default']['curator_bin_dir'] = '/usr/local/bin'
 default['logstash']['instance_default']['curator_days_to_keep'] = 31
 default['logstash']['instance_default']['curator_cron_minute'] = '0'
 default['logstash']['instance_default']['curator_cron_hour'] = '*'
 default['logstash']['instance_default']['curator_cron_log_file'] = '/dev/null'
+
+# Make sure instance key exists
+default['logstash']['instance']

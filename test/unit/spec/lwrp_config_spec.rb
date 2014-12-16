@@ -18,42 +18,20 @@ describe 'logstash::server' do
       runner.node.set['logstash']['instance']['server']['config_templates_cookbook'] = 'logstash'
       runner.node.set['logstash']['instance']['server']['elasticsearch_ip'] = '127.0.0.1'
       runner.node.set['logstash']['instance']['server']['enable_embedded_es'] = true
+      runner.node.set['logstash']['instance']['server']['config_templates'] = {
+        output_stdout: 'config/output_stdout.conf.erb'
+      }
       runner.converge(described_recipe)
     end
     include_context 'stubs-common'
 
     it 'installs the output_stdout template' do
-      expect(chef_run).to create_template('/opt/logstash/server/etc/conf.d/output_stdout.conf').with(
+      expect(chef_run).to create_template('/opt/logstash/server/etc/conf.d/output_stdout').with(
         source:   'config/output_stdout.conf.erb',
         cookbook: 'logstash',
         owner:     'logstash',
         group:    'logstash',
         mode:     '0644',
-        action: [:create]
-      )
-    end
-
-    it 'installs the input_syslog template' do
-      expect(chef_run).to create_template('/opt/logstash/server/etc/conf.d/input_syslog.conf').with(
-        source:   'config/input_syslog.conf.erb',
-        cookbook: 'logstash',
-        owner:     'logstash',
-        group:    'logstash',
-        mode:     '0644',
-        action: [:create]
-      )
-    end
-
-    it 'installs the output_elasticsearch template' do
-      expect(chef_run).to create_template('/opt/logstash/server/etc/conf.d/output_elasticsearch.conf').with(
-        source:   'config/output_elasticsearch.conf.erb',
-        cookbook: 'logstash',
-        owner:     'logstash',
-        group:    'logstash',
-        mode:     '0644',
-        variables: {
-          elasticsearch_embedded: true
-        },
         action: [:create]
       )
     end

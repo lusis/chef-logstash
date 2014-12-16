@@ -1,0 +1,12 @@
+output {
+  elasticsearch_http {
+<% if @elasticsearch_ip -%>
+    host => "<%= @elasticsearch_ip %>"
+<% else -%>
+    host => "127.0.0.1"
+<% end -%>
+<% if @es_index -%>
+    index => "<%= @es_index %>"
+<% end -%>
+  }
+}
