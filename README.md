@@ -46,17 +46,6 @@ no longer used.  see [Community Beaver cookbook](https://supermarket.getchef.com
 
 no longer supports installing from source.
 
-## Index Cleaner / Curator
-
-* `node['logstash']['index_cleaner']['days_to_keep']` - Integer number
-  of days from today of Logstash index to keep.
-* `node['logstash']['index_cleaner']['cron']['minute']` - Minute to run
-  the index_cleaner cron job
-* `node['logstash']['index_cleaner']['cron']['hour']` - Hour to run the
-  index_cleaner cron job
-* `node['logstash']['index_cleaner']['cron']['log_file']` - Path to direct
-  the index_cleaner cron job's stdout and stderr
-
 Lightweight Resource Providers
 ===================
 
@@ -93,6 +82,12 @@ see [resources/pattern.rb](resources/pattern.rb)
 This will install the logstash community plugins:
 
 see [resources/plugins.rb](resources/plugins.rb)
+
+## logstash_curator
+
+This will install the [ElasticSearch Curator](https://github.com/elasticsearch/curator) and setup a cron job. This replaces the deprecated `index_cleaner`:
+
+see [resources/curator.rb](resources/curator.rb)
 
 ## attribute precidence in logstash LWRPs
 
