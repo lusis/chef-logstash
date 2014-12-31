@@ -9,7 +9,7 @@ exec 2>&1
 LOGSTASH_HOME="<%= @options[:home] %>"
 GC_OPTS="<%= @options[:gc_opts] %>"
 
-LOGSTASH_OPTS="web -a <%= node[:logstash][:instance][@name][:web][:address] %> -p <%= node[:logstash][:instance][@name][:web][:port] %>"
+LOGSTASH_OPTS="web -a <%= node[:logstash][:instance][@options[:name]][:web][:address] %> -p <%= node[:logstash][:instance][@options[:name]][:web][:port] %>"
 
 <% if @options[:install_type] == 'tarball' -%>
 <%   if ! @options[:supervisor_gid].empty? -%>
