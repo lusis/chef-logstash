@@ -21,6 +21,7 @@ def load_current_resource
   @user = new_resource.user || Logstash.get_attribute_or_default(node, @instance, 'user')
   @group = new_resource.group || Logstash.get_attribute_or_default(node, @instance, 'group')
   @log_file = Logstash.get_attribute_or_default(node, @instance, 'log_file')
+  @java_home = Logstash.get_attribute_or_default(node, @instance, 'java_home')
   @max_heap = Logstash.get_attribute_or_default(node, @instance, 'xmx')
   @min_heap = Logstash.get_attribute_or_default(node, @instance, 'xms')
   @gc_opts = Logstash.get_attribute_or_default(node, @instance, 'gc_opts')
@@ -64,6 +65,7 @@ action :enable do
       options(
                 name: svc[:name],
                 home: svc[:home],
+                java_home: svc[:java_home],
                 max_heap: svc[:max_heap],
                 min_heap: svc[:min_heap],
                 gc_opts: svc[:gc_opts],
@@ -105,6 +107,7 @@ action :enable do
                     user: svc[:user],
                     group: svc[:group],
                     description: svc[:description],
+                    java_home: svc[:max_heap],
                     max_heap: svc[:max_heap],
                     min_heap: svc[:min_heap],
                     gc_opts: svc[:gc_opts],
@@ -171,6 +174,7 @@ action :enable do
                   user: svc[:user],
                   group: svc[:group],
                   description: svc[:description],
+                  java_home: svc[:java_home],
                   max_heap: svc[:max_heap],
                   min_heap: svc[:min_heap],
                   gc_opts: svc[:gc_opts],
@@ -241,6 +245,7 @@ def svc_vars
     user: @user,
     group: @group,
     log_file: @log_file,
+    java_home: @java_home,
     max_heap: @max_heap,
     min_heap: @min_heap,
     java_opts: @java_opts,
