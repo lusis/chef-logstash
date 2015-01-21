@@ -44,7 +44,11 @@ module Logstash
         'sysvinit'
       end
     when 'debian'
-      'sysvinit'
+      if platform_major_version <= 7
+        'sysvinit'
+      else
+        'systemd'
+      end
     when 'redhat', 'centos', 'scientific'
       if platform_major_version <= 6
         'sysvinit'
