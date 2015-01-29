@@ -17,8 +17,8 @@ def load_current_resource
   @hour = new_resource.hour || Logstash.get_attribute_or_default(node, @instance, 'curator_cron_hour')
   @log_file = new_resource.log_file || Logstash.get_attribute_or_default(node, @instance, 'curator_cron_log_file')
   @user = new_resource.user || Logstash.get_attribute_or_default(node, @instance, 'user')
-  @bin_dir = new_resource.user || Logstash.get_attribute_or_default(node, @instance, 'curator_bin_dir')
-  @index_prefix = new_resource.user || Logstash.get_attribute_or_default(node, @instance, 'curator_index_prefix')
+  @bin_dir = new_resource.bin_dir || Logstash.get_attribute_or_default(node, @instance, 'curator_bin_dir')
+  @index_prefix = new_resource.index_prefix || Logstash.get_attribute_or_default(node, @instance, 'curator_index_prefix')
 end
 
 action :create do
