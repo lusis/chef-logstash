@@ -92,6 +92,7 @@ default['logstash']['instance_default']['curator_days_to_keep'] = 31
 default['logstash']['instance_default']['curator_cron_minute'] = '0'
 default['logstash']['instance_default']['curator_cron_hour'] = '*'
 default['logstash']['instance_default']['curator_cron_log_file'] = '/dev/null'
+default['logstash']['instance_default']['curator_index_prefix'] = 'logstash-'
 
 # Make sure instance key exists
 default['logstash']['instance']
