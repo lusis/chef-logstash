@@ -14,6 +14,5 @@ describe 'logstash::haproxy' do
     it 'writes some chefspec code' do
       skip 'todo'
     end
-
   end
 end

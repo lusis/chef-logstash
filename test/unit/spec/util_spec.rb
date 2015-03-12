@@ -121,5 +121,4 @@ describe '::determine_native_init' do
       end
     end
   end
-
 end

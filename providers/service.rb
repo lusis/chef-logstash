@@ -62,21 +62,21 @@ action :enable do
     @run_context.include_recipe 'runit::default'
     ri = runit_service svc[:service_name] do
       options(
-                name: svc[:name],
-                home: svc[:home],
-                max_heap: svc[:max_heap],
-                min_heap: svc[:min_heap],
-                gc_opts: svc[:gc_opts],
-                java_opts: svc[:java_opts],
-                ipv4_only: svc[:ipv4_only],
-                debug: svc[:debug],
-                log_file: svc[:log_file],
-                workers: svc[:workers],
-                install_type: svc[:install_type],
-                supervisor_gid: svc[:supervisor_gid],
-                user: svc[:user],
-                web_address: svc[:web_address],
-                web_port: svc[:web_port]
+        name: svc[:name],
+        home: svc[:home],
+        max_heap: svc[:max_heap],
+        min_heap: svc[:min_heap],
+        gc_opts: svc[:gc_opts],
+        java_opts: svc[:java_opts],
+        ipv4_only: svc[:ipv4_only],
+        debug: svc[:debug],
+        log_file: svc[:log_file],
+        workers: svc[:workers],
+        install_type: svc[:install_type],
+        supervisor_gid: svc[:supervisor_gid],
+        user: svc[:user],
+        web_address: svc[:web_address],
+        web_port: svc[:web_port]
       )
       cookbook  svc[:templates_cookbook]
       run_template_name svc[:runit_run_template_name]
@@ -97,26 +97,26 @@ action :enable do
         source    "init/upstart/#{svc[:install_type]}.erb"
         cookbook  svc[:templates_cookbook]
         variables(
-                    user_supported: ::Logstash.upstart_supports_user?(node),
-                    home: svc[:home],
-                    name: svc[:name],
-                    command: svc[:command],
-                    args: args,
-                    user: svc[:user],
-                    group: svc[:group],
-                    description: svc[:description],
-                    max_heap: svc[:max_heap],
-                    min_heap: svc[:min_heap],
-                    gc_opts: svc[:gc_opts],
-                    java_opts: svc[:java_opts],
-                    ipv4_only: svc[:ipv4_only],
-                    debug: svc[:debug],
-                    log_file: svc[:log_file],
-                    workers: svc[:workers],
-                    supervisor_gid: svc[:supervisor_gid],
-                    upstart_with_sudo: svc[:upstart_with_sudo],
-                    nofile_soft: svc[:nofile_soft],
-                    nofile_hard: svc[:nofile_hard]
+          user_supported: ::Logstash.upstart_supports_user?(node),
+          home: svc[:home],
+          name: svc[:name],
+          command: svc[:command],
+          args: args,
+          user: svc[:user],
+          group: svc[:group],
+          description: svc[:description],
+          max_heap: svc[:max_heap],
+          min_heap: svc[:min_heap],
+          gc_opts: svc[:gc_opts],
+          java_opts: svc[:java_opts],
+          ipv4_only: svc[:ipv4_only],
+          debug: svc[:debug],
+          log_file: svc[:log_file],
+          workers: svc[:workers],
+          supervisor_gid: svc[:supervisor_gid],
+          upstart_with_sudo: svc[:upstart_with_sudo],
+          nofile_soft: svc[:nofile_soft],
+          nofile_hard: svc[:nofile_hard]
                   )
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
@@ -141,10 +141,10 @@ action :enable do
         group 'root'
         mode '0755'
         variables(
-                   home: svc[:home],
-                   user: svc[:user],
-                   supervisor_gid: svc[:supervisor_gid],
-                   args: args
+          home: svc[:home],
+          user: svc[:user],
+          supervisor_gid: svc[:supervisor_gid],
+          args: args
                   )
         notifies :run, 'execute[reload-systemd]', :immediately
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
@@ -164,23 +164,23 @@ action :enable do
         group 'root'
         mode '0774'
         variables(
-                  home: svc[:home],
-                  name: svc[:name],
-                  command: svc[:command],
-                  args: args,
-                  user: svc[:user],
-                  group: svc[:group],
-                  description: svc[:description],
-                  max_heap: svc[:max_heap],
-                  min_heap: svc[:min_heap],
-                  gc_opts: svc[:gc_opts],
-                  java_opts: svc[:java_opts],
-                  ipv4_only: svc[:ipv4_only],
-                  debug: svc[:debug],
-                  log_file: svc[:log_file],
-                  workers: svc[:workers],
-                  supervisor_gid: svc[:supervisor_gid],
-                  config_file: "#{svc[:home]}/etc/conf.d"
+          home: svc[:home],
+          name: svc[:name],
+          command: svc[:command],
+          args: args,
+          user: svc[:user],
+          group: svc[:group],
+          description: svc[:description],
+          max_heap: svc[:max_heap],
+          min_heap: svc[:min_heap],
+          gc_opts: svc[:gc_opts],
+          java_opts: svc[:java_opts],
+          ipv4_only: svc[:ipv4_only],
+          debug: svc[:debug],
+          log_file: svc[:log_file],
+          workers: svc[:workers],
+          supervisor_gid: svc[:supervisor_gid],
+          config_file: "#{svc[:home]}/etc/conf.d"
                   )
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end

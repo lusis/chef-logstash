@@ -28,7 +28,6 @@ chef_json = {
 }
 
 Vagrant.configure('2') do |config|
-
   # Common Settings
   config.omnibus.chef_version = 'latest'
   config.vm.hostname = 'logstash'
@@ -116,5 +115,4 @@ Vagrant.configure('2') do |config|
       chef.json = chef_json
     end
   end
-
 end

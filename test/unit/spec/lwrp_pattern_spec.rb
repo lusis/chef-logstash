@@ -34,6 +34,5 @@ describe 'logstash::server' do
         action:   [:create]
       )
     end
-
   end
 end
