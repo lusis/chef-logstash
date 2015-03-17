@@ -39,3 +39,22 @@ MethodLength:
 
 SingleSpaceBeforeFirstArg:
   Enabled: false
+
+Style/WordArray:
+  MinSize: 5
+
+Style/RedundantBegin:
+  Enabled: false
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/NumericLiterals:
+  MinDigits: 6
+
+# Offense count: 9
+Metrics/AbcSize:
+  Max: 78
+
+# Offense count: 8
+Metrics/PerceivedComplexity:
+  Max: 18

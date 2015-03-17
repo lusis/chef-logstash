@@ -32,72 +32,62 @@ def load_current_resource
   @debug =  Logstash.get_attribute_or_default(node, @instance, 'debug')
   @install_type = Logstash.get_attribute_or_default(node, @instance, 'install_type')
   @supervisor_gid = Logstash.get_attribute_or_default(node, @instance, 'supervisor_gid')
+  @runit_run_template_name = Logstash.get_attribute_or_default(node, @instance, 'runit_run_template_name')
+  @runit_log_template_name = Logstash.get_attribute_or_default(node, @instance, 'runit_log_template_name')
   @nofile_soft = Logstash.get_attribute_or_default(node, @instance, 'limit_nofile_soft')
   @nofile_hard = Logstash.get_attribute_or_default(node, @instance, 'limit_nofile_hard')
 end
 
-use_inline_resources
-
 action :restart do
-  service_action(:restart)
+  new_resource.updated_by_last_action(service_action(:restart))
 end
 
 action :start do
-  service_action(:start)
+  new_resource.updated_by_last_action(service_action(:start))
 end
 
 action :stop do
-  service_action(:stop)
+  new_resource.updated_by_last_action(service_action(:stop))
 end
 
 action :reload do
-  service_action(:reload)
+  new_resource.updated_by_last_action(service_action(:reload))
 end
 
 action :enable do
   svc = svc_vars
   Chef::Log.info("Using init method #{svc[:method]} for #{svc[:service_name]}")
   case svc[:method]
-  when 'pleaserun'
-    @run_context.include_recipe 'pleaserun::default'
-    pr = pleaserun svc[:service_name] do
-      name        svc[:service_name]
-      program     svc[:command]
-      args        default_args
-      description svc[:description]
-      chdir       svc[:chdir]
-      user        svc[:user]
-      group       svc[:group]
-      action      :create
-      not_if { ::File.exist?("/etc/init.d/#{svc[:service_name]}") }
-    end
-    new_resource.updated_by_last_action(pr.updated_by_last_action?)
-
   when 'runit'
     @run_context.include_recipe 'runit::default'
     ri = runit_service svc[:service_name] do
       options(
-                name: svc[:name],
-                home: svc[:home],
-                max_heap: svc[:max_heap],
-                min_heap: svc[:min_heap],
-                gc_opts: svc[:gc_opts],
-                java_opts: svc[:java_opts],
-                ipv4_only: svc[:ipv4_only],
-                debug: svc[:debug],
-                log_file: svc[:log_file],
-                workers: svc[:workers],
-                install_type: svc[:install_type],
-                supervisor_gid: svc[:supervisor_gid],
-                user: svc[:user],
-                web_address: svc[:web_address],
-                web_port: svc[:web_port]
+        name: svc[:name],
+        home: svc[:home],
+        max_heap: svc[:max_heap],
+        min_heap: svc[:min_heap],
+        gc_opts: svc[:gc_opts],
+        java_opts: svc[:java_opts],
+        ipv4_only: svc[:ipv4_only],
+        debug: svc[:debug],
+        log_file: svc[:log_file],
+        workers: svc[:workers],
+        install_type: svc[:install_type],
+        supervisor_gid: svc[:supervisor_gid],
+        user: svc[:user],
+        web_address: svc[:web_address],
+        web_port: svc[:web_port]
       )
       cookbook  svc[:templates_cookbook]
+      run_template_name svc[:runit_run_template_name]
+      log_template_name svc[:runit_log_template_name]
     end
     new_resource.updated_by_last_action(ri.updated_by_last_action?)
 
   when 'native'
+    Chef::Log.warn("Using any init method other than runit is depreciated.  It is
+      recommended that you write your own service resources in your wrapper cookbook
+      if the default runit is not suitable.")
     native_init = ::Logstash.determine_native_init(node)
     args = default_args
 
@@ -107,25 +97,26 @@ action :enable do
         source    "init/upstart/#{svc[:install_type]}.erb"
         cookbook  svc[:templates_cookbook]
         variables(
-                    user_supported: ::Logstash.upstart_supports_user?(node),
-                    home: svc[:home],
-                    name: svc[:name],
-                    command: svc[:command],
-                    args: args,
-                    user: svc[:user],
-                    group: svc[:group],
-                    description: svc[:description],
-                    max_heap: svc[:max_heap],
-                    min_heap: svc[:min_heap],
-                    gc_opts: svc[:gc_opts],
-                    java_opts: svc[:java_opts],
-                    ipv4_only: svc[:ipv4_only],
-                    debug: svc[:debug],
-                    log_file: svc[:log_file],
-                    workers: svc[:workers],
-                    supervisor_gid: svc[:supervisor_gid],
-                    nofile_soft: svc[:nofile_soft],
-                    nofile_hard: svc[:nofile_hard]
+          user_supported: ::Logstash.upstart_supports_user?(node),
+          home: svc[:home],
+          name: svc[:name],
+          command: svc[:command],
+          args: args,
+          user: svc[:user],
+          group: svc[:group],
+          description: svc[:description],
+          max_heap: svc[:max_heap],
+          min_heap: svc[:min_heap],
+          gc_opts: svc[:gc_opts],
+          java_opts: svc[:java_opts],
+          ipv4_only: svc[:ipv4_only],
+          debug: svc[:debug],
+          log_file: svc[:log_file],
+          workers: svc[:workers],
+          supervisor_gid: svc[:supervisor_gid],
+          upstart_with_sudo: svc[:upstart_with_sudo],
+          nofile_soft: svc[:nofile_soft],
+          nofile_hard: svc[:nofile_hard]
                   )
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
@@ -150,10 +141,10 @@ action :enable do
         group 'root'
         mode '0755'
         variables(
-                   home: svc[:home],
-                   user: svc[:user],
-                   supervisor_gid: svc[:supervisor_gid],
-                   args: args
+          home: svc[:home],
+          user: svc[:user],
+          supervisor_gid: svc[:supervisor_gid],
+          args: args
                   )
         notifies :run, 'execute[reload-systemd]', :immediately
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
@@ -173,23 +164,23 @@ action :enable do
         group 'root'
         mode '0774'
         variables(
-                  home: svc[:home],
-                  name: svc[:name],
-                  command: svc[:command],
-                  args: args,
-                  user: svc[:user],
-                  group: svc[:group],
-                  description: svc[:description],
-                  max_heap: svc[:max_heap],
-                  min_heap: svc[:min_heap],
-                  gc_opts: svc[:gc_opts],
-                  java_opts: svc[:java_opts],
-                  ipv4_only: svc[:ipv4_only],
-                  debug: svc[:debug],
-                  log_file: svc[:log_file],
-                  workers: svc[:workers],
-                  supervisor_gid: svc[:supervisor_gid],
-                  config_file: "#{svc[:home]}/etc/conf.d"
+          home: svc[:home],
+          name: svc[:name],
+          command: svc[:command],
+          args: args,
+          user: svc[:user],
+          group: svc[:group],
+          description: svc[:description],
+          max_heap: svc[:max_heap],
+          min_heap: svc[:min_heap],
+          gc_opts: svc[:gc_opts],
+          java_opts: svc[:java_opts],
+          ipv4_only: svc[:ipv4_only],
+          debug: svc[:debug],
+          log_file: svc[:log_file],
+          workers: svc[:workers],
+          supervisor_gid: svc[:supervisor_gid],
+          config_file: "#{svc[:home]}/etc/conf.d"
                   )
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
@@ -230,9 +221,12 @@ def service_action(action)
     else
       sv.provider(Chef::Provider::Service::Init)
     end
-    sv.run_action(action)
-    new_resource.updated_by_last_action(sv.updated_by_last_action?)
+  when 'runit'
+    @run_context.include_recipe 'runit::default'
+    sv = runit_service svc[:service_name]
   end
+  sv.run_action(action)
+  sv.updated_by_last_action?
 end
 
 def svc_vars
@@ -256,6 +250,8 @@ def svc_vars
     install_type: @install_type,
     supervisor_gid: @supervisor_gid,
     templates_cookbook: @templates_cookbook,
+    runit_run_template_name: @runit_run_template_name,
+    runit_log_template_name: @runit_log_template_name,
     nofile_soft: @nofile_soft,
     nofile_hard: @nofile_hard
   }

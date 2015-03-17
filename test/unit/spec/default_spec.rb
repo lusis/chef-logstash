@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 
 describe 'logstash::default' do
   describe 'ubuntu' do
-    let(:runner) { ChefSpec::Runner.new(::UBUNTU_OPTS) }
+    let(:runner) { ChefSpec::SoloRunner.new(::UBUNTU_OPTS) }
     let(:node) { runner.node }
     let(:chef_run) do
       runner.node.set['memory']['total'] = '1024000kb'
@@ -14,6 +14,5 @@ describe 'logstash::default' do
     it 'writes some chefspec code' do
       skip 'todo'
     end
-
   end
 end

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+ulimit -Hn 65550
+ulimit -Sn 65550
+
+cd /<%= @options[:home] %>
+exec 2>&1
+# Need to set LOGSTASH_HOME and HOME so sincedb will work
+export LS_HEAP_SIZE=<%= @options[:max_heap] %>
+export LOGSTASH_HOME="<%= @options[:home] %>"
+export GC_OPTS="<%= @options[:gc_opts] %>"
+export JAVA_OPTS="-server -Xms<%= @options[:min_heap] %> -Xmx<%= @options[:max_heap] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= @options[:java_opts] %> <%= '-Djava.net.preferIPv4Stack=true' if @options[:ipv4_only] %>"
+LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/conf.d"
+LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath $LOGSTASH_HOME/lib"
+<% if @options[:debug] -%>
+LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
+<% end -%>
+LOGSTASH_OPTS="$LOGSTASH_OPTS -l $LOGSTASH_HOME/log/<%= @options[:log_file] %>"
+export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= @options[:workers] %>"
+<% if @options[:supervisor_gid] -%>
+HOME=$LOGSTASH_HOME exec chpst -u <%= @options[:user] %>:<%= @options[:supervisor_gid] %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
+<% else -%>
+HOME=$LOGSTASH_HOME exec chpst -u <%= @options[:user] %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
+<% end -%>

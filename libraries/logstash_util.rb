@@ -21,13 +21,14 @@ module Logstash
     if interface.nil?
       service_ip = node['ipaddress']
     else
-      service_ip = node['network']['interfaces'][interface]['addresses'].to_hash.find do
-        |_, addr_info| addr_info['family'] == 'inet'
+      service_ip = node['network']['interfaces'][interface]['addresses'].to_hash.find do |_, addr_info|
+        addr_info['family'] == 'inet'
       end.first
     end
   end
 
   def self.get_attribute_or_default(node, instance_name, attribute_name)
+    instance_attr = {} unless node['logstash']['instance'][instance_name]
     instance_attr = deep_fetch(node, 'logstash', 'instance', instance_name, attribute_name)
     default_attr = deep_fetch(node, 'logstash', 'instance_default', attribute_name)
     instance_attr || default_attr

@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 
 describe 'logstash::server' do
   describe 'ubuntu' do
-    let(:runner) { ChefSpec::Runner.new(::UBUNTU_OPTS) }
+    let(:runner) { ChefSpec::SoloRunner.new(::UBUNTU_OPTS) }
     let(:node) { runner.node }
     let(:chef_run) do
       # runner.node.set['logstash'] ...
@@ -41,6 +41,5 @@ describe 'logstash::server' do
     it 'calls the logstash_curator LWRP' do
       expect(chef_run).to create_logstash_curator('server')
     end
-
   end
 end

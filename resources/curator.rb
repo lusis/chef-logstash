@@ -15,3 +15,5 @@ attribute :minute,        kind_of: String
 attribute :hour,          kind_of: String
 attribute :log_file,      kind_of: String
 attribute :user,          kind_of: String
+attribute :bin_dir,       kind_of: String
+attribute :index_prefix,       kind_of: String

@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 
 describe 'logstash::agent' do
   describe 'ubuntu' do
-    let(:runner) { ChefSpec::Runner.new(::UBUNTU_OPTS) }
+    let(:runner) { ChefSpec::SoloRunner.new(::UBUNTU_OPTS) }
     let(:node) { runner.node }
     let(:chef_run) do
       # runner.node.set['logstash'] ...
@@ -33,6 +33,5 @@ describe 'logstash::agent' do
     it 'calls the logstash_instance LWRP' do
       expect(chef_run).to enable_logstash_service('agent')
     end
-
   end
 end

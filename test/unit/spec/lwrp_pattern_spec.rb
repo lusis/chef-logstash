@@ -4,7 +4,7 @@ require_relative 'server_spec'
 
 describe 'logstash::server' do
   describe 'ubuntu' do
-    let(:runner) { ChefSpec::Runner.new(step_into: ['logstash_pattern']) }
+    let(:runner) { ChefSpec::SoloRunner.new(step_into: ['logstash_pattern']) }
     let(:node) { runner.node }
     let(:chef_run) do
       runner.node.merge(::UBUNTU_OPTS)
@@ -34,6 +34,5 @@ describe 'logstash::server' do
         action:   [:create]
       )
     end
-
   end
 end

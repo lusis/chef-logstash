@@ -1,5 +1,19 @@
 # CHANGELOG for chef-logstash
 
+## 0.11.2
+* MINOR - default logstash version 1.4.2
+* MINOR - correct status code for initv scripts
+* MINOR - parameterize open file limits for upstart method
+* MINOR - late night bad resource in server recipe.
+
+## 0.11.0
+* MAJOR - depreciate non runit service types.
+* MINOR - fix bug where node['logstash'][instance_name] must exist.
+* MAJOR - remove pyshipper in favor of beaver community cookbook.
+* MAJOR - remove beaver in favor of community cookbook.
+* MAJOR - assumes ChefDK for Development/Testing
+* MAJOR - use keys from config_template hash to make templates reusable.
+
 ## 0.10.0:
 * major rework of service LWRP
 * rework of attribute precidence
@@ -24,7 +38,7 @@ _this will almost certainly break backwards compatibility_
   * instance LWRP
   * service LWRP
   * pattern LWP
-  * config LWP  
+  * config LWP
 
 ## 0.7.7:
 
