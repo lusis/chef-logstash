@@ -1,7 +1,7 @@
 #!/bin/sh
 
-ulimit -Hn 65550
-ulimit -Sn 65550
+ulimit -Hn <%= @nofile_hard %>
+ulimit -Sn <%= @nofile_soft %>
 
 cd /<%= @options[:home] %>
 exec 2>&1

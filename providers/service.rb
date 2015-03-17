@@ -76,7 +76,9 @@ action :enable do
         supervisor_gid: svc[:supervisor_gid],
         user: svc[:user],
         web_address: svc[:web_address],
-        web_port: svc[:web_port]
+        web_port: svc[:web_port],
+        nofile_soft: svc[:nofile_soft],
+        nofile_hard: svc[:nofile_hard]
       )
       cookbook  svc[:templates_cookbook]
       run_template_name svc[:runit_run_template_name]
