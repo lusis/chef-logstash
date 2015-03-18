@@ -19,6 +19,7 @@ def load_current_resource
   @user = new_resource.user || Logstash.get_attribute_or_default(node, @instance, 'user')
   @bin_dir = new_resource.bin_dir || Logstash.get_attribute_or_default(node, @instance, 'curator_bin_dir')
   @index_prefix = new_resource.index_prefix || Logstash.get_attribute_or_default(node, @instance, 'curator_index_prefix')
+  @version = new_resource.index_prefix || Logstash.get_attribute_or_default(node, @instance, 'curator_version')
 end
 
 action :create do
@@ -30,11 +31,13 @@ action :create do
   cur_user = @user
   cur_bin_dir = @bin_dir
   cur_index_prefix = @index_prefix
+  cur_version = @version
 
   @run_context.include_recipe 'python::pip'
 
   pi = python_pip 'elasticsearch-curator' do
     action :install
+    version cur_version
   end
   new_resource.updated_by_last_action(pi.updated_by_last_action?)
 
