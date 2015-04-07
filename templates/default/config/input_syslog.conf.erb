@@ -3,6 +3,10 @@ input {
     port => "5959"
     type => "syslog"
   }
+  udp {
+    port => "514"
+    type => "syslog"
+  }
 }
 
 filter {
