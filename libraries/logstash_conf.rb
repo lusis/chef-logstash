@@ -12,6 +12,8 @@ class Erubis::RubyEvaluator::LogstashConf
       return k.to_s
     when 'Regex'
       return k.inspect
+    when 'Symbol'
+      return k.to_s
     end
     return k
   end
