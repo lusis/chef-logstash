@@ -6,6 +6,7 @@
 #
 # Copyright 2014, John E. Vincent
 
+require 'pathname'
 require 'chef/mixin/shell_out'
 require 'chef/mixin/language'
 include Chef::Mixin::ShellOut
@@ -21,6 +22,9 @@ def load_current_resource
   @user = new_resource.user || Logstash.get_attribute_or_default(node, @instance, 'user')
   @group = new_resource.group || Logstash.get_attribute_or_default(node, @instance, 'group')
   @log_file = Logstash.get_attribute_or_default(node, @instance, 'log_file')
+  if not Pathname.new(@log_file).absolute?
+    @log_file = "#{@home}/log/#{@log_file}"
+  end
   @max_heap = Logstash.get_attribute_or_default(node, @instance, 'xmx')
   @min_heap = Logstash.get_attribute_or_default(node, @instance, 'xms')
   @gc_opts = Logstash.get_attribute_or_default(node, @instance, 'gc_opts')
@@ -205,7 +209,7 @@ def default_args
   svc = svc_vars
   args = ['agent', '-f', "#{svc[:home]}/etc/conf.d/"]
   args.concat ['-vv'] if svc[:debug]
-  args.concat ['-l', "#{svc[:home]}/log/#{svc[:log_file]}"] if svc[:log_file]
+  args.concat ['-l', "#{svc[:log_file]}"] if svc[:log_file]
   args.concat ['-w', svc[:workers].to_s] if svc[:workers]
   args
 end
