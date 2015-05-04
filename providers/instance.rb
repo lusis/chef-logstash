@@ -6,6 +6,7 @@
 #
 # Copyright 2014, John E. Vincent
 
+require 'pathname'
 require 'chef/mixin/shell_out'
 require 'chef/mixin/language'
 include Chef::Mixin::ShellOut
@@ -27,12 +28,16 @@ def load_current_resource
   @useropts = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'user_opts')
   @instance_dir = "#{@base_directory}/#{@version}/#{new_resource.name}".clone
   @unversioned_instance_dir = "#{@base_directory}/#{new_resource.name}".clone
-  @logrotate_size = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_size')
+  @logrotate_size = new_resource.logrotate_size || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_size')
   @logrotate_use_filesize = new_resource.logrotate_use_filesize || Logstash.get_attribute_or_default(node, @name, 'logrotate_use_filesize')
   @logrotate_frequency = new_resource.logrotate_frequency || Logstash.get_attribute_or_default(node, @name, 'logrotate_frequency')
   @logrotate_max_backup = new_resource.logrotate_max_backup || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_backup')
   @logrotate_options = new_resource.logrotate_options || Logstash.get_attribute_or_default(node, @name, 'logrotate_options')
   @logrotate_enable = new_resource.logrotate_enable || Logstash.get_attribute_or_default(node, @name, 'logrotate_enable')
+  @logrotate_files = new_resource.logrotate_files || Logstash.get_attribute_or_default(node, @name, 'logrotate_files')
+  if not Pathname.new(@logrotate_files).absolute?
+    @log_file = "#{@instance_dir}/log/#{@logrotate_files}"
+  end
 end
 
 action :delete do
@@ -243,7 +248,11 @@ def logrotate(ls)
   @run_context.include_recipe 'logrotate::default'
 
   logrotate_app "logstash_#{name}" do
+<<<<<<< HEAD
     path "#{ls[:unversioned_instance_dir]}/log/*.log"
+=======
+    path ls[:logrotate_files]
+>>>>>>> Also allow specifying files for log rotation.
     size ls[:logrotate_size] if ls[:logrotate_use_filesize]
     frequency ls[:logrotate_frequency]
     rotate ls[:logrotate_max_backup]
@@ -270,6 +279,7 @@ def ls_vars
     instance_dir: @instance_dir,
     unversioned_instance_dir: @unversioned_instance_dir,
     enable_logrotate: @enable_logrotate,
+    logrotate_files: @logrotate_files,
     logrotate_size: @logrotate_size,
     logrotate_use_filesize: @logrotate_use_filesize,
     logrotate_frequency: @logrotate_frequency,

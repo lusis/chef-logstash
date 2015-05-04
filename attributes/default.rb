@@ -81,6 +81,7 @@ default['logstash']['instance_default']['web']['port']    = '9292'
 # Logging features
 default['logstash']['instance_default']['logrotate_enable']  = true
 default['logstash']['instance_default']['logrotate_options'] = %w(missingok notifempty compress copytruncate)
+default['logstash']['instance_default']['logrotate_files'] = '*.log'
 default['logstash']['instance_default']['logrotate_frequency'] = 'daily'
 default['logstash']['instance_default']['logrotate_max_backup'] = 10
 default['logstash']['instance_default']['logrotate_max_size'] = '10M'
