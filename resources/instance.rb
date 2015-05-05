@@ -26,6 +26,7 @@ attribute :group, kind_of: String
 attribute :create_account, kind_of: [TrueClass, FalseClass]
 attribute :logrotate_enable, kind_of: [TrueClass, FalseClass]
 attribute :user_opts, kind_of: [Hash]
+attribute :log_dir, kind_of: [String]
 attribute :logrotate_size, kind_of: [String]
 attribute :logrotate_use_filesize, kind_of: [TrueClass, FalseClass]
 attribute :logrotate_frequency, kind_of: [String]
