@@ -3,9 +3,9 @@
 
 module Logstash
   def self.service_ip(node, instance = 'default', service = 'elasticsearch', interface = nil)
+    defaults = node['logstash']['instance']['default']
     if node['logstash']['instance'].key?(instance)
       attributes = node['logstash']['instance'][instance]
-      defaults = node['logstash']['instance']['default']
     else
       attributes = node['logstash']['instance']['default']
     end
