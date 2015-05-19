@@ -30,7 +30,7 @@ def load_current_resource
   @group = new_resource.group || attributes['group'] || defaults['group']
   @useropts = new_resource.user_opts || attributes['user_opts'] || defaults['user_opts']
   @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
-  @logrotate_size = new_resource.user_opts || attributes['logrotate_max_size'] || defaults['logrotate_max_size']
+  @logrotate_size = new_resource.logrotate_max_size || attributes['logrotate_max_size'] || defaults['logrotate_max_size']
   @logrotate_use_filesize = new_resource.logrotate_use_filesize || attributes['logrotate_use_filesize'] || defaults['logrotate_use_filesize']
   @logrotate_frequency = new_resource.logrotate_frequency || attributes['logrotate_frequency'] || defaults['logrotate_frequency']
   @logrotate_max_backup = new_resource.logrotate_max_backup || attributes['logrotate_max_backup'] || defaults['logrotate_max_backup']
