@@ -14,10 +14,10 @@ def load_current_resource
   @name = new_resource.name || 'default'
   if node['logstash']['instance'].key?(@name)
     attributes = node['logstash']['instance'][@name]
-    defaults = node['logstash']['instance']['default']
   else
     attributes = node['logstash']['instance']['default']
   end
+  defaults = node['logstash']['instance']['default']
   @base_directory = new_resource.base_directory || attributes['basedir'] || defaults['basedir']
   @install_type = new_resource.install_type || attributes['install_type'] || defaults['install_type']
   @version = new_resource.version || attributes['version'] || defaults['version']
