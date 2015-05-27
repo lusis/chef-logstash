@@ -32,6 +32,7 @@ def load_current_resource
   @chdir = @home
   @workers = Logstash.get_attribute_or_default(node, @instance, 'workers')
   @debug = Logstash.get_attribute_or_default(node, @instance, 'debug')
+  @pluginpath = Logstash.get_attribute_or_default(node, @instance, 'pluginpath')
   @install_type = Logstash.get_attribute_or_default(node, @instance, 'install_type')
   @supervisor_gid = Logstash.get_attribute_or_default(node, @instance, 'supervisor_gid')
   @runit_run_template_name = Logstash.get_attribute_or_default(node, @instance, 'runit_run_template_name')
@@ -251,6 +252,7 @@ def svc_vars
     ipv4_only: @ipv4_only,
     workers: @workers,
     debug: @debug,
+    pluginpath: @pluginpath,
     install_type: @install_type,
     supervisor_gid: @supervisor_gid,
     templates_cookbook: @templates_cookbook,

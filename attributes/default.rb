@@ -41,7 +41,8 @@ default['logstash']['instance_default']['xmx']        = node['memory'] ? "#{(nod
 default['logstash']['instance_default']['gc_opts']    = '-XX:+UseParallelOldGC'
 default['logstash']['instance_default']['ipv4_only']  = false
 default['logstash']['instance_default']['debug']      = false
-default['logstash']['instance_default']['workers']    = 1
+default['logstash']['instance_default']['pluginpath'] = true
+default['logstash']['instance_default']['workers'] = 1
 
 default['logstash']['instance_default']['pattern_templates_cookbook']  = 'logstash'
 default['logstash']['instance_default']['pattern_templates']           = {}
