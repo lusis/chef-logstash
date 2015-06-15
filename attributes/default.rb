@@ -94,7 +94,7 @@ default['logstash']['instance_default']['curator_cron_hour'] = '*'
 default['logstash']['instance_default']['curator_cron_log_file'] = '/dev/null'
 default['logstash']['instance_default']['curator_index_prefix'] = 'logstash-'
 default['logstash']['instance_default']['curator_time_unit'] = 'days'
-default['logstash']['instance_default']['curator_timestring'] = '%Y.%m.%d'
+default['logstash']['instance_default']['curator_timestring'] = '\%Y.\%m.\%d'
 
 # Make sure instance key exists
 default['logstash']['instance']
