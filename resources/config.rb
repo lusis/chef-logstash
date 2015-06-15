@@ -18,3 +18,4 @@ attribute :group,       kind_of: String
 attribute :mode,        kind_of: String
 attribute :path,        kind_of: String
 attribute :templates_cookbook,    kind_of: String
+attribute :templates_local,       kind_of: [TrueClass, FalseClass], default: false
