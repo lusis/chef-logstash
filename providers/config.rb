@@ -20,6 +20,7 @@ def load_current_resource
   end
   @basedir = attributes['basedir'] || defaults['basedir']
   @templates = new_resource.templates || attributes['config_templates'] || defaults['config_templates']
+  @templates_local = new_resource.templates_local
   @templates_cookbook = new_resource.templates_cookbook  || attributes['config_templates_cookbook'] || defaults['config_templates_cookbook']
   @variables = new_resource.variables || attributes['config_templates_variables'] || defaults['config_templates_variables']
   @owner     = new_resource.owner || attributes['user'] || defaults['user']
@@ -35,6 +36,7 @@ action :create do
   conf[:templates].each do |_template, file|
     tp = template "#{conf[:path]}/#{::File.basename(file).chomp(::File.extname(file))}" do
       source      file
+      local       conf[:templates_local]
       cookbook    conf[:templates_cookbook]
       owner       conf[:owner]
       group       conf[:group]
@@ -59,7 +61,8 @@ def conf_vars
     group:      @group,
     mode:       @mode,
     service_name: @service_name,
-    templates_cookbook:   @templates_cookbook
+    templates_cookbook:   @templates_cookbook,
+    templates_local:      @templates_local
   }
   conf
 end
