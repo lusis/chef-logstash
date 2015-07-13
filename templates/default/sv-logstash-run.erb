@@ -11,7 +11,9 @@ export LOGSTASH_HOME="<%= @options[:home] %>"
 export GC_OPTS="<%= @options[:gc_opts] %>"
 export JAVA_OPTS="-server -Xms<%= @options[:min_heap] %> -Xmx<%= @options[:max_heap] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= @options[:java_opts] %> <%= '-Djava.net.preferIPv4Stack=true' if @options[:ipv4_only] %>"
 LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/conf.d"
+<% if node['logstash']['instance_default']['version'].start_with?("1.4") -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath $LOGSTASH_HOME/lib"
+<% end -%>
 <% if @options[:debug] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
 <% end -%>
