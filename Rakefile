@@ -8,7 +8,13 @@ namespace :style do
 
   require 'foodcritic'
   desc 'Run Chef style checks'
-  FoodCritic::Rake::LintTask.new(:chef)
+  FoodCritic::Rake::LintTask.new(:chef) do |t|
+    t.options = {
+      tags: %w(
+        ~FC024
+      )
+    }
+  end
 end
 
 desc 'Run all style checks'
