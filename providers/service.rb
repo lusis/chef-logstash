@@ -117,7 +117,7 @@ action :enable do
           upstart_with_sudo: svc[:upstart_with_sudo],
           nofile_soft: svc[:nofile_soft],
           nofile_hard: svc[:nofile_hard]
-                  )
+        )
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
@@ -145,7 +145,7 @@ action :enable do
           user: svc[:user],
           supervisor_gid: svc[:supervisor_gid],
           args: args
-                  )
+        )
         notifies :run, 'execute[reload-systemd]', :immediately
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
@@ -181,7 +181,7 @@ action :enable do
           workers: svc[:workers],
           supervisor_gid: svc[:supervisor_gid],
           config_file: "#{svc[:home]}/etc/conf.d"
-                  )
+        )
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
