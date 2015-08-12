@@ -23,6 +23,7 @@ def load_current_resource
   @create_account = new_resource.create_account || Logstash.get_attribute_or_default(node, @name, 'create_account')
   @user = new_resource.user || Logstash.get_attribute_or_default(node, @name, 'user')
   @group = new_resource.group || Logstash.get_attribute_or_default(node, @name, 'group')
+  @join_groups = new_resource.join_groups || Logstash.get_attribute_or_default(node, @name, 'join_groups')
   @useropts = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'user_opts')
   @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
   @logrotate_size = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_size')
@@ -61,6 +62,15 @@ action :create do
       members ls[:user]
       append true
       system true
+    end
+    new_resource.updated_by_last_action(gr.updated_by_last_action?)
+  end
+
+  ls[:join_groups].each do |grp|
+    gr = group grp do
+      action :modify
+      members ls[:user]
+      append true
     end
     new_resource.updated_by_last_action(gr.updated_by_last_action?)
   end
@@ -227,6 +237,7 @@ def ls_vars
     create_account: @create_account,
     user: @user,
     group: @group,
+    join_groups: @join_groups,
     name: @name,
     instance_dir: @instance_dir,
     enable_logrotate: @enable_logrotate,
