@@ -1,9 +1,9 @@
 # Encoding: utf-8
 require 'spec_helper'
 
-# Java 1.6
+# Java 1.7
 describe command('java -version') do
-  it { should return_stdout(/java version "1.7.\d+_\d+"/) }
+  its(:stdout) { should eq(/java version "1.7.\d+_\d+"/) }
 end
 
 # Logstash Instance

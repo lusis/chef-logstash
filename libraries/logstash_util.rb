@@ -1,5 +1,4 @@
 # Encoding: utf-8
-# rubocop:disable RedundantReturn
 
 module Logstash
   def self.service_ip(node, instance = 'default', service = 'elasticsearch', interface = nil)
