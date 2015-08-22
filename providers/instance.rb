@@ -218,9 +218,9 @@ end
 
 def ls_vars
   ls = {
-    homedir: @useropts[:homedir],
-    uid: @useropts[:uid],
-    gid: @useropts[:gid],
+    homedir: @useropts['homedir'],
+    uid: @useropts['uid'],
+    gid: @useropts['gid'],
     source_url: @source_url,
     version: @version,
     checksum: @checksum,
