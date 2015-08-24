@@ -14,6 +14,7 @@ def load_current_resource
   @instance  = new_resource.instance
   @basedir = Logstash.get_attribute_or_default(node, @instance, 'basedir')
   @templates = new_resource.templates || Logstash.get_attribute_or_default(node, @instance, 'config_templates')
+  @templates_local = new_resource.templates_local || false
   @templates_cookbook = new_resource.templates_cookbook || Logstash.get_attribute_or_default(node, @instance, 'config_templates_cookbook')
 
   # merge user overrides into defaults for configuration variables
@@ -36,6 +37,7 @@ action :create do
   conf[:templates].each do |template, file|
     tp = template "#{conf[:path]}/#{::File.basename(template).chomp(::File.extname(template))}" do
       source      file
+      local       conf[:templates_local]
       cookbook    conf[:templates_cookbook]
       owner       conf[:owner]
       group       conf[:group]
@@ -51,14 +53,15 @@ private
 
 def conf_vars
   conf = {
-    instance:   @instance,
-    templates:  @templates,
-    variables:  @variables,
-    path:       @path,
-    owner:      @owner,
-    group:      @group,
-    mode:       @mode,
-    service_name: @service_name,
+    instance:        @instance,
+    templates:       @templates,
+    templates_local: @templates_local,
+    variables:       @variables,
+    path:            @path,
+    owner:           @owner,
+    group:           @group,
+    mode:            @mode,
+    service_name:    @service_name,
     templates_cookbook:   @templates_cookbook
   }
   conf
