@@ -8,6 +8,7 @@ Group=<%= @supervisor_gid %>
 WorkingDirectory=<%= @home %>
 Environment="LOGSTASH_HOME=<%= @home %>
 Environment="HOME=<%= @home %>
+Environment="LS_HEAP_SIZE=<%= @max_heap %>
 ExecStart=<%= "#{@home}/bin/logstash #{@args.join(' ')}" %>
 Restart=on-failure
 RestartSec=30
