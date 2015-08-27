@@ -193,7 +193,7 @@ action :enable do
     end
 
   else
-    Chef::Log.fatal("Unsupported init method: #{@svc[:method]}")
+    Chef::Log.fatal("Unsupported init method: #{svc[:method]}")
   end
 end
 
