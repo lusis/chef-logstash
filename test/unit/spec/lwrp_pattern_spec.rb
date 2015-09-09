@@ -31,7 +31,7 @@ describe 'logstash::server' do
         group:    'logstash',
         mode:     '0644',
         variables: { 'test' => true },
-        action:   [:create]
+        action: [:create]
       )
     end
   end

@@ -46,7 +46,7 @@ end
 action :create do
   ls = ls_vars
 
-  if  ls[:create_account]
+  if ls[:create_account]
     ur = user ls[:user] do
       home ls[:homedir]
       system true

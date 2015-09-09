@@ -15,11 +15,11 @@
 name = 'server'
 
 logstash_instance name do
-  action            :create
+  action :create
 end
 
 logstash_service name do
-  action      [:enable]
+  action [:enable]
 end
 
 logstash_config name do

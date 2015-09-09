@@ -31,7 +31,7 @@ default['logstash']['instance_default']['plugins_version']        = '1.4.5'
 default['logstash']['instance_default']['plugins_source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-contrib-1.4.5.tar.gz'
 default['logstash']['instance_default']['plugins_checksum']       = 'e4fa08cac70f97e30d4d043fcab817b72c301631713376c5c21824d5d89cae3e'
 default['logstash']['instance_default']['plugins_install_type']   = 'tarball' # native|tarball
-default['logstash']['instance_default']['plugins_check_if_installed']  = 'lib/logstash/filters/translate.rb'
+default['logstash']['instance_default']['plugins_check_if_installed'] = 'lib/logstash/filters/translate.rb'
 
 default['logstash']['instance_default']['log_file']   = 'logstash.log'
 default['logstash']['instance_default']['java_home']  = '/usr/lib/jvm/java-6-openjdk' # openjdk6 on ubuntu
@@ -47,8 +47,8 @@ default['logstash']['instance_default']['pattern_templates_cookbook']  = 'logsta
 default['logstash']['instance_default']['pattern_templates']           = {}
 default['logstash']['instance_default']['pattern_templates_variables'] = {}
 
-default['logstash']['instance_default']['base_config_cookbook']       = 'logstash'
-default['logstash']['instance_default']['base_config']    = '' # set if want data driven
+default['logstash']['instance_default']['base_config_cookbook'] = 'logstash'
+default['logstash']['instance_default']['base_config'] = '' # set if want data driven
 
 default['logstash']['instance_default']['config_file']                = ''
 default['logstash']['instance_default']['config_templates']           = {}
@@ -56,7 +56,7 @@ default['logstash']['instance_default']['config_templates_cookbook']  = 'logstas
 default['logstash']['instance_default']['config_templates_variables'] = {}
 
 default['logstash']['instance_default']['init_method'] = 'runit'
-default['logstash']['instance_default']['service_templates_cookbook']  = 'logstash'
+default['logstash']['instance_default']['service_templates_cookbook'] = 'logstash'
 
 # default locations for runit templates
 default['logstash']['instance_default']['runit_run_template_name'] = 'logstash'

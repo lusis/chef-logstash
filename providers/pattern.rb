@@ -51,7 +51,7 @@ def pattern_vars
     owner:      @owner,
     group:      @group,
     mode:       @mode,
-    templates_cookbook:   @templates_cookbook
+    templates_cookbook: @templates_cookbook
   }
   pattern
 end
