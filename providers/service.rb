@@ -12,7 +12,7 @@ include Chef::Mixin::ShellOut
 
 def load_current_resource
   @instance = new_resource.instance
-  @basedir = Logstash.get_attribute_or_default(node, @instance, 'basedir')
+  @basedir = new_resource.base_directory || Logstash.get_attribute_or_default(node, @instance, 'basedir')
   @templates_cookbook = new_resource.templates_cookbook || Logstash.get_attribute_or_default(node, @instance, 'service_templates_cookbook')
   @service_name = new_resource.service_name || "logstash_#{@instance}"
   @home = "#{@basedir}/#{@instance}"
@@ -134,18 +134,14 @@ action :enable do
         action :nothing
       end
       new_resource.updated_by_last_action(ex.updated_by_last_action?)
+      vars = svc_vars.merge(args: args)
       tp = template "/etc/systemd/system/#{svc[:service_name]}.service" do
         tp = source "init/systemd/#{svc[:install_type]}.erb"
         cookbook  svc[:templates_cookbook]
         owner 'root'
         group 'root'
         mode '0755'
-        variables(
-          home: svc[:home],
-          user: svc[:user],
-          supervisor_gid: svc[:supervisor_gid],
-          args: args
-        )
+        variables vars
         notifies :run, 'execute[reload-systemd]', :immediately
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
