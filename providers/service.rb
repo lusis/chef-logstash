@@ -28,8 +28,8 @@ def load_current_resource
   @java_opts = Logstash.get_attribute_or_default(node, @instance, 'java_opts')
   @description = new_resource.description || @service_name
   @chdir = @home
-  @workers =  Logstash.get_attribute_or_default(node, @instance, 'workers')
-  @debug =  Logstash.get_attribute_or_default(node, @instance, 'debug')
+  @workers = Logstash.get_attribute_or_default(node, @instance, 'workers')
+  @debug = Logstash.get_attribute_or_default(node, @instance, 'debug')
   @install_type = Logstash.get_attribute_or_default(node, @instance, 'install_type')
   @supervisor_gid = Logstash.get_attribute_or_default(node, @instance, 'supervisor_gid')
   @runit_run_template_name = Logstash.get_attribute_or_default(node, @instance, 'runit_run_template_name')
@@ -137,7 +137,7 @@ action :enable do
       vars = svc_vars.merge(args: args)
       tp = template "/etc/systemd/system/#{svc[:service_name]}.service" do
         tp = source "init/systemd/#{svc[:install_type]}.erb"
-        cookbook  svc[:templates_cookbook]
+        cookbook svc[:templates_cookbook]
         owner 'root'
         group 'root'
         mode '0755'
