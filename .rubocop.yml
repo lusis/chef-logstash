@@ -57,4 +57,7 @@ Metrics/AbcSize:
 
 # Offense count: 8
 Metrics/PerceivedComplexity:
-  Max: 18
+  Max: 25
+
+Metrics/AbcSize:
+  Max: 90

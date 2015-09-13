@@ -1,6 +1,9 @@
 # CHANGELOG for chef-logstash
 
-* MINOR - default logstash version 1.4.5
+## 0.12.0
+* MAJOR - logstash version 1.5.4
+* MINOR - systemd improvements
+* MINOR - implement join_groups attribute
 
 ## 0.11.2
 * MINOR - default logstash version 1.4.2
