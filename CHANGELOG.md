@@ -1,5 +1,7 @@
 # CHANGELOG for chef-logstash
 
+* MINOR - default logstash version 1.4.5
+
 ## 0.11.2
 * MINOR - default logstash version 1.4.2
 * MINOR - correct status code for initv scripts

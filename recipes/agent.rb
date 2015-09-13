@@ -9,12 +9,12 @@ name = 'agent'
 
 # these should all default correctly.  listing out for example.
 logstash_instance name do
-  action            :create
+  action :create
 end
 
 # services are hard! Let's go LWRP'ing.   FIREBALL! FIREBALL! FIREBALL!
 logstash_service name do
-  action      [:enable]
+  action [:enable]
 end
 
 logstash_config name do

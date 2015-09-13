@@ -28,8 +28,8 @@ def load_current_resource
   @java_opts = Logstash.get_attribute_or_default(node, @instance, 'java_opts')
   @description = new_resource.description || @service_name
   @chdir = @home
-  @workers =  Logstash.get_attribute_or_default(node, @instance, 'workers')
-  @debug =  Logstash.get_attribute_or_default(node, @instance, 'debug')
+  @workers = Logstash.get_attribute_or_default(node, @instance, 'workers')
+  @debug = Logstash.get_attribute_or_default(node, @instance, 'debug')
   @install_type = Logstash.get_attribute_or_default(node, @instance, 'install_type')
   @supervisor_gid = Logstash.get_attribute_or_default(node, @instance, 'supervisor_gid')
   @runit_run_template_name = Logstash.get_attribute_or_default(node, @instance, 'runit_run_template_name')
@@ -78,7 +78,7 @@ action :enable do
         web_address: svc[:web_address],
         web_port: svc[:web_port]
       )
-      cookbook  svc[:templates_cookbook]
+      cookbook svc[:templates_cookbook]
       run_template_name svc[:runit_run_template_name]
       log_template_name svc[:runit_log_template_name]
     end
@@ -136,7 +136,7 @@ action :enable do
       new_resource.updated_by_last_action(ex.updated_by_last_action?)
       tp = template "/etc/systemd/system/#{svc[:service_name]}.service" do
         tp = source "init/systemd/#{svc[:install_type]}.erb"
-        cookbook  svc[:templates_cookbook]
+        cookbook svc[:templates_cookbook]
         owner 'root'
         group 'root'
         mode '0755'
@@ -159,7 +159,7 @@ action :enable do
     elsif native_init == 'sysvinit'
       tp = template "/etc/init.d/#{svc[:service_name]}" do
         source "init/sysvinit/#{svc[:install_type]}.erb"
-        cookbook  svc[:templates_cookbook]
+        cookbook svc[:templates_cookbook]
         owner 'root'
         group 'root'
         mode '0774'
@@ -201,7 +201,7 @@ private
 
 def default_args
   svc = svc_vars
-  args      = ['agent', '-f', "#{svc[:home]}/etc/conf.d/"]
+  args = ['agent', '-f', "#{svc[:home]}/etc/conf.d/"]
   args.concat ['-vv'] if svc[:debug]
   args.concat ['-l', "#{svc[:home]}/log/#{svc[:log_file]}"] if svc[:log_file]
   args.concat ['-w', svc[:workers].to_s] if svc[:workers]
