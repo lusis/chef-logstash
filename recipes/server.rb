@@ -26,13 +26,12 @@ logstash_config name do
   action [:create]
   notifies :restart, "logstash_service[#{name}]"
 end
-# ^ see `.kitchen.yml` for example attributes to configure templates.
 
- logstash_plugins 'contrib' do
+logstash_plugins 'contrib' do
   instance name
   name 'logstash-output-influxdb'
   action [:create]
- end
+end
 
 logstash_pattern name do
   action [:create]
