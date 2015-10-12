@@ -86,7 +86,7 @@ action :update do
   case @install_type
   when 'native'
     ex = execute "bin/plugin update #{ls_name}" do
-      command "bin/plugin update #{ls_name}"
+      command "echo 'Y' | bin/plugin update #{ls_name}"
       user    ls_user
       group   ls_group
       cwd     ls_instance_dir
