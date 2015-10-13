@@ -96,7 +96,7 @@ action :update do
     end
     new_resource.updated_by_last_action(ex.updated_by_last_action?)
   when 'tarball'
-    Chef::Application.fatal!("Cannot update from tarball")
+    Chef::Application.fatal!('Cannot update from tarball')
   else
     Chef::Application.fatal!("Unknown install type: #{@install_type}")
   end
