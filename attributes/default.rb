@@ -35,9 +35,9 @@ default['logstash']['instance_default']['plugins_check_if_installed'] = 'lib/log
 
 default['logstash']['instance_default']['log_file']   = 'logstash.log'
 default['logstash']['instance_default']['java_home']  = '/usr/lib/jvm/java-6-openjdk' # openjdk6 on ubuntu
-default['logstash']['instance_default']['xms']        = "#{(node['memory']['total'].to_i * 0.2).floor / 1024}M"
-default['logstash']['instance_default']['xmx']        = "#{(node['memory']['total'].to_i * 0.6).floor / 1024}M"
 default['logstash']['instance_default']['java_opts']  = ''
+default['logstash']['instance_default']['xms']        = node['memory'] ? "#{(node['memory']['total'].to_i * 0.2).floor / 1024}M" : '256M'
+default['logstash']['instance_default']['xmx']        = node['memory'] ? "#{(node['memory']['total'].to_i * 0.6).floor / 1024}M" : '256M'
 default['logstash']['instance_default']['gc_opts']    = '-XX:+UseParallelOldGC'
 default['logstash']['instance_default']['ipv4_only']  = false
 default['logstash']['instance_default']['debug']      = false
