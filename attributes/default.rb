@@ -90,7 +90,7 @@ default['logstash']['instance_default']['logrotate_use_filesize'] = false
 
 # Curator
 default['logstash']['instance_default']['curator_bin_dir'] = '/usr/local/bin'
-default['logstash']['instance_default']['curator_days_to_keep'] = 31
+default['logstash']['instance_default']['curator_days_to_keep'] = '31'
 default['logstash']['instance_default']['curator_cron_minute'] = '0'
 default['logstash']['instance_default']['curator_cron_hour'] = '*'
 default['logstash']['instance_default']['curator_cron_log_file'] = '/dev/null'
