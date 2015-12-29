@@ -25,7 +25,8 @@ def load_current_resource
   @group = new_resource.group || Logstash.get_attribute_or_default(node, @name, 'group')
   @join_groups = new_resource.join_groups || Logstash.get_attribute_or_default(node, @name, 'join_groups')
   @useropts = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'user_opts')
-  @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
+  @instance_dir = "#{@base_directory}/#{@version}/#{new_resource.name}".clone
+  @unversioned_instance_dir = "#{@base_directory}/#{new_resource.name}".clone
   @logrotate_size = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_size')
   @logrotate_use_filesize = new_resource.logrotate_use_filesize || Logstash.get_attribute_or_default(node, @name, 'logrotate_use_filesize')
   @logrotate_frequency = new_resource.logrotate_frequency || Logstash.get_attribute_or_default(node, @name, 'logrotate_frequency')
@@ -42,10 +43,32 @@ action :delete do
     action      :delete
   end
   new_resource.updated_by_last_action(idr.updated_by_last_action?)
+
+  if ::File.symlink? ls[:unversioned_instance_dir]
+    ul = link ls[:unversioned_instance_dir] do
+      action :delete
+    end
+    new_resource.updated_by_last_action(ul.updated_by_last_action?)
+  else
+    udr = directory ls[:unversioned_instance_dir] do
+      recursive   true
+      action      :delete
+    end
+    new_resource.updated_by_last_action(udr.updated_by_last_action?)
+  end
 end
 
 action :create do
   ls = ls_vars
+
+  # handle instances set up with previous cookbook versions
+  unless ::File.symlink? ls[:unversioned_instance_dir]
+    udr = directory ls[:unversioned_instance_dir] do
+      recursive   true
+      action      :delete
+    end
+    new_resource.updated_by_last_action(udr.updated_by_last_action?)
+  end
 
   if ls[:create_account]
     ur = user ls[:user] do
@@ -85,7 +108,7 @@ action :create do
       group     ls[:group]
       mode      0755
       version   ls[:version]
-      path      ls[:basedir]
+      path      "#{ls[:basedir]}/#{ls[:version]}"
       action    :put
     end
     new_resource.updated_by_last_action(arkit.updated_by_last_action?)
@@ -205,6 +228,10 @@ action :create do
   else
     Chef::Application.fatal!("Unknown install type: #{@install_type}")
   end
+  ul = link ls[:unversioned_instance_dir] do
+    to ls[:instance_dir]
+  end
+  new_resource.updated_by_last_action(ul.updated_by_last_action?)
   logrotate(ls) if ls[:logrotate_enable]
 end
 
@@ -216,7 +243,7 @@ def logrotate(ls)
   @run_context.include_recipe 'logrotate::default'
 
   logrotate_app "logstash_#{name}" do
-    path "#{ls[:instance_dir]}/log/*.log"
+    path "#{ls[:unversioned_instance_dir]}/log/*.log"
     size ls[:logrotate_size] if ls[:logrotate_use_filesize]
     frequency ls[:logrotate_frequency]
     rotate ls[:logrotate_max_backup]
@@ -241,6 +268,7 @@ def ls_vars
     join_groups: @join_groups,
     name: @name,
     instance_dir: @instance_dir,
+    unversioned_instance_dir: @unversioned_instance_dir,
     enable_logrotate: @enable_logrotate,
     logrotate_size: @logrotate_size,
     logrotate_use_filesize: @logrotate_use_filesize,
