@@ -72,6 +72,7 @@ action :enable do
         debug: svc[:debug],
         log_file: svc[:log_file],
         workers: svc[:workers],
+        batch_size: svc[:batch_size],
         install_type: svc[:install_type],
         supervisor_gid: svc[:supervisor_gid],
         user: svc[:user],
