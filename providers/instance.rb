@@ -254,7 +254,7 @@ def logrotate(ls)
     frequency ls[:logrotate_frequency]
     rotate ls[:logrotate_max_backup]
     options ls[:logrotate_options]
-    postrotate ["service logstash_#{name} restart"]
+    postrotate ["service logstash_#{name} restart > /dev/null"]
     create "664 #{ls[:user]} #{ls[:group]}"
   end
 end
