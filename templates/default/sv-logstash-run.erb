@@ -11,7 +11,7 @@ export LOGSTASH_HOME="<%= @options[:home] %>"
 # Must set HEAP_DUMP_PATH if vendored jruby is to work
 export HEAP_DUMP_PATH="-XX:HeapDumpPath=<%= @options[:home] %>/heapdump.hprof"
 export GC_OPTS="<%= @options[:gc_opts] %>"
-export JAVA_OPTS="-server -Xms<%= @options[:min_heap] %> -Xmx<%= @options[:max_heap] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= @options[:java_opts] %> <%= '-Djava.net.preferIPv4Stack=true' if @options[:ipv4_only] %>"
+export LS_JAVA_OPTS="-server -Xms<%= @options[:min_heap] %> -Xmx<%= @options[:max_heap] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= @options[:java_opts] %> <%= '-Djava.net.preferIPv4Stack=true' if @options[:ipv4_only] %>"
 LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/conf.d"
 <% if @options[:pluginpath] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath $LOGSTASH_HOME/lib"
