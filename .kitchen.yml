@@ -37,6 +37,8 @@ suites:
           server:
             xms: '256M'
             xmx: '256M'
+            logrotate_use_filesize: true
+            logrotate_max_size: '25MB'
             config_templates:
               input_syslog: 'config/input_syslog.conf.erb'
               output_stdout: 'config/output_stdout.conf.erb'
