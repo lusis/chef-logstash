@@ -85,6 +85,7 @@ default['logstash']['instance_default']['logrotate_options'] = %w(missingok noti
 default['logstash']['instance_default']['logrotate_files'] = '*.log'
 default['logstash']['instance_default']['logrotate_frequency'] = 'daily'
 default['logstash']['instance_default']['logrotate_max_backup'] = 10
+default['logstash']['instance_default']['logrotate_size'] = '10M'
 default['logstash']['instance_default']['logrotate_max_size'] = '10M'
 default['logstash']['instance_default']['logrotate_use_filesize'] = false
 

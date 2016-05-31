@@ -29,6 +29,8 @@ def load_current_resource
   @instance_dir = "#{@base_directory}/#{@version}/#{new_resource.name}".clone
   @unversioned_instance_dir = "#{@base_directory}/#{new_resource.name}".clone
   @logrotate_size = new_resource.logrotate_size || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_size')
+  @logrotate_size = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'logrotate_size')
+  @logrotate_max_size = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_size')
   @logrotate_use_filesize = new_resource.logrotate_use_filesize || Logstash.get_attribute_or_default(node, @name, 'logrotate_use_filesize')
   @logrotate_frequency = new_resource.logrotate_frequency || Logstash.get_attribute_or_default(node, @name, 'logrotate_frequency')
   @logrotate_max_backup = new_resource.logrotate_max_backup || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_backup')
@@ -248,6 +250,7 @@ def logrotate(ls)
   logrotate_app "logstash_#{name}" do
     path ls[:logrotate_files]
     size ls[:logrotate_size] if ls[:logrotate_use_filesize]
+    maxsize ls[:logrotate_max_size] if ls[:logrotate_use_filesize]
     frequency ls[:logrotate_frequency]
     rotate ls[:logrotate_max_backup]
     options ls[:logrotate_options]
@@ -275,6 +278,7 @@ def ls_vars
     enable_logrotate: @enable_logrotate,
     logrotate_files: @logrotate_files,
     logrotate_size: @logrotate_size,
+    logrotate_max_size: @logrotate_max_size,
     logrotate_use_filesize: @logrotate_use_filesize,
     logrotate_frequency: @logrotate_frequency,
     logrotate_max_backup: @logrotate_max_backup,
