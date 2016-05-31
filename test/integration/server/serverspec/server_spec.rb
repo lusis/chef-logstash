@@ -1,5 +1,5 @@
 # Encoding: utf-8
-require 'spec_helper'
+require_relative 'spec_helper'
 
 # Java 1.7
 describe command('java -version') do
@@ -27,6 +27,11 @@ end
 
 describe file('/opt/logstash/server/etc/conf.d/output_stdout.conf') do
   it { should be_file }
+end
+
+describe file('/etc/logrotate.d/logstash_server') do
+  it { should be_file }
+  its(:content) { should match(/maxsize 25MB/) } 
 end
 
 describe port(9200) do
