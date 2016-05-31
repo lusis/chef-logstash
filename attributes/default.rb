@@ -22,16 +22,16 @@ default['logstash']['instance_default']['create_account'] = true
 default['logstash']['instance_default']['join_groups'] = []
 default['logstash']['instance_default']['homedir'] = '/var/lib/logstash'
 
-default['logstash']['instance_default']['version']        = '1.4.2'
-default['logstash']['instance_default']['source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.4.2.tar.gz'
-default['logstash']['instance_default']['checksum']       = 'd5be171af8d4ca966a0c731fc34f5deeee9d7631319e3660d1df99e43c5f8069'
+default['logstash']['instance_default']['version']        = '1.5.4'
+default['logstash']['instance_default']['source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-1.5.4.tar.gz'
+default['logstash']['instance_default']['checksum']       = 'f03075ee534ce6e7667679447f56543ce05cebbdb7b65a9396a5e538bf3e9fa8'
 default['logstash']['instance_default']['install_type']   = 'tarball'
 
-default['logstash']['instance_default']['plugins_version']        = '1.4.2'
-default['logstash']['instance_default']['plugins_source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-contrib-1.4.2.tar.gz'
-default['logstash']['instance_default']['plugins_checksum']       = '7497ca3614ba9122159692cc6e60ffc968219047e88de97ecc47c2bf117ba4e5'
-default['logstash']['instance_default']['plugins_install_type']   = 'tarball' # native|tarball
-default['logstash']['instance_default']['plugins_check_if_installed']  = 'lib/logstash/filters/translate.rb'
+default['logstash']['instance_default']['plugins_version']        = '1.4.5'
+default['logstash']['instance_default']['plugins_source_url']     = 'https://download.elasticsearch.org/logstash/logstash/logstash-contrib-1.4.5.tar.gz'
+default['logstash']['instance_default']['plugins_checksum']       = 'e4fa08cac70f97e30d4d043fcab817b72c301631713376c5c21824d5d89cae3e'
+default['logstash']['instance_default']['plugins_install_type']   = 'native' # native|tarball ( only native after 1.5 )
+default['logstash']['instance_default']['plugins_check_if_installed'] = 'lib/logstash/filters/translate.rb'
 
 default['logstash']['instance_default']['log_file']   = 'logstash.log'
 default['logstash']['instance_default']['java_home']  = '/usr/lib/jvm/java-6-openjdk' # openjdk6 on ubuntu
@@ -47,8 +47,8 @@ default['logstash']['instance_default']['pattern_templates_cookbook']  = 'logsta
 default['logstash']['instance_default']['pattern_templates']           = {}
 default['logstash']['instance_default']['pattern_templates_variables'] = {}
 
-default['logstash']['instance_default']['base_config_cookbook']       = 'logstash'
-default['logstash']['instance_default']['base_config']    = '' # set if want data driven
+default['logstash']['instance_default']['base_config_cookbook'] = 'logstash'
+default['logstash']['instance_default']['base_config'] = '' # set if want data driven
 
 default['logstash']['instance_default']['config_file']                = ''
 default['logstash']['instance_default']['config_templates']           = {}
@@ -56,7 +56,7 @@ default['logstash']['instance_default']['config_templates_cookbook']  = 'logstas
 default['logstash']['instance_default']['config_templates_variables'] = {}
 
 default['logstash']['instance_default']['init_method'] = 'runit'
-default['logstash']['instance_default']['service_templates_cookbook']  = 'logstash'
+default['logstash']['instance_default']['service_templates_cookbook'] = 'logstash'
 
 # default locations for runit templates
 default['logstash']['instance_default']['runit_run_template_name'] = 'logstash'
@@ -92,6 +92,9 @@ default['logstash']['instance_default']['curator_days_to_keep'] = 31
 default['logstash']['instance_default']['curator_cron_minute'] = '0'
 default['logstash']['instance_default']['curator_cron_hour'] = '*'
 default['logstash']['instance_default']['curator_cron_log_file'] = '/dev/null'
+default['logstash']['instance_default']['curator_index_prefix'] = 'logstash-'
+default['logstash']['instance_default']['curator_time_unit'] = 'days'
+default['logstash']['instance_default']['curator_timestring'] = '\%Y.\%m.\%d'
 
 # Make sure instance key exists
 default['logstash']['instance']

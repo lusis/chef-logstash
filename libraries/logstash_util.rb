@@ -1,5 +1,4 @@
 # Encoding: utf-8
-# rubocop:disable RedundantReturn
 
 module Logstash
   def self.service_ip(node, instance = 'default', service = 'elasticsearch', interface = nil)
@@ -21,8 +20,8 @@ module Logstash
     if interface.nil?
       service_ip = node['ipaddress']
     else
-      service_ip = node['network']['interfaces'][interface]['addresses'].to_hash.find do
-        |_, addr_info| addr_info['family'] == 'inet'
+      service_ip = node['network']['interfaces'][interface]['addresses'].to_hash.find do |_, addr_info|
+        addr_info['family'] == 'inet'
       end.first
     end
   end

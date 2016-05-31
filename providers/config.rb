@@ -59,7 +59,7 @@ def conf_vars
     group:      @group,
     mode:       @mode,
     service_name: @service_name,
-    templates_cookbook:   @templates_cookbook
+    templates_cookbook: @templates_cookbook
   }
   conf
 end

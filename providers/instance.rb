@@ -23,6 +23,7 @@ def load_current_resource
   @create_account = new_resource.create_account || Logstash.get_attribute_or_default(node, @name, 'create_account')
   @user = new_resource.user || Logstash.get_attribute_or_default(node, @name, 'user')
   @group = new_resource.group || Logstash.get_attribute_or_default(node, @name, 'group')
+  @join_groups = new_resource.join_groups || Logstash.get_attribute_or_default(node, @name, 'join_groups')
   @useropts = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'user_opts')
   @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
   @logrotate_size = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_size')
@@ -46,7 +47,7 @@ end
 action :create do
   ls = ls_vars
 
-  if  ls[:create_account]
+  if ls[:create_account]
     ur = user ls[:user] do
       home ls[:homedir]
       system true
@@ -61,6 +62,15 @@ action :create do
       members ls[:user]
       append true
       system true
+    end
+    new_resource.updated_by_last_action(gr.updated_by_last_action?)
+  end
+
+  ls[:join_groups].each do |grp|
+    gr = group grp do
+      action :modify
+      members ls[:user]
+      append true
     end
     new_resource.updated_by_last_action(gr.updated_by_last_action?)
   end
@@ -196,7 +206,6 @@ action :create do
     Chef::Application.fatal!("Unknown install type: #{@install_type}")
   end
   logrotate(ls) if ls[:logrotate_enable]
-
 end
 
 private
@@ -212,15 +221,16 @@ def logrotate(ls)
     frequency ls[:logrotate_frequency]
     rotate ls[:logrotate_max_backup]
     options ls[:logrotate_options]
+    postrotate ["service logstash_#{name} restart"]
     create "664 #{ls[:user]} #{ls[:group]}"
   end
 end
 
 def ls_vars
   ls = {
-    homedir: @useropts[:homedir],
-    uid: @useropts[:uid],
-    gid: @useropts[:gid],
+    homedir: @useropts['homedir'],
+    uid: @useropts['uid'],
+    gid: @useropts['gid'],
     source_url: @source_url,
     version: @version,
     checksum: @checksum,
@@ -228,6 +238,7 @@ def ls_vars
     create_account: @create_account,
     user: @user,
     group: @group,
+    join_groups: @join_groups,
     name: @name,
     instance_dir: @instance_dir,
     enable_logrotate: @enable_logrotate,

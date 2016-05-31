@@ -41,6 +41,5 @@ describe 'logstash::server' do
     it 'calls the logstash_curator LWRP' do
       expect(chef_run).to create_logstash_curator('server')
     end
-
   end
 end

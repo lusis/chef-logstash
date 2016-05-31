@@ -13,10 +13,11 @@ provisioner:
 
 platforms:
   - name: ubuntu-12.04
+  - name: ubuntu-14.04
   - name: centos-5.10
-  - name: centos-6.5
-  - name: centos-7.0
-  - name: fedora-20
+  - name: centos-6.6
+  - name: centos-7.1
+  - name: fedora-21
   - name: debian-7.6
 
 suites:

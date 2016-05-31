@@ -50,3 +50,14 @@ Style/RedundantBegin:
 # Cop supports --auto-correct.
 Style/NumericLiterals:
   MinDigits: 6
+
+# Offense count: 9
+Metrics/AbcSize:
+  Max: 78
+
+# Offense count: 8
+Metrics/PerceivedComplexity:
+  Max: 25
+
+Metrics/AbcSize:
+  Max: 90

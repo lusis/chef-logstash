@@ -33,6 +33,5 @@ describe 'logstash::agent' do
     it 'calls the logstash_instance LWRP' do
       expect(chef_run).to enable_logstash_service('agent')
     end
-
   end
 end

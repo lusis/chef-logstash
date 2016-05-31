@@ -22,7 +22,7 @@ require_relative 'support/matchers'
 
 shared_context 'stubs-common' do
   before do
-    Chef::Application.stub(:fatal!).and_return('fatal')
+    allow_any_instance_of(Chef::Application).to receive(:fatal!).and_return('fatal')
     stub_command("update-alternatives --display java | grep '/usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java - priority 1061'").and_return(true)
     stub_command("/usr/bin/python -c 'import setuptools'").and_return(true)
     stub_command('test -f /opt/logstash/source/build/logstash-v1.3.2-monolithic.jar').and_return(true)

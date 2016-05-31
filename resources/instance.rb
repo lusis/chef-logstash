@@ -24,6 +24,7 @@ attribute :java_home, kind_of: String
 attribute :user, kind_of: String
 attribute :group, kind_of: String
 attribute :create_account, kind_of: [TrueClass, FalseClass]
+attribute :join_groups, kind_of: [String]
 attribute :logrotate_enable, kind_of: [TrueClass, FalseClass]
 attribute :user_opts, kind_of: [Hash]
 attribute :logrotate_size, kind_of: [String]

@@ -12,7 +12,7 @@ include Chef::Mixin::ShellOut
 
 def load_current_resource
   @instance = new_resource.instance
-  @basedir = Logstash.get_attribute_or_default(node, @instance, 'basedir')
+  @basedir = new_resource.base_directory || Logstash.get_attribute_or_default(node, @instance, 'basedir')
   @templates_cookbook = new_resource.templates_cookbook || Logstash.get_attribute_or_default(node, @instance, 'service_templates_cookbook')
   @service_name = new_resource.service_name || "logstash_#{@instance}"
   @home = "#{@basedir}/#{@instance}"
@@ -28,8 +28,8 @@ def load_current_resource
   @java_opts = Logstash.get_attribute_or_default(node, @instance, 'java_opts')
   @description = new_resource.description || @service_name
   @chdir = @home
-  @workers =  Logstash.get_attribute_or_default(node, @instance, 'workers')
-  @debug =  Logstash.get_attribute_or_default(node, @instance, 'debug')
+  @workers = Logstash.get_attribute_or_default(node, @instance, 'workers')
+  @debug = Logstash.get_attribute_or_default(node, @instance, 'debug')
   @install_type = Logstash.get_attribute_or_default(node, @instance, 'install_type')
   @supervisor_gid = Logstash.get_attribute_or_default(node, @instance, 'supervisor_gid')
   @runit_run_template_name = Logstash.get_attribute_or_default(node, @instance, 'runit_run_template_name')
@@ -62,23 +62,23 @@ action :enable do
     @run_context.include_recipe 'runit::default'
     ri = runit_service svc[:service_name] do
       options(
-                name: svc[:name],
-                home: svc[:home],
-                max_heap: svc[:max_heap],
-                min_heap: svc[:min_heap],
-                gc_opts: svc[:gc_opts],
-                java_opts: svc[:java_opts],
-                ipv4_only: svc[:ipv4_only],
-                debug: svc[:debug],
-                log_file: svc[:log_file],
-                workers: svc[:workers],
-                install_type: svc[:install_type],
-                supervisor_gid: svc[:supervisor_gid],
-                user: svc[:user],
-                web_address: svc[:web_address],
-                web_port: svc[:web_port]
+        name: svc[:name],
+        home: svc[:home],
+        max_heap: svc[:max_heap],
+        min_heap: svc[:min_heap],
+        gc_opts: svc[:gc_opts],
+        java_opts: svc[:java_opts],
+        ipv4_only: svc[:ipv4_only],
+        debug: svc[:debug],
+        log_file: svc[:log_file],
+        workers: svc[:workers],
+        install_type: svc[:install_type],
+        supervisor_gid: svc[:supervisor_gid],
+        user: svc[:user],
+        web_address: svc[:web_address],
+        web_port: svc[:web_port]
       )
-      cookbook  svc[:templates_cookbook]
+      cookbook svc[:templates_cookbook]
       run_template_name svc[:runit_run_template_name]
       log_template_name svc[:runit_log_template_name]
     end
@@ -97,27 +97,27 @@ action :enable do
         source    "init/upstart/#{svc[:install_type]}.erb"
         cookbook  svc[:templates_cookbook]
         variables(
-                    user_supported: ::Logstash.upstart_supports_user?(node),
-                    home: svc[:home],
-                    name: svc[:name],
-                    command: svc[:command],
-                    args: args,
-                    user: svc[:user],
-                    group: svc[:group],
-                    description: svc[:description],
-                    max_heap: svc[:max_heap],
-                    min_heap: svc[:min_heap],
-                    gc_opts: svc[:gc_opts],
-                    java_opts: svc[:java_opts],
-                    ipv4_only: svc[:ipv4_only],
-                    debug: svc[:debug],
-                    log_file: svc[:log_file],
-                    workers: svc[:workers],
-                    supervisor_gid: svc[:supervisor_gid],
-                    upstart_with_sudo: svc[:upstart_with_sudo],
-                    nofile_soft: svc[:nofile_soft],
-                    nofile_hard: svc[:nofile_hard]
-                  )
+          user_supported: ::Logstash.upstart_supports_user?(node),
+          home: svc[:home],
+          name: svc[:name],
+          command: svc[:command],
+          args: args,
+          user: svc[:user],
+          group: svc[:group],
+          description: svc[:description],
+          max_heap: svc[:max_heap],
+          min_heap: svc[:min_heap],
+          gc_opts: svc[:gc_opts],
+          java_opts: svc[:java_opts],
+          ipv4_only: svc[:ipv4_only],
+          debug: svc[:debug],
+          log_file: svc[:log_file],
+          workers: svc[:workers],
+          supervisor_gid: svc[:supervisor_gid],
+          upstart_with_sudo: svc[:upstart_with_sudo],
+          nofile_soft: svc[:nofile_soft],
+          nofile_hard: svc[:nofile_hard]
+        )
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
@@ -134,18 +134,14 @@ action :enable do
         action :nothing
       end
       new_resource.updated_by_last_action(ex.updated_by_last_action?)
+      vars = svc_vars.merge(args: args)
       tp = template "/etc/systemd/system/#{svc[:service_name]}.service" do
         tp = source "init/systemd/#{svc[:install_type]}.erb"
-        cookbook  svc[:templates_cookbook]
+        cookbook svc[:templates_cookbook]
         owner 'root'
         group 'root'
         mode '0755'
-        variables(
-                   home: svc[:home],
-                   user: svc[:user],
-                   supervisor_gid: svc[:supervisor_gid],
-                   args: args
-                  )
+        variables vars
         notifies :run, 'execute[reload-systemd]', :immediately
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
@@ -159,29 +155,29 @@ action :enable do
     elsif native_init == 'sysvinit'
       tp = template "/etc/init.d/#{svc[:service_name]}" do
         source "init/sysvinit/#{svc[:install_type]}.erb"
-        cookbook  svc[:templates_cookbook]
+        cookbook svc[:templates_cookbook]
         owner 'root'
         group 'root'
         mode '0774'
         variables(
-                  home: svc[:home],
-                  name: svc[:name],
-                  command: svc[:command],
-                  args: args,
-                  user: svc[:user],
-                  group: svc[:group],
-                  description: svc[:description],
-                  max_heap: svc[:max_heap],
-                  min_heap: svc[:min_heap],
-                  gc_opts: svc[:gc_opts],
-                  java_opts: svc[:java_opts],
-                  ipv4_only: svc[:ipv4_only],
-                  debug: svc[:debug],
-                  log_file: svc[:log_file],
-                  workers: svc[:workers],
-                  supervisor_gid: svc[:supervisor_gid],
-                  config_file: "#{svc[:home]}/etc/conf.d"
-                  )
+          home: svc[:home],
+          name: svc[:name],
+          command: svc[:command],
+          args: args,
+          user: svc[:user],
+          group: svc[:group],
+          description: svc[:description],
+          max_heap: svc[:max_heap],
+          min_heap: svc[:min_heap],
+          gc_opts: svc[:gc_opts],
+          java_opts: svc[:java_opts],
+          ipv4_only: svc[:ipv4_only],
+          debug: svc[:debug],
+          log_file: svc[:log_file],
+          workers: svc[:workers],
+          supervisor_gid: svc[:supervisor_gid],
+          config_file: "#{svc[:home]}/etc/conf.d"
+        )
         notifies :restart, "service[#{svc[:service_name]}]", :delayed
       end
       new_resource.updated_by_last_action(tp.updated_by_last_action?)
@@ -193,7 +189,7 @@ action :enable do
     end
 
   else
-    Chef::Log.fatal("Unsupported init method: #{@svc[:method]}")
+    Chef::Log.fatal("Unsupported init method: #{svc[:method]}")
   end
 end
 
@@ -201,7 +197,7 @@ private
 
 def default_args
   svc = svc_vars
-  args      = ['agent', '-f', "#{svc[:home]}/etc/conf.d/"]
+  args = ['agent', '-f', "#{svc[:home]}/etc/conf.d/"]
   args.concat ['-vv'] if svc[:debug]
   args.concat ['-l', "#{svc[:home]}/log/#{svc[:log_file]}"] if svc[:log_file]
   args.concat ['-w', svc[:workers].to_s] if svc[:workers]
