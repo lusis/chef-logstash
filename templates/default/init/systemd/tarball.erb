@@ -11,7 +11,7 @@ Environment="LOGSTASH_HOME=<%= @home %>"
 Environment="HOME=<%= @home %>"
 Environment="LS_HEAP_SIZE=<%= @max_heap %>"
 Environment="GC_OPTS=<%= @gc_opts %>"
-Environment='JAVA_OPTS=-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=<%= @home %>/tmp/ <%= @java_opts %> <%= "-Djava.net.preferIPv4Stack=true" if @ipv4_only %>'
+Environment='LS_JAVA_OPTS=-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=<%= @home %>/tmp/ <%= @java_opts %> <%= "-Djava.net.preferIPv4Stack=true" if @ipv4_only %>'
 ExecStart=<%= @home %>/bin/logstash <%= @args.join(' ') %>
 Restart=on-failure
 RestartSec=30
