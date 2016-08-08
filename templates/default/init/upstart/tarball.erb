@@ -1,4 +1,4 @@
-description "Logstash"
+description <%= @description.inspect %>
 author "Chef"
 
 start on (filesystem and net-device-up)
