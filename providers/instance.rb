@@ -52,7 +52,7 @@ action :create do
       home ls[:homedir]
       system true
       action :create
-      manage_home true
+      manage_home ls[:manage_home]
       uid ls[:uid]
     end
     new_resource.updated_by_last_action(ur.updated_by_last_action?)
@@ -229,6 +229,7 @@ end
 def ls_vars
   ls = {
     homedir: @useropts['homedir'],
+    manage_home: @useropts['manage_home'],
     uid: @useropts['uid'],
     gid: @useropts['gid'],
     source_url: @source_url,
