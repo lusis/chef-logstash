@@ -9,7 +9,7 @@ exec 2>&1
 export LS_HEAP_SIZE=<%= @options[:max_heap] %>
 export LOGSTASH_HOME="<%= @options[:home] %>"
 export GC_OPTS="<%= @options[:gc_opts] %>"
-export JAVA_OPTS="-server -Xms<%= @options[:min_heap] %> -Xmx<%= @options[:max_heap] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= @options[:java_opts] %> <%= '-Djava.net.preferIPv4Stack=true' if @options[:ipv4_only] %>"
+export LS_JAVA_OPTS="-server -Xms<%= @options[:min_heap] %> -Xmx<%= @options[:max_heap] %> -Djava.io.tmpdir=$LOGSTASH_HOME/tmp/ <%= @options[:java_opts] %> <%= '-Djava.net.preferIPv4Stack=true' if @options[:ipv4_only] %>"
 LOGSTASH_OPTS="agent -f $LOGSTASH_HOME/etc/conf.d"
 LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath $LOGSTASH_HOME/lib"
 <% if @options[:debug] -%>
