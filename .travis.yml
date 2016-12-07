@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-  - 2.0.0
+  - 2.2.2
 env:
   - USE_SYSTEM_GECODE=1
 addons:
