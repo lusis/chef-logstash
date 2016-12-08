@@ -76,7 +76,13 @@ class Erubis::RubyEvaluator::LogstashConf
       if segment.key?('condition') || segment.key?('block')
         indent += 4
         result << indent(indent) + segment['condition'] + ' {' if segment['condition']
-        result << plugin_to_arr(segment['block'], patterns_dir_plugins, patterns_dir, indent)
+        if segment['block'].kind_of?(Array)
+          segment['block'].each do |plugin|
+            result << plugin_to_arr(plugin, patterns_dir_plugins, patterns_dir, indent)
+          end
+        else
+          result << plugin_to_arr(segment['block'], patterns_dir_plugins, patterns_dir, indent)
+        end
         result << indent(indent) + '}' if segment['condition']
         indent -= 4
       else
