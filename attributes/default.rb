@@ -32,6 +32,7 @@ default['logstash']['instance_default']['plugins_source_url']     = 'https://dow
 default['logstash']['instance_default']['plugins_checksum']       = 'e4fa08cac70f97e30d4d043fcab817b72c301631713376c5c21824d5d89cae3e'
 default['logstash']['instance_default']['plugins_install_type']   = 'native' # native|tarball ( only native after 1.5 )
 default['logstash']['instance_default']['plugins_check_if_installed'] = 'lib/logstash/filters/translate.rb'
+default['logstash']['instance_default']['plugins_install_command'] = 'plugin' # should be 'logstash-plugin' after 2.2
 
 default['logstash']['instance_default']['log_file']   = 'logstash.log'
 default['logstash']['instance_default']['java_home']  = '/usr/lib/jvm/java-6-openjdk' # openjdk6 on ubuntu

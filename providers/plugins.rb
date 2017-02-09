@@ -23,6 +23,7 @@ def load_current_resource
   @instance_dir = "#{@base_directory}/#{@instance}"
   @install_type = new_resource.install_type || Logstash.get_attribute_or_default(node, @instance, 'plugins_install_type')
   @install_check = new_resource.install_check || Logstash.get_attribute_or_default(node, @instance, 'plugins_check_if_installed')
+  @install_command = new_resource.install_command || Logstash.get_attribute_or_default(node, @instance, 'plugins_install_command')
 end
 
 action :create do
@@ -36,11 +37,13 @@ action :create do
   ls_instance = @instance
   ls_instance_dir = @instance_dir
   ls_install_check = @install_check
+  ls_install_command = @install_command
 
   case @install_type
   when 'native'
-    ex = execute "bin/plugin install #{ls_name}" do
-      command "bin/plugin install #{ls_name}"
+    install_command = "bin/#{ls_install_command} install #{ls_name}"
+    ex = execute install_command do
+      command install_command
       user    ls_user
       group   ls_group
       cwd     ls_instance_dir

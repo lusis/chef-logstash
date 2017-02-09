@@ -1,4 +1,4 @@
-description "Logstash"
+description <%= @description.inspect %>
 author "Chef"
 
 start on (filesystem and net-device-up)
@@ -31,4 +31,4 @@ script
   <% end -%>
 end script
 
-emits logstash-server-running
+emits logstash-<%= @name %>-running

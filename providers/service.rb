@@ -104,7 +104,7 @@ action :enable do
           args: args,
           user: svc[:user],
           group: svc[:group],
-          description: svc[:description],
+          description: svc[:description] || svc[:name],
           max_heap: svc[:max_heap],
           min_heap: svc[:min_heap],
           gc_opts: svc[:gc_opts],
