@@ -19,3 +19,4 @@ attribute :group, kind_of: String
 attribute :base_directory, kind_of: String
 attribute :install_type, kind_of: String
 attribute :install_check, kind_of: String
+attribute :install_command, kind_of: String
