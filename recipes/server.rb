@@ -37,7 +37,6 @@ if my_templates.empty?
 end
 
 logstash_config name do
-  templates my_templates
   action [:create]
   variables(
     elasticsearch_embedded: true
