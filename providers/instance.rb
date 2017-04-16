@@ -232,7 +232,6 @@ def ls_vars
     group: @group,
     name: @name,
     instance_dir: @instance_dir,
-    enable_logrotate: @enable_logrotate,
     logrotate_size: @logrotate_size,
     logrotate_use_filesize: @logrotate_use_filesize,
     logrotate_frequency: @logrotate_frequency,
