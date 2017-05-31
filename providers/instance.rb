@@ -26,6 +26,7 @@ def load_current_resource
   @join_groups = new_resource.join_groups || Logstash.get_attribute_or_default(node, @name, 'join_groups')
   @useropts = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'user_opts')
   @instance_dir = "#{@base_directory}/#{new_resource.name}".clone
+  @log_dir = new_resource.log_dir || Logstash.get_attribute_or_default(node, @name, 'log_dir') || "#{@instance_dir}/log".clone
   @logrotate_size = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_size')
   @logrotate_use_filesize = new_resource.logrotate_use_filesize || Logstash.get_attribute_or_default(node, @name, 'logrotate_use_filesize')
   @logrotate_frequency = new_resource.logrotate_frequency || Logstash.get_attribute_or_default(node, @name, 'logrotate_frequency')
@@ -100,6 +101,17 @@ action :create do
       new_resource.updated_by_last_action(r.updated_by_last_action?)
     end
 
+    unless ls[:log_dir] == "#{ls[:instance_dir]}/log"
+      r = directory ls[:log_dir] do
+        action :create
+        mode '0755'
+        mode '0755'
+        owner ls[:user]
+        group ls[:group]
+      end
+      new_resource.updated_by_last_action(r.updated_by_last_action?)
+    end
+     
   when 'jar'
     bdr = directory @base_directory do
       action :create
@@ -126,6 +138,15 @@ action :create do
       end
       new_resource.updated_by_last_action(r.updated_by_last_action?)
     end
+
+    r = directory "#{ls[:log_dir]}" do
+      action :create
+      mode '0755'
+      mode '0755'
+      owner ls[:user]
+      group ls[:group]
+    end
+    new_resource.updated_by_last_action(r.updated_by_last_action?)
 
     rfr = remote_file "#{ls[:instance_dir]}/lib/logstash-#{ls[:version]}.jar" do
       owner ls[:user]
@@ -168,6 +189,15 @@ action :create do
       end
       new_resource.updated_by_last_action(r.updated_by_last_action?)
     end
+
+    r = directory "#{ls[:log_dir]}" do
+      action :create
+      mode '0755'
+      mode '0755'
+      owner ls[:user]
+      group ls[:group]
+    end
+    new_resource.updated_by_last_action(r.updated_by_last_action?)
 
     sd = directory "#{ls[:instance_dir]}/source" do
       action :create
@@ -216,7 +246,7 @@ def logrotate(ls)
   @run_context.include_recipe 'logrotate::default'
 
   logrotate_app "logstash_#{name}" do
-    path "#{ls[:instance_dir]}/log/*.log"
+    path "#{ls[:log_dir]}/*.log"
     size ls[:logrotate_size] if ls[:logrotate_use_filesize]
     frequency ls[:logrotate_frequency]
     rotate ls[:logrotate_max_backup]
@@ -241,6 +271,7 @@ def ls_vars
     join_groups: @join_groups,
     name: @name,
     instance_dir: @instance_dir,
+    log_dir: @log_dir,
     enable_logrotate: @enable_logrotate,
     logrotate_size: @logrotate_size,
     logrotate_use_filesize: @logrotate_use_filesize,

@@ -20,6 +20,7 @@ def load_current_resource
   @command = new_resource.command || "#{@home}/bin/logstash"
   @user = new_resource.user || Logstash.get_attribute_or_default(node, @instance, 'user')
   @group = new_resource.group || Logstash.get_attribute_or_default(node, @instance, 'group')
+  @log_dir = Logstash.get_attribute_or_default(node, @instance, 'log_dir') || "#{@home}/log"
   @log_file = Logstash.get_attribute_or_default(node, @instance, 'log_file')
   @max_heap = Logstash.get_attribute_or_default(node, @instance, 'xmx')
   @min_heap = Logstash.get_attribute_or_default(node, @instance, 'xms')
@@ -70,6 +71,7 @@ action :enable do
         java_opts: svc[:java_opts],
         ipv4_only: svc[:ipv4_only],
         debug: svc[:debug],
+        log_dir: svc[:log_dir],
         log_file: svc[:log_file],
         workers: svc[:workers],
         install_type: svc[:install_type],
@@ -111,6 +113,7 @@ action :enable do
           java_opts: svc[:java_opts],
           ipv4_only: svc[:ipv4_only],
           debug: svc[:debug],
+          log_dir: svc[:log_dir],
           log_file: svc[:log_file],
           workers: svc[:workers],
           supervisor_gid: svc[:supervisor_gid],
@@ -173,6 +176,7 @@ action :enable do
           java_opts: svc[:java_opts],
           ipv4_only: svc[:ipv4_only],
           debug: svc[:debug],
+          log_dir: svc[:log_dir],
           log_file: svc[:log_file],
           workers: svc[:workers],
           supervisor_gid: svc[:supervisor_gid],
@@ -199,7 +203,7 @@ def default_args
   svc = svc_vars
   args = ['agent', '-f', "#{svc[:home]}/etc/conf.d/"]
   args.concat ['-vv'] if svc[:debug]
-  args.concat ['-l', "#{svc[:home]}/log/#{svc[:log_file]}"] if svc[:log_file]
+  args.concat ['-l', "#{svc[:log_dir]}/#{svc[:log_file]}"] if svc[:log_file]
   args.concat ['-w', svc[:workers].to_s] if svc[:workers]
   args
 end
@@ -236,6 +240,7 @@ def svc_vars
     chdir: @chdir,
     user: @user,
     group: @group,
+    log_dir: @log_dir,
     log_file: @log_file,
     max_heap: @max_heap,
     min_heap: @min_heap,

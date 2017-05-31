@@ -33,6 +33,7 @@ default['logstash']['instance_default']['plugins_checksum']       = 'e4fa08cac70
 default['logstash']['instance_default']['plugins_install_type']   = 'native' # native|tarball ( only native after 1.5 )
 default['logstash']['instance_default']['plugins_check_if_installed'] = 'lib/logstash/filters/translate.rb'
 
+default['logstash']['instance_default']['log_dir']    = nil # defaults to @instance_dir/log
 default['logstash']['instance_default']['log_file']   = 'logstash.log'
 default['logstash']['instance_default']['java_home']  = '/usr/lib/jvm/java-6-openjdk' # openjdk6 on ubuntu
 default['logstash']['instance_default']['xms']        = "#{(node['memory']['total'].to_i * 0.2).floor / 1024}M"

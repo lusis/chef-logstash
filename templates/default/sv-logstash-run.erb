@@ -15,7 +15,7 @@ LOGSTASH_OPTS="$LOGSTASH_OPTS --pluginpath $LOGSTASH_HOME/lib"
 <% if @options[:debug] -%>
 LOGSTASH_OPTS="$LOGSTASH_OPTS -vv"
 <% end -%>
-LOGSTASH_OPTS="$LOGSTASH_OPTS -l $LOGSTASH_HOME/log/<%= @options[:log_file] %>"
+LOGSTASH_OPTS="$LOGSTASH_OPTS -l <%= @options[:log_dir] %>/<%= @options[:log_file] %>"
 export LOGSTASH_OPTS="$LOGSTASH_OPTS -w <%= @options[:workers] %>"
 <% if @options[:supervisor_gid] -%>
 HOME=$LOGSTASH_HOME exec chpst -u <%= @options[:user] %>:<%= @options[:supervisor_gid] %> $LOGSTASH_HOME/bin/logstash $LOGSTASH_OPTS
