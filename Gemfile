@@ -1,6 +1,5 @@
 source 'https://rubygems.org'
 
-
 group :lint do
   gem 'cookstyle', '~> 1.3'
   gem 'foodcritic', '~> 10.3'

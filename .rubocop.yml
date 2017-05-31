@@ -3,21 +3,37 @@ AllCops:
     - 'vendor/**/*'
     - 'test/support/**'
     - 'bin/**/*'
+    - 'test/**'
   Include:
     - '**/Rakefile'
     - '**/Gemfile'
     - '**/Vagrantfile'
     - '**/Berksfile'
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 CyclomaticComplexity:
+  Enabled: false
+
+Lint/IneffectiveAccessModifier:
+  Enabled: false
+
+Lint/UnifiedInteger:
+  Enabled: false
+
+Lint/UselessAccessModifier:
   Enabled: false
 
 LineLength:
   Enabled: true
-  Max: 200
+  Max: 210
 
 MethodLength:
   Enabled: true
-  Max: 20
+
+Metrics/BlockLength:
+  Enabled: false
 
 AccessorMethodName:
   Enabled: false
@@ -36,9 +52,6 @@ Documentation:
 
 MethodLength:
   Max: 50
-
-SingleSpaceBeforeFirstArg:
-  Enabled: false
 
 Style/WordArray:
   MinSize: 5
@@ -61,3 +74,27 @@ Metrics/PerceivedComplexity:
 
 Metrics/AbcSize:
   Max: 90
+
+Style/NestedModifier:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
+
+Style/IdenticalConditionalBranches:
+  Enabled: false
+
+Style/IfUnlessModifierOfIfUnless:
+  Enabled: false
+
+Style/MutableConstant:
+  Enabled: false
+
+Style/NumericLiteralPrefix:
+  Enabled: false
+
+Style/RedundantParentheses:
+  Enabled: false
+
+Style/SpaceAroundOperators:
+  Enabled: false

@@ -40,5 +40,4 @@ end
 # Logstash Curator
 describe cron do
   it { should have_entry('0 * * * * /usr/local/bin/curator --host 127.0.0.1 delete indices --older-than 31 --time-unit days --timestring \'\%Y.\%m.\%d\' --prefix logstash- &> /dev/null').with_user('logstash') }
-#                        0 * * * * /usr/local/bin/curator --host  delete indices --older-than 31 --time-unit days --timestring '\%Y.\%m.\%d' --prefix logstash- &> /dev/null
 end

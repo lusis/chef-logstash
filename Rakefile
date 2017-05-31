@@ -12,6 +12,7 @@ namespace :style do
     t.options = {
       tags: %w(
         ~FC024
+        ~FC059
       )
     }
   end
