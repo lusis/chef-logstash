@@ -35,7 +35,7 @@ describe 'logstash::server' do
     end
 
     it 'calls the logstash_plugins LWRP' do
-      expect(chef_run).to create_logstash_plugins('contrib')
+      expect(chef_run).to create_logstash_plugins('logstash-output-influxdb')
     end
 
     it 'calls the logstash_curator LWRP' do
