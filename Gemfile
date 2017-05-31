@@ -1,33 +1,27 @@
-# Encoding: utf-8
-
 source 'https://rubygems.org'
 
-gem 'berkshelf'
 
-if ENV['CI']
-  gem 'serverspec', '>= 2.0'
-  gem 'vagrant-wrapper'
-  gem 'chef', '>= 11.8'
-  gem 'rake', '>= 10.2'
-  gem 'rubocop', '>= 0.23'
-  gem 'foodcritic', '>= 4.0'
-  gem 'chefspec', '>= 4.0'
-  gem 'test-kitchen'
-  gem 'kitchen-vagrant'
-  gem 'nokogiri', '>= 1.6.4.1'
-else
-  gem 'chef'
-  gem 'rake'
-  gem 'rubocop'
-  gem 'foodcritic'
-  gem 'chefspec'
-  gem 'test-kitchen'
-  gem 'kitchen-vagrant'
-  gem 'nokogiri'
-  unless ENV['RAKE']
-    gem 'stove'
-    gem 'guard', '>= 2.6'
-    gem 'guard-rubocop', '>= 1.1'
-    gem 'guard-foodcritic', '>= 1.0.2'
-  end
+group :lint do
+  gem 'cookstyle', '~> 1.3'
+  gem 'foodcritic', '~> 10.3'
+  gem 'rubocop', '~> 0.47'
 end
+
+group :unit do
+  gem 'berkshelf', '~> 5.6'
+  gem 'chef', '>= 12.7'
+  gem 'chef-sugar'
+  gem 'chefspec'
+end
+
+group :kitchen_common do
+  gem 'test-kitchen', '~> 1.16'
+end
+
+group :kitchen_vagrant do
+  gem 'kitchen-vagrant', '~> 1.1'
+  gem 'vagrant-wrapper'
+end
+
+gem 'rake'
+gem 'serverspec'

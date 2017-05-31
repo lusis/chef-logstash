@@ -12,10 +12,14 @@ version          '0.12.1'
   supports os
 end
 
-%w(build-essential runit git ant java logrotate python ark curl).each do |ckbk|
+%w(build-essential runit git ant logrotate python ark curl).each do |ckbk|
   depends ckbk
 end
 
-%w(apt elasticsearch beaver).each do |ckbk|
+depends 'java', '~> 1.50'
+
+%w(elasticsearch beaver).each do |ckbk|
   recommends ckbk
 end
+
+chef_version '>= 12.7' if respond_to?(:chef_version)

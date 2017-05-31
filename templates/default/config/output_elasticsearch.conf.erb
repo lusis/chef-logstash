@@ -8,12 +8,17 @@ output {
 <% end -%>
 <% if @elasticsearch_embedded -%>
     embedded => true
+<% else -%>
+    embedded => false
 <% end -%>
 <% if @bind_host -%>
     bind_host => "<%= @bind_host %>"
 <% end -%>
 <% if @es_index -%>
     index => "<%= @es_index %>"
+<% end -%>
+<% if @es_protocol -%>
+  protocol => "<%= @es_protocol %>"
 <% end -%>
   }
 }

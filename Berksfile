@@ -4,8 +4,9 @@ source 'https://api.berkshelf.com' if Gem::Version.new(Berkshelf::VERSION) > Gem
 
 metadata
 
-group :test do
-  cookbook 'elasticsearch', git: 'https://github.com/elasticsearch/cookbook-elasticsearch.git'
-  cookbook 'kibana_lwrp', git: 'https://github.com/lusis/chef-kibana.git'
+group :integration do
+  cookbook 'apt'
+  cookbook 'kibana_lwrp'
   cookbook 'beaver'
+  cookbook 'logstash-test', path: 'test/fixtures/cookbooks/logstash-test'
 end

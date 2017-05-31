@@ -2,46 +2,53 @@
 driver:
   name: vagrant
 driver_config:
-  require_chef_omnibus: true
-  use_vagrant_berkshelf_plugin: true
+  require_chef_omnibus: 12.7
   customize:
     memory: 512
     cpus: 1
 
 provisioner:
-  name: chef_solo
+  name: chef_zero
+  attributes:
+    java:
+      jdk_version: "8"
+      install_flavor: "oracle"
+      oracle:
+        accept_oracle_download_terms: true
+    logstash:
+      instance:
+        server:
+          elasticsearch_ip: '127.0.0.1'
+          config_templates_variables:
+            bind_host: '127.0.0.1'
+            es_protocol: 'http'
+          init_method: 'native'
+          xms: '256M'
+          xmx: '256M'
+          config_templates:
+            input_syslog: 'config/input_syslog.conf.erb'
+            output_stdout: 'config/output_stdout.conf.erb'
+            output_elasticsearch: 'config/output_elasticsearch.conf.erb'
+          pattern_templates:
+            default: 'patterns/custom_patterns.erb'
 
 platforms:
   - name: ubuntu-12.04
+    run_list:
+      - recipe[apt::default]
+      - recipe[java::default]
   - name: ubuntu-14.04
-  - name: centos-5.10
+    run_list:
+      - recipe[apt::default]
+      - recipe[java::default]
   - name: centos-6.6
+    run_list:
+      - recipe[java::default]
   - name: centos-7.1
-  - name: fedora-21
-  - name: debian-7.6
+    run_list:
+      - recipe[java::default]
 
 suites:
   - name: server
     run_list:
-      - recipe[apt::default]
-      - recipe[java::default]
-      - recipe[logstash::server]
-    attributes:
-      java:
-        install_flavor: "oracle"
-        jdk_version: "7"
-        oracle:
-          accept_oracle_download_terms: true
-      logstash:
-        instance:
-          server:
-            xms: '256M'
-            xmx: '256M'
-            config_templates:
-              input_syslog: 'config/input_syslog.conf.erb'
-              output_stdout: 'config/output_stdout.conf.erb'
-              output_elasticsearch: 'config/output_elasticsearch.conf.erb'
-            pattern_templates:
-              default: 'patterns/custom_patterns.erb'
-            elasticsearch_ip: '127.0.0.1'
-            enable_embedded_es: true
+      - recipe[logstash-test::default]

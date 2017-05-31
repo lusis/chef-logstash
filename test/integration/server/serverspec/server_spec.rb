@@ -1,9 +1,9 @@
 # Encoding: utf-8
 require 'spec_helper'
 
-# Java 1.7
+# Java 1.8
 describe command('java -version') do
-  its(:stdout) { should eq(/java version "1.7.\d+_\d+"/) }
+  its(:stderr) { should match(/java version "1.8.\d+_\d+"/) }
 end
 
 # Logstash Instance
@@ -17,15 +17,15 @@ describe user('logstash') do
 end
 
 # Logstash Config
-describe file('/opt/logstash/server/etc/conf.d/input_syslog.conf') do
+describe file('/opt/logstash/server/etc/conf.d/input_syslog') do
   it { should be_file }
 end
 
-describe file('/opt/logstash/server/etc/conf.d/output_elasticsearch.conf') do
+describe file('/opt/logstash/server/etc/conf.d/output_elasticsearch') do
   it { should be_file }
 end
 
-describe file('/opt/logstash/server/etc/conf.d/output_stdout.conf') do
+describe file('/opt/logstash/server/etc/conf.d/output_stdout') do
   it { should be_file }
 end
 
@@ -39,5 +39,6 @@ end
 
 # Logstash Curator
 describe cron do
-  it { should have_entry('0 * * * * curator --host 127.0.0.1 delete --older-than 31 &> /dev/null').with_user('logstash') }
+  it { should have_entry('0 * * * * /usr/local/bin/curator --host 127.0.0.1 delete indices --older-than 31 --time-unit days --timestring \'\%Y.\%m.\%d\' --prefix logstash- &> /dev/null').with_user('logstash') }
+#                        0 * * * * /usr/local/bin/curator --host  delete indices --older-than 31 --time-unit days --timestring '\%Y.\%m.\%d' --prefix logstash- &> /dev/null
 end

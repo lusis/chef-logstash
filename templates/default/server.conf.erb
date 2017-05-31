@@ -5,7 +5,7 @@ input {
     port => "5959"
     codec => "json"
   }
-  <% else -%> 
+  <% else -%>
     <%= LogstashConf.section_to_str(node['logstash']['server']['inputs']) %>
   <% end -%>
 }
