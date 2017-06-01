@@ -17,6 +17,7 @@ LS_GROUP="<%= @group %>"
 LS_LOG="<%= @log_file %>"
 LOGDIR="<%= ::File.dirname @log_file %>"
 export JAVA_OPTS="-server -Xms<%= @min_heap %> -Xmx<%= @max_heap %> -Djava.io.tmpdir=$LS_HOME/tmp/ <%= @java_opts %> <%= '-Djava.net.preferIPv4Stack=true' if @ipv4_only %>"
+export HEAP_DUMP_PATH="-XX:HeapDumpPath=${LS_HOME}/heapdump.hprof"
 BIN_SCRIPT="/usr/bin/env $LS_HOME/bin/logstash $LOGSTASH_OPTS > $LS_LOG 2>&1 &  echo \$! > $PIDFILE"
 
 if [ -f /etc/init.d/functions ] ; then
