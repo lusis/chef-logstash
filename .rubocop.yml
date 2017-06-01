@@ -73,7 +73,7 @@ Metrics/PerceivedComplexity:
   Max: 25
 
 Metrics/AbcSize:
-  Max: 90
+  Max: 100
 
 Style/NestedModifier:
   Enabled: false

@@ -35,9 +35,7 @@ def load_current_resource
   @logrotate_options = new_resource.logrotate_options || Logstash.get_attribute_or_default(node, @name, 'logrotate_options')
   @logrotate_enable = new_resource.logrotate_enable || Logstash.get_attribute_or_default(node, @name, 'logrotate_enable')
   @logrotate_files = new_resource.logrotate_files || Logstash.get_attribute_or_default(node, @name, 'logrotate_files')
-  if not Pathname.new(@logrotate_files).absolute?
-    @log_file = "#{@instance_dir}/log/#{@logrotate_files}"
-  end
+  @log_file = "#{@unversioned_instance_dir}/log/#{@logrotate_files}" unless Pathname.new(@logrotate_files).absolute?
 end
 
 action :delete do
@@ -248,11 +246,7 @@ def logrotate(ls)
   @run_context.include_recipe 'logrotate::default'
 
   logrotate_app "logstash_#{name}" do
-<<<<<<< HEAD
-    path "#{ls[:unversioned_instance_dir]}/log/*.log"
-=======
     path ls[:logrotate_files]
->>>>>>> Also allow specifying files for log rotation.
     size ls[:logrotate_size] if ls[:logrotate_use_filesize]
     frequency ls[:logrotate_frequency]
     rotate ls[:logrotate_max_backup]
