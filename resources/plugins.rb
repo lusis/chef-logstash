@@ -5,7 +5,7 @@
 # Copyright 2014, John E. Vincent
 # License:: Apache 2.0
 
-actions :create
+actions :create, :update
 
 default_action :create if defined?(default_action)
 
