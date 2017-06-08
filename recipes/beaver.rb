@@ -5,5 +5,5 @@
 #
 #
 
-include_recipe 'python::default'
+include_recipe 'poise-python::default'
 include_recipe 'beaver::default'
