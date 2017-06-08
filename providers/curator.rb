@@ -35,12 +35,15 @@ action :create do
   cur_time_unit = @time_unit
   cur_timestring = @timestring
 
-  @run_context.include_recipe 'python::pip'
-
-  pi = python_pip 'elasticsearch-curator' do
+  pr = python_runtime '2' do
     action :install
   end
-  new_resource.updated_by_last_action(pi.updated_by_last_action?)
+  new_resource.updated_by_last_action(pr.updated_by_last_action?)
+
+  pp = python_package 'elasticsearch-curator' do
+    action :install
+  end
+  new_resource.updated_by_last_action(pp.updated_by_last_action?)
 
   server_ip = ::Logstash.service_ip(node, cur_instance, 'elasticsearch')
   curator_args = "--host #{server_ip} delete indices --older-than #{cur_days_to_keep} --time-unit #{cur_time_unit} --timestring '#{cur_timestring}' --prefix #{cur_index_prefix} &> #{cur_log_file}"
@@ -64,12 +67,15 @@ action :delete do
   cur_bin_dir = @bin_dir
   cur_index_prefix = @index_prefix
 
-  @run_context.include_recipe 'python::pip'
+  pr = python_runtime '2' do
+    action :install
+  end
+  new_resource.updated_by_last_action(pr.updated_by_last_action?)
 
-  pi = python_pip 'elasticsearch-curator' do
+  pp = python_package 'elasticsearch-curator' do
     action :uninstall
   end
-  new_resource.updated_by_last_action(pi.updated_by_last_action?)
+  new_resource.updated_by_last_action(pp.updated_by_last_action?)
 
   host = ::Logstash.service_ip(node, cur_instance, 'elasticsearch')
   curator_args = "--host #{host} delete indices --older-than #{cur_days_to_keep} --time-unit #{cur_time_unit} --timestring '#{cur_timestring}' --prefix #{cur_index_prefix} 2>&1 > #{cur_log_file}"

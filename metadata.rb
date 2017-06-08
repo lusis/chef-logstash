@@ -18,7 +18,7 @@ depends 'git'
 depends 'ant'
 depends 'logrotate'
 depends 'ark'
-depends 'python'
+depends 'poise-python'
 depends 'curl'
 depends 'beaver'
 
