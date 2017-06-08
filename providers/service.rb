@@ -147,6 +147,7 @@ action :enable do
         variables(
           home: svc[:home],
           user: svc[:user],
+          min_heap: svc[:min_heap],
           max_heap: svc[:max_heap],
           supervisor_gid: svc[:supervisor_gid],
           args: args
