@@ -108,14 +108,6 @@ There is a search helper library `libraries/search.rb` which will help you searc
 Testing
 =======
 
-## Vagrant
-
-__depreciated in favor if test kitchen.__
-
-```
-$ vagrant up precise64
-```
-
 ## Rubocop, FoodCritic, Rspec, Test-Kitchen
 
 ```
@@ -148,18 +140,6 @@ These two recipes show how to install and configure logstash instances via the p
 * [recipes/agent.rb](recipes/agent.rb) - This would be a local host's agent for collection
 
 See the [elkstack community cookbook](https://supermarket.getchef.com/cookbooks/elkstack) for a great example of using the LWRPs provided by this cookbook.
-
-
-# Vagrant
-
-## Requirements
-* Vagrant 1.2.1+
-* Vagrant Berkshelf Plugin `vagrant plugin install vagrant-berkshelf`
-* Vagrant Omnibus Plugin   `vagrant plugin install vagrant-omnibus`
-
-Uses the Box Name to determine the run list ( based on whether its Debian or RHEL based ).
-
-See chef_json and chef_run_list variables to change recipe behavior.
 
 ## Usage:
 
