@@ -6,7 +6,7 @@ describe 'logstash::default' do
     let(:runner) { ChefSpec::SoloRunner.new(::UBUNTU_OPTS) }
     let(:node) { runner.node }
     let(:chef_run) do
-      runner.node.set['memory']['total'] = '1024000kb'
+      runner.node.normal['memory']['total'] = '1024000kb'
       runner.converge(described_recipe)
     end
     include_context 'stubs-common'

@@ -11,14 +11,14 @@ describe 'logstash::server' do
     let(:runner) { ChefSpec::SoloRunner.new(::LWRP) }
     let(:node) { runner.node }
     let(:chef_run) do
-      runner.node.set['memory']['total'] = '1024000kb'
-      runner.node.set['logstash']['instance']['server']['basedir'] = '/opt/logstash'
-      runner.node.set['logstash']['instance']['server']['user'] = 'logstash'
-      runner.node.set['logstash']['instance']['server']['group'] = 'logstash'
-      runner.node.set['logstash']['instance']['server']['config_templates_cookbook'] = 'logstash'
-      runner.node.set['logstash']['instance']['server']['elasticsearch_ip'] = '127.0.0.1'
-      runner.node.set['logstash']['instance']['server']['enable_embedded_es'] = true
-      runner.node.set['logstash']['instance']['server']['config_templates'] = {
+      runner.node.normal['memory']['total'] = '1024000kb'
+      runner.node.normal['logstash']['instance']['server']['basedir'] = '/opt/logstash'
+      runner.node.normal['logstash']['instance']['server']['user'] = 'logstash'
+      runner.node.normal['logstash']['instance']['server']['group'] = 'logstash'
+      runner.node.normal['logstash']['instance']['server']['config_templates_cookbook'] = 'logstash'
+      runner.node.normal['logstash']['instance']['server']['elasticsearch_ip'] = '127.0.0.1'
+      runner.node.normal['logstash']['instance']['server']['enable_embedded_es'] = true
+      runner.node.normal['logstash']['instance']['server']['config_templates'] = {
         output_stdout: 'config/output_stdout.conf.erb'
       }
       runner.converge(described_recipe)
