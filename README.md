@@ -141,15 +141,6 @@ These two recipes show how to install and configure logstash instances via the p
 
 See the [elkstack community cookbook](https://supermarket.getchef.com/cookbooks/elkstack) for a great example of using the LWRPs provided by this cookbook.
 
-## Usage:
-
-Run Logstash on Ubuntu Lucid   : `vagrant up lucid32` or `vagrant up lucid64`
-
-Run Logstash on Centos 6 32bit : `vagrant up centos6_32`
-
-Logstash will listen for syslog messages on tcp/5140
-
-
 ## License and Author
 
 - Author:    John E. Vincent
