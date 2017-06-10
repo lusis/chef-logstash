@@ -8,12 +8,12 @@ describe 'logstash::agent' do
     let(:chef_run) do
       # runner.node.set['logstash'] ...
       runner.node.automatic['memory']['total'] = '1024kB'
-      runner.node.set['logstash']['instance']['agent']['basedir'] = '/opt/logstash'
-      runner.node.set['logstash']['instance']['agent']['user'] = 'logstash'
-      runner.node.set['logstash']['instance']['agent']['group'] = 'logstash'
-      runner.node.set['logstash']['instance']['agent']['config_templates_cookbook'] = 'logstash'
-      runner.node.set['logstash']['instance']['agent']['elasticsearch_ip'] = '127.0.0.1'
-      runner.node.set['logstash']['instance']['agent']['enable_embedded_es'] = false
+      runner.node.normal['logstash']['instance']['agent']['basedir'] = '/opt/logstash'
+      runner.node.normal['logstash']['instance']['agent']['user'] = 'logstash'
+      runner.node.normal['logstash']['instance']['agent']['group'] = 'logstash'
+      runner.node.normal['logstash']['instance']['agent']['config_templates_cookbook'] = 'logstash'
+      runner.node.normal['logstash']['instance']['agent']['elasticsearch_ip'] = '127.0.0.1'
+      runner.node.normal['logstash']['instance']['agent']['enable_embedded_es'] = false
       runner.converge(described_recipe)
     end
     include_context 'stubs-common'
