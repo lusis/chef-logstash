@@ -6,7 +6,6 @@ metadata
 
 group :integration do
   cookbook 'apt'
-  cookbook 'kibana_lwrp'
   cookbook 'beaver'
   cookbook 'logstash-test', path: 'test/fixtures/cookbooks/logstash-test'
 end
