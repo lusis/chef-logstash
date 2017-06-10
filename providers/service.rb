@@ -17,7 +17,7 @@ def load_current_resource
   @templates_cookbook = new_resource.templates_cookbook || Logstash.get_attribute_or_default(node, @instance, 'service_templates_cookbook')
   @service_name = new_resource.service_name || "logstash_#{@instance}"
   @home = "#{@basedir}/#{@instance}"
-  @method = new_resource.method || Logstash.get_attribute_or_default(node, @instance, 'init_method')
+  @init_method = new_resource.init_method || Logstash.get_attribute_or_default(node, @instance, 'init_method')
   @command = new_resource.command || "#{@home}/bin/logstash"
   @user = new_resource.user || Logstash.get_attribute_or_default(node, @instance, 'user')
   @group = new_resource.group || Logstash.get_attribute_or_default(node, @instance, 'group')
@@ -59,8 +59,8 @@ end
 
 action :enable do
   svc = svc_vars
-  Chef::Log.info("Using init method #{svc[:method]} for #{svc[:service_name]}")
-  case svc[:method]
+  Chef::Log.info("Using init method #{svc[:init_method]} for #{svc[:service_name]}")
+  case svc[:init_method]
   when 'runit'
     @run_context.include_recipe 'runit::default'
     ri = runit_service svc[:service_name] do
@@ -199,7 +199,7 @@ action :enable do
     end
 
   else
-    Chef::Log.fatal("Unsupported init method: #{svc[:method]}")
+    Chef::Log.fatal("Unsupported init method: #{svc[:init_method]}")
   end
 end
 
@@ -216,7 +216,7 @@ end
 
 def service_action(action)
   svc = svc_vars
-  case svc[:method]
+  case svc[:init_method]
   when 'native'
     sv = service svc[:service_name]
     case ::Logstash.determine_native_init(node)
@@ -240,7 +240,7 @@ def svc_vars
     name: @instance,
     service_name: @service_name,
     home: @home,
-    method: @method,
+    init_method: @init_method,
     command: @command,
     description: @description,
     chdir: @chdir,
