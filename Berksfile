@@ -6,6 +6,7 @@ metadata
 
 group :integration do
   cookbook 'apt'
+  cookbook 'java'
   cookbook 'beaver'
   cookbook 'logstash-test', path: 'test/fixtures/cookbooks/logstash-test'
 end
