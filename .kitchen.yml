@@ -2,7 +2,7 @@
 driver:
   name: vagrant
 driver_config:
-  require_chef_omnibus: 12.7
+  require_chef_omnibus: 13.1
   customize:
     memory: 512
     cpus: 1
