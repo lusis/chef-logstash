@@ -1,5 +1,8 @@
 # CHANGELOG for chef-logstash
 
+## 0.13.0
+* MAJOR - Chef13 support
+
 ## 0.12.0
 * MAJOR - logstash version 1.5.4
 * MINOR - systemd improvements

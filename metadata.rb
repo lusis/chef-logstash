@@ -6,7 +6,7 @@ license          'Apache-2.0'
 description      'Installs/Configures logstash'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 
-version          '0.12.1'
+version          '0.13.0'
 
 %w(ubuntu debian redhat centos scientific amazon fedora).each do |os|
   supports os
@@ -22,6 +22,6 @@ depends 'poise-python'
 depends 'curl'
 depends 'beaver'
 
-chef_version '>= 12.7' if respond_to?(:chef_version)
+chef_version '>= 13.0' if respond_to?(:chef_version)
 issues_url       'https://github.com/lusis/chef-logstash/issues'
 source_url       'https://github.com/lusis/chef-logstash'
