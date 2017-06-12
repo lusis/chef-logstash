@@ -1,5 +1,14 @@
 # CHANGELOG for chef-logstash
 
+## 1.0.0
+
+* MAJOR - Get tests passing on Chef 12.7
+* MAJOR - Use a versioned directory structure
+* MAJOR - Use systemd for Debian 8 (Jessie)
+* MINOR - Add Max Heap to systemd init parameters
+* MINOR - Add udp listening port 514
+* MINOR - Remove Vagrant support
+
 ## 0.12.0
 * MAJOR - logstash version 1.5.4
 * MINOR - systemd improvements
