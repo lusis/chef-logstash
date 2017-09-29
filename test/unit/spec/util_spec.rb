@@ -81,7 +81,7 @@ describe '::determine_native_init' do
     context 'with 6' do
       let(:node) { { 'platform' => 'centos', 'platform_version' => '6' } }
       it 'returns sysvinit' do
-        expect(Logstash.determine_native_init(node)).to eql('sysvinit')
+        expect(Logstash.determine_native_init(node)).to eql('upstart')
       end
     end
     context 'with 7' do
