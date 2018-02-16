@@ -21,7 +21,7 @@ def load_current_resource
   @repo = new_resource.repo
   @sha = new_resource.sha
   @java_home = new_resource.java_home || Logstash.get_attribute_or_default(node, @name, 'java_home')
-  @create_account = new_resource.create_account || Logstash.get_attribute_or_default(node, @name, 'create_account')
+  @create_account = new_resource.create_account.nil? && Logstash.get_attribute_or_default(node, @name, 'create_account') || new_resource.create_account
   @user = new_resource.user || Logstash.get_attribute_or_default(node, @name, 'user')
   @group = new_resource.group || Logstash.get_attribute_or_default(node, @name, 'group')
   @join_groups = new_resource.join_groups || Logstash.get_attribute_or_default(node, @name, 'join_groups')
@@ -31,11 +31,11 @@ def load_current_resource
   @logrotate_size = new_resource.logrotate_size || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_size')
   @logrotate_size = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'logrotate_size')
   @logrotate_max_size = new_resource.user_opts || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_size')
-  @logrotate_use_filesize = new_resource.logrotate_use_filesize || Logstash.get_attribute_or_default(node, @name, 'logrotate_use_filesize')
+  @logrotate_use_filesize = new_resource.logrotate_use_filesize.nil? && Logstash.get_attribute_or_default(node, @name, 'logrotate_use_filesize') || new_resource.logrotate_use_filesize
   @logrotate_frequency = new_resource.logrotate_frequency || Logstash.get_attribute_or_default(node, @name, 'logrotate_frequency')
   @logrotate_max_backup = new_resource.logrotate_max_backup || Logstash.get_attribute_or_default(node, @name, 'logrotate_max_backup')
   @logrotate_options = new_resource.logrotate_options || Logstash.get_attribute_or_default(node, @name, 'logrotate_options')
-  @logrotate_enable = new_resource.logrotate_enable || Logstash.get_attribute_or_default(node, @name, 'logrotate_enable')
+  @logrotate_enable = new_resource.logrotate_enable.nil? && Logstash.get_attribute_or_default(node, @name, 'logrotate_enable') || new_resource.logrotate_enable
   @logrotate_files = new_resource.logrotate_files || Logstash.get_attribute_or_default(node, @name, 'logrotate_files')
   @log_file = "#{@unversioned_instance_dir}/log/#{@logrotate_files}" unless Pathname.new(@logrotate_files).absolute?
 end
