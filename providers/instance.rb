@@ -11,7 +11,7 @@ require 'chef/mixin/shell_out'
 require 'chef/mixin/language'
 include Chef::Mixin::ShellOut
 
-def load_current_resource
+def load_current_resource # rubocop:disable AbcSize,PerceivedComplexity
   @name = new_resource.name || 'default'
   @base_directory = new_resource.base_directory || Logstash.get_attribute_or_default(node, @name, 'basedir')
   @install_type = new_resource.install_type || Logstash.get_attribute_or_default(node, @name, 'install_type')
