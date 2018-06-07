@@ -218,7 +218,7 @@ action :create do
     er = execute 'build-logstash' do
       cwd "#{ls[:instance_dir]}/source"
       environment(JAVA_HOME: @java_home)
-      user ls_user # Changed from root cause building as root...WHA?
+      user ls[:user] # Changed from root cause building as root...WHA?
       command "make clean && make VERSION=#{source_version} jar"
       action :run
       creates "#{ls[:instance_dir]}/source/build/logstash-#{source_version}--monolithic.jar"
