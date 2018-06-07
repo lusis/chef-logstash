@@ -207,7 +207,7 @@ private
 
 def default_args
   svc = svc_vars
-  args = ['agent', '-f', "#{svc[:home]}/etc/conf.d/"]
+  args = ['-f', "#{svc[:home]}/etc/conf.d/"]
   args.concat ['-vv'] if svc[:debug]
   args.concat ['-l', svc[:log_file]] if svc[:log_file]
   args.concat ['-w', svc[:workers].to_s] if svc[:workers]
