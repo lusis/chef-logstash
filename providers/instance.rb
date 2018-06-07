@@ -184,6 +184,7 @@ action :create do
       mode '0755'
       owner ls[:user]
       group ls[:group]
+      recursive true
     end
     new_resource.updated_by_last_action(idr.updated_by_last_action?)
 
