@@ -3,9 +3,9 @@ require_relative '../../../libraries/logstash_util.rb'
 
 describe '::determine_platform_major_version' do
   context 'with ubuntu' do
-    let(:node) { { 'platform' => 'ubuntu', 'platform_version' => '12.04' } }
+    let(:node) { { 'platform' => 'ubuntu', 'platform_version' => '16.04' } }
     it 'returns full version' do
-      expect(Logstash.determine_platform_major_version(node)).to eql(12.04)
+      expect(Logstash.determine_platform_major_version(node)).to eql(16.04)
     end
   end
 
@@ -33,7 +33,7 @@ describe '::upstart_supports_user?' do
       end
     end
     context 'after user' do
-      let(:node) { { 'platform' => 'ubuntu', 'platform_version' => '12.04' } }
+      let(:node) { { 'platform' => 'ubuntu', 'platform_version' => '16.04' } }
       it 'returns true' do
         expect(Logstash.upstart_supports_user?(node)).to eql(true)
       end

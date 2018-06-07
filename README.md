@@ -63,7 +63,7 @@ This will create system init scripts for managing logstash instance.   It will t
 
 see [resources/service.rb](resources/service.rb)
 
-_experimental support for pleaserun has been added.   Only `native` for `Ubuntu 12.04` has been thoroughly tested._
+_experimental support for pleaserun has been added.   Only `native` for `Ubuntu 16.04` has been thoroughly tested._
 
 ## logstash_config
 

@@ -16,7 +16,7 @@ require_relative 'support/matchers'
 
 ::UBUNTU_OPTS = {
   platform:  'ubuntu',
-  version:   '12.04',
+  version:   '16.04',
   log_level: ::LOG_LEVEL
 }
 
