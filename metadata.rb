@@ -22,6 +22,6 @@ depends 'poise-python'
 depends 'curl'
 depends 'beaver'
 
-chef_version '>= 12.19' if respond_to?(:chef_version)
+chef_version '>= 12.18' if respond_to?(:chef_version)
 issues_url       'https://github.com/lusis/chef-logstash/issues'
 source_url       'https://github.com/lusis/chef-logstash'
