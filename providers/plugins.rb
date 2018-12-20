@@ -6,10 +6,6 @@
 #
 # Copyright 2014, John E. Vincent
 
-require 'chef/mixin/shell_out'
-require 'chef/mixin/language'
-include Chef::Mixin::ShellOut
-
 def load_current_resource
   @name = new_resource.name || 'contrib'
   @instance = new_resource.instance || 'default'
