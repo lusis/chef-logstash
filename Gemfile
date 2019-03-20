@@ -22,5 +22,7 @@ group :kitchen_vagrant do
   gem 'vagrant-wrapper'
 end
 
+gem 'cucumber-core', '3.2.0'
+gem 'gherkin', '5.1.0'
 gem 'rake'
 gem 'serverspec'

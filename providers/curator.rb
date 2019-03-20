@@ -6,10 +6,6 @@
 #
 # Copyright 2014, John E. Vincent
 
-require 'chef/mixin/shell_out'
-require 'chef/mixin/language'
-include Chef::Mixin::ShellOut
-
 def load_current_resource
   @instance = new_resource.instance || 'default'
   @days_to_keep = new_resource.days_to_keep || Logstash.get_attribute_or_default(node, @instance, 'curator_days_to_keep')
