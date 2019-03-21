@@ -1,5 +1,11 @@
 # CHANGELOG for chef-logstash
 
+## 1.0.1
+
+* MINOR - Removed chef/mixin/language references to support Chef 14
+* MINOR - Pinned version for 'cucumber-core' and 'gherkin' in Gemfile
+* MINOR - Update Ubuntu version in specs
+
 ## 1.0.0
 
 * MAJOR - Get tests passing on Chef 12.7
