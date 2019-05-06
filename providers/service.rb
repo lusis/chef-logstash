@@ -227,7 +227,7 @@ def service_action(action)
   when 'runit'
     @run_context.include_recipe 'runit::default'
     sv = runit_service svc[:service_name] do
-        action(:nothing)
+      action(:nothing)
     end
   end
   sv.run_action(action)
