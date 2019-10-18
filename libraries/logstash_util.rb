@@ -52,7 +52,7 @@ module Logstash
       end
     when 'redhat', 'centos', 'scientific'
       if platform_major_version <= 6
-        'sysvinit'
+        File.exist?('/sbin/start') ? 'upstart' : 'sysvinit'
       else
         'systemd'
       end
